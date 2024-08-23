@@ -1,0 +1,122 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|c:\\users\\walter.nguyen\\desktop\\learning\\dataservice\\helper\\realtimeeventhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|solutionrelative:helper\\realtimeeventhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|c:\\users\\walter.nguyen\\desktop\\learning\\dataservice\\helper\\sdkhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|solutionrelative:helper\\sdkhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|c:\\users\\walter.nguyen\\desktop\\learning\\dataservice\\pubsub\\subscriber.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|solutionrelative:pubsub\\subscriber.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|c:\\users\\walter.nguyen\\desktop\\learning\\dataservice\\pubsub\\notificationevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|solutionrelative:pubsub\\notificationevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|c:\\users\\walter.nguyen\\desktop\\learning\\dataservice\\pubsub\\publisher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|solutionrelative:pubsub\\publisher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|c:\\users\\walter.nguyen\\desktop\\learning\\dataservice\\worker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|solutionrelative:worker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Subscriber.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\PubSub\\Subscriber.cs",
+              "RelativeDocumentMoniker": "PubSub\\Subscriber.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\PubSub\\Subscriber.cs",
+              "RelativeToolTip": "PubSub\\Subscriber.cs",
+              "ViewState": "AQIAABUAAAAAAAAAAAA3wAYAAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-23T10:48:12.381Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Publisher.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\PubSub\\Publisher.cs",
+              "RelativeDocumentMoniker": "PubSub\\Publisher.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\PubSub\\Publisher.cs",
+              "RelativeToolTip": "PubSub\\Publisher.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-23T10:48:06.547Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "NotificationEvent.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\PubSub\\NotificationEvent.cs",
+              "RelativeDocumentMoniker": "PubSub\\NotificationEvent.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\PubSub\\NotificationEvent.cs",
+              "RelativeToolTip": "PubSub\\NotificationEvent.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-23T10:48:05.777Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "RealTimeEventHelper.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\Helper\\RealTimeEventHelper.cs",
+              "RelativeDocumentMoniker": "Helper\\RealTimeEventHelper.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\Helper\\RealTimeEventHelper.cs",
+              "RelativeToolTip": "Helper\\RealTimeEventHelper.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAoAAAA3AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-23T10:47:08.706Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SDKHelper.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\Helper\\SDKHelper.cs",
+              "RelativeDocumentMoniker": "Helper\\SDKHelper.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\Helper\\SDKHelper.cs",
+              "RelativeToolTip": "Helper\\SDKHelper.cs",
+              "ViewState": "AQIAAPsAAAAAAAAAAAAmwAcBAACSAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-23T10:46:11.068Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Worker.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\Worker.cs",
+              "RelativeDocumentMoniker": "Worker.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\Learning\\DataService\\Worker.cs",
+              "RelativeToolTip": "Worker.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAqwBAAAABJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-23T10:42:02.69Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

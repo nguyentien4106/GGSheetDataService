@@ -23,5 +23,8 @@
   <ItemGroup>
     <PackageReference Include="GoogleSheetsWrapper" Version="2.0.18" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.0" />
+
   </ItemGroup>
 </Project>

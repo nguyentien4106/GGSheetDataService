@@ -40,10 +40,11 @@ namespace DataService.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult TestConnection(Device device)
+        public JsonResult Create(Device device)
         {
-            var result = _sdk.sta_TestConnection(device);
+            var result = _sdk.sta_ConnectTCP(device, true);
 
+            
             return Json(result);
         }
 

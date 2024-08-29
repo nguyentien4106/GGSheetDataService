@@ -3,75 +3,52 @@
     ViewData["Title"] = "Create";
 }
 
-
 <form class="w-100 d-flex gap-lg-5" >
-    <div class="w-25">
+    <div class="w-50">
         <h2>Add New Device</h2>
         <hr />
-        <div class="mb-3">
-            <label class="form-label">Device's IP:</label>
-            <input class="form-control" />
+        <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label">Device's IP:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" value="192.168.0.201" id="ip">
+            </div>
         </div>
-        <div>
-            <label class="form-label">Device's Port:</label>
-            <input class="form-control" />
+        <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label">Device's Port:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" value="4370" id="port">
+            </div>
         </div>
-        <div>
-            <label class="form-label">Comm Key:</label>
-            <input class="form-control" />
+        <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label">Device's CommKey:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" value="0" id="commKey">
+            </div>
         </div>
     </div>
-    <div class="w-75 sheets">
+    <div class="w-50 sheets">
         <div class="d-flex flex-row justify-content-between">
             <h2>Sheets</h2>
-            <button type="button" id="add-sheet" class="mt-3 btn btn-primary" >
+            <button type="button" id="add-sheet" class="btn btn-primary" >
                 Add Sheet
             </button>
         </div>
         <hr />
         <div class="sheet w-100 d-flex flex-row gap-5 mb-3" >
-            <input class="form-control w-25" placeholder="Sheet Name" value="Sheet1"/>
-            <input class="form-control w-75" placeholder="Sheet Id" value="" />
+            <input class="form-control w-25 sheetName" placeholder="Sheet Name" value="Sheet1"/>
+            <input class="form-control w-75 documentId" placeholder="Document Id" value="" />
         </div>
 
     </div>
 </form>
 
 <div>
-    <button id="test" class="btn btn-primary" >
-        <div class="d-flex flex-row gap-2">
-            <p>Test</p>
-            <div id="spinner" class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
+    <button class="btn btn-primary mt-3" type="button" id="add-device">
+        <span role="status">Add Device</span>
+        <span class="spinner-border spinner-border-sm" aria-hidden="true" hidden></span>
     </button>
 </div>
 
 @section Scripts{
-    <script>
-        const $spinner = $("#spinner")
-        $spinner.hide()
-        $("#test").click(function () {
-            $spinner.show()
-            $("#test").prop("disabled", true)
-            $("form").prop("disabled", true)
-
-            $.post("https://localhost:7058/Devices/TestConnection")
-                .then(res => {
-                    if(res.isSuccess){
-
-                    }
-                })
-                .always(() => {
-                    $spinner.hide()
-                    $("#test").prop("disabled", false)
-                })
-        });
-
-        $("#add-sheet").click(() => {
-            $(".sheet:first").clone().appendTo(".sheets")
-        })
-    </script>
-
+    <script src="~/js/devices/create.js" asp-append-version="true"></script>
 }

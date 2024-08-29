@@ -4,7 +4,7 @@ using zkemkeeper;
 
 namespace DataService.Web.Helper
 {
-    public class SDKHelper
+    public class SDKHelper : IDisposable
     {
         public CZKEMClass axCZKEM1 = new CZKEMClass();
 
@@ -13,7 +13,7 @@ namespace DataService.Web.Helper
         private static bool bIsConnected = false;//the boolean value identifies whether the device is connected
         private static int iMachineNumber = 1;
         private static int idwErrorCode = 0;
-
+        bool disposed = false;
 
         #region ConnectDevice
 
@@ -97,7 +97,7 @@ namespace DataService.Web.Helper
             }
         }
 
-        public Result sta_ConnectTCP(Device model)
+        public Result sta_ConnectTCP(Device model, bool isTest = false)
         {
             if (!model.IsValid())
             {
@@ -131,12 +131,19 @@ namespace DataService.Web.Helper
             if (axCZKEM1.Connect_Net(model.IP, Convert.ToInt32(model.Port)))
             {
                 SetConnectState(true);
-
+                if (isTest)
+                {
+                    sta_DisConnect();
+                }
                 return Result.Success();
             }
             else
             {
                 axCZKEM1.GetLastError(ref idwErrorCode);
+                if(idwErrorCode == -307)
+                {
+                    return Result.Fail(idwErrorCode, $"Connection time out! Please check correctly device pluggin and correctly parameters");
+                }
                 return Result.Fail(idwErrorCode, $"Refer to documentation for more details, errorCode={idwErrorCode}");
 
             }
@@ -147,6 +154,7 @@ namespace DataService.Web.Helper
             if (GetConnectState())
             {
                 axCZKEM1.Disconnect();
+
             }
         }
 
@@ -197,6 +205,30 @@ namespace DataService.Web.Helper
 
 
             return Result.Success("*No data");
+        }
+
+        // Public implementation of Dispose pattern callable by consumers.
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                if (GetConnectState())
+                {
+                    axCZKEM1.Disconnect();
+                }
+            }
+
+            disposed = true;
         }
     }
 }

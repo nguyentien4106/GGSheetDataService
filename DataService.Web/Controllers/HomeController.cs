@@ -12,22 +12,17 @@ namespace DataService.Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly SDKHelper _sdk;
         private AppSettingsService _settingsService;
+
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
             _sdk = new SDKHelper();
-            _settingsService = new AppSettingsService("C:\\appsettings.json");
         }
 
         public IActionResult Index()
         {
-            var status = _sdk.GetConnectState();
-            ViewBag.ConnectState = status;
-            var devices = _settingsService.GetCurrentDevicesSettings();
             var model = new IndexViewModel()
             {
-                Devices = devices,
-                
             };
             return View(model);
         }

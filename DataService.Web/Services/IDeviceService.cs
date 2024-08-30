@@ -11,5 +11,6 @@ namespace DataService.Web.Services
 
         Result Update(Device device);
 
+        List<Device> GetDevices();
     }
 }

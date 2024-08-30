@@ -10,8 +10,6 @@
 
         public List<Sheet> Sheets { get; set; } = [];
 
-        public bool Connected { get; set; }
-
         public bool IsValid()
         {
             return !string.IsNullOrEmpty(IP) && !string.IsNullOrEmpty(Port) && !string.IsNullOrEmpty(CommKey);

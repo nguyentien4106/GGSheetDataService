@@ -16,10 +16,13 @@ $("#add-device").click(function () {
         IP: $("#ip").val(),
         Port: $("#port").val(),
         CommKey: $("#commKey").val(),
-        Sheets: sheetNames.map((idx, val) => ({
-            SheetName: val,
-            DocumentId: documentIds[idx]
-        }))
+        Sheets: sheetNames.map((val, idx) => {
+            console.log(idx, val)
+            return {
+                SheetName: val,
+                DocumentId: documentIds[idx]
+            }
+        })
     }
     $.post("https://localhost:7058/Devices/Create", data)
         .then(res => {

@@ -9,12 +9,10 @@ namespace DataService.Web.Controllers
 {
     public class DevicesController : Controller
     {
-        AppSettingsService _settingsServices;
-        SDKHelper _sdk;
-        public DevicesController()
+        private readonly IDeviceService _deviceService;
+        public DevicesController(IDeviceService deviceService)
         {
-            _settingsServices = new AppSettingsService("C:\\appsettings.json");
-            _sdk = new SDKHelper();
+            _deviceService = deviceService;
         }
 
         // GET: DevicesController
@@ -22,7 +20,7 @@ namespace DataService.Web.Controllers
         {
             var model = new IndexViewModel()
             {
-                Devices = _settingsServices.GetCurrentDevicesSettings()
+                Devices = _deviceService.GetDevices()
             };
             return View(model);
         }
@@ -42,10 +40,7 @@ namespace DataService.Web.Controllers
         [HttpPost]
         public JsonResult Create(Device device)
         {
-            var result = _sdk.sta_ConnectTCP(device, true);
-
-            
-            return Json(result);
+            return Json(_deviceService.Add(device));
         }
 
         // GET: DevicesController/Edit/5
@@ -69,16 +64,10 @@ namespace DataService.Web.Controllers
             }
         }
 
-        // GET: DevicesController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
         // POST: DevicesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(string ip)
         {
             try
             {

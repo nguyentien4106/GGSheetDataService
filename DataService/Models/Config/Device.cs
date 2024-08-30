@@ -1,15 +1,13 @@
-﻿using DataService.PubSub;
-
-namespace DataWorkerService.Models
+﻿namespace DataWorkerService.Models
 {
-    public class Device : Subscriber
+    public class Device 
     {
-        public Device() : base("")
+        public Device()
         {
             
         }
 
-        public Device(string ip) : base(ip)
+        public Device(string ip) 
         {
             IP = ip;
         }

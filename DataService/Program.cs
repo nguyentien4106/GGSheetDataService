@@ -1,19 +1,14 @@
 using DataService;
-using DataService.PubSub;
 using DataService.Settings;
 using DataWorkerService.Models;
 using DataWorkerService.Models.Config;
 using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);
-//var logger = new LoggerConfiguration()
-//    .ReadFrom.Configuration(builder.Configuration)   //read config from appsettings
-//    .CreateLogger();
-//builder.Services.AddSerilog(logger);
 builder.Services.AddSerilog(config =>
 {
     config.ReadFrom.Configuration(builder.Configuration);
-    config.WriteTo.File(Path.Join(builder.Environment.ContentRootPath, "logs/service.log"));
+    config.WriteTo.File(Path.Join(builder.Environment.ContentRootPath, "logs/.log"), rollingInterval: RollingInterval.Day);
 });
 builder.Services.AddWindowsService(options =>
 {
@@ -44,7 +39,6 @@ if (googleAccount == null)
 builder.Services.AddSingleton(new DevicesAppSettings(devices));
 builder.Services.AddSingleton(credential);
 builder.Services.AddSingleton(googleAccount);
-builder.Services.AddSingleton(new Publisher("PublisherGGSheetData", 2000));
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddSystemd();
 

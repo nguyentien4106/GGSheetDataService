@@ -1,27 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DataService;
+using DataService.Models.AttMachine;
 using DataService.Settings;
 using DataWorkerService.Models;
 using DataWorkerService.Models.Config;
 using DataWorkerService.Models.Sheet;
+using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Wordprocessing;
 using GoogleSheetsWrapper;
+using Microsoft.Extensions.Logging;
 using zkemkeeper;
 
 namespace DataWorkerService.Helper
 {
-    public class SDKHelper(GoogleApiAccount account, JSONCredential credential)
+    public class SDKHelper(GoogleApiAccount account, JSONCredential credential, ILogger<Worker> logger)
     {
         public CZKEMClass axCZKEM1 = new CZKEMClass();
         private GoogleApiAccount _account = account;
+        private ILogger<Worker> _logger = logger;
         private JSONCredential _credential = credential;
         private static bool bIsConnected = false;//the boolean value identifies whether the device is connected
         private static int iMachineNumber = 1;
         private static int idwErrorCode = 0;
         private static int iDeviceTpye = 1;
-        private List<Device> _devices = [];
+        private Device _device;
+        private List<Employee> _employees = [];
+        private List<SheetHelper> _sheetsHelper = [];
 
         #region ConnectDevice
 
@@ -32,6 +40,7 @@ namespace DataWorkerService.Helper
 
         public void SetConnectState(bool state)
         {
+            _logger.LogInformation($"SetConnectState to {state}");
             bIsConnected = state;
             //connected = state;
         }
@@ -46,106 +55,52 @@ namespace DataWorkerService.Helper
             iMachineNumber = Number;
         }
 
-        public int sta_ConnectTCP(string ip, string port, string commKey, Device device = null)
+        public Result sta_ConnectTCP(Device device)
         {
-            if (ip == "" || port == "" || commKey == "")
-            {
-                return -1;// ip or port is null
-            }
+            _logger.LogInformation($"Connecting to device {device.IP}");
 
             if (device == null)
             {
-                return -1;
-            }
-            _devices.Add(device);
+                _logger.LogError($"Device model given was null");
 
-            if (Convert.ToInt32(port) <= 0 || Convert.ToInt32(port) > 65535)
-            {
-                return -1;
+                return Result.Fail(-1, "Do not recognize device settings");// ip or port is null
+
             }
 
-            if (Convert.ToInt32(commKey) < 0 || Convert.ToInt32(commKey) > 999999)
+            if (!device.IsValid())
             {
-                return -1;
+                _logger.LogError($"Parameter of device was invalid");
+                return Result.Fail(-1, "Device settings is invalid");// ip or port is null
             }
+
+            _device = device;
 
             int idwErrorCode = 0;
 
-            axCZKEM1.SetCommPassword(Convert.ToInt32(commKey));
-
-            if (bIsConnected)
-            {
-                axCZKEM1.Disconnect();
-                //sta_UnRegRealTime();
-                SetConnectState(false);
-                //connected = false;
-                return -2; //disconnect
-            }
-
-            if (axCZKEM1.Connect_Net(ip, Convert.ToInt32(port)))
-            {
-                SetConnectState(true);
-                //sta_RegRealTime(lblOutputInfo);
-
-                //get Biotype
-
-                return 1;
-            }
-            else
-            {
-                axCZKEM1.GetLastError(ref idwErrorCode);
-                return idwErrorCode;
-            }
-        }
-
-        public Result sta_ConnectTCP(Device model, Device device)
-        {
-            if (!model.IsValid())
-            {
-                return Result.Fail(-1, "ConnectTCPModel is not valid");// ip or port is null
-            }
-            if (device == null)
-            {
-                return Result.Fail(-1, "settings is not valid");// ip or port is null
-
-            }
-            _devices.Add(device);
-
-            if (Convert.ToInt32(model.Port) <= 0 || Convert.ToInt32(model.Port) > 65535)
-            {
-                return Result.Fail(-1, "ConnectTCPModel is not valid");// ip or port is null
-
-            }
-
-            if (Convert.ToInt32(model.CommKey) < 0 || Convert.ToInt32(model.CommKey) > 999999)
-            {
-                return Result.Fail(-1, "ConnectTCPModel is not valid");// ip or port is null
-
-            }
-
-            int idwErrorCode = 0;
-
-            axCZKEM1.SetCommPassword(Convert.ToInt32(model.CommKey));
+            axCZKEM1.SetCommPassword(Convert.ToInt32(device.CommKey));
 
             if (bIsConnected)
             {
                 axCZKEM1.Disconnect();
                 SetConnectState(false);
+                _logger.LogError($"Device was connected then disconnected");
 
                 return Result.Fail(-2, "Disconnected"); //disconnect
             }
 
-            if (axCZKEM1.Connect_Net(model.IP, Convert.ToInt32(model.Port)))
+            if (axCZKEM1.Connect_Net(device.IP, Convert.ToInt32(device.Port)))
             {
                 SetConnectState(true);
-
+                _logger.LogInformation($"Connected successfully to device ${device.IP}!");
+                sta_RegRealTime();
                 return Result.Success();
             }
             else
             {
                 axCZKEM1.GetLastError(ref idwErrorCode);
-                return Result.Fail(idwErrorCode, "Refer to documentation for more details");
+                _logger.LogError($"Refer to documentation for more details with errorCode={idwErrorCode}");
 
+                return Result.Fail(idwErrorCode, $"Refer to documentation for more details with errorCode={idwErrorCode}");
             }
         }
 
@@ -154,15 +109,19 @@ namespace DataWorkerService.Helper
             if (GetConnectState())
             {
                 axCZKEM1.Disconnect();
+                _logger.LogInformation($"Disconnected device {_device.IP} successfully");
+                return;
             }
+            _logger.LogError($"Disconnected device {_device.IP} failed !!!");
         }
 
         #endregion
 
         public Result sta_RegRealTime()
         {
-            if (GetConnectState() == false)
+            if (!GetConnectState())
             {
+                _logger.LogError("Register Real-Time Event fail because of unconnected device!");
                 return Result.Fail(-1024);
             }
 
@@ -181,11 +140,13 @@ namespace DataWorkerService.Helper
                 //this.axCZKEM1.OnDoor += new zkemkeeper._IZKEMEvents_OnDoorEventHandler(axCZKEM1_OnDoor);
 
                 //only for color device
+                _employees = sta_getEmployees();
+                InitSheetsHelper();
                 this.axCZKEM1.OnAttTransactionEx += axCZKEM1_OnAttTransactionEx;
                 //this.axCZKEM1.OnEnrollFingerEx += new zkemkeeper._IZKEMEvents_OnEnrollFingerExEventHandler(axCZKEM1_OnEnrollFingerEx);
 
                 //only for black&white device
-                this.axCZKEM1.OnAttTransaction -= new zkemkeeper._IZKEMEvents_OnAttTransactionEventHandler(RealTimeEventHelper.axCZKEM1_OnAttTransaction);
+                //this.axCZKEM1.OnAttTransaction -= new zkemkeeper._IZKEMEvents_OnAttTransactionEventHandler(axCZKEM1_OnAttTransaction);
                 //this.axCZKEM1.OnWriteCard += new zkemkeeper._IZKEMEvents_OnWriteCardEventHandler(axCZKEM1_OnWriteCard);
                 //this.axCZKEM1.OnEmptyCard += new zkemkeeper._IZKEMEvents_OnEmptyCardEventHandler(axCZKEM1_OnEmptyCard);
                 //this.axCZKEM1.OnKeyPress += new zkemkeeper._IZKEMEvents_OnKeyPressEventHandler(axCZKEM1_OnKeyPress);
@@ -198,7 +159,6 @@ namespace DataWorkerService.Helper
 
             if (idwErrorCode != 0)
             {
-                //lblOutputInfo.Items.Add("*RegEvent failed,ErrorCode: " + idwErrorCode.ToString());
                 return Result.Fail(idwErrorCode, "*RegEvent failed,ErrorCode: " + idwErrorCode.ToString());
             }
 
@@ -206,36 +166,122 @@ namespace DataWorkerService.Helper
             return Result.Success("*No data");
         }
 
-        private void axCZKEM1_OnAttTransactionEx(string EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
+        private void InitSheetsHelper()
         {
-
-            foreach (var device in _devices)
+            try
             {
-
-                foreach (var sheet in device.Sheets)
+                foreach (var sheet in _device.Sheets)
                 {
-                    var sheetHelper = new SheetHelper<Record>(
-                            // https://docs.google.com/spreadsheets/d/<SPREADSHEET_ID_IS_HERE>/edit#gid=0
-                            sheet.DocumentId,
-                            // The email for the service account you created
-                            _account.ServiceAccountId,
-                            // the name of the tab you want to access, leave blank if you want the default first tab
-                            sheet.SheetName);
-
+                    var sheetHelper = new SheetHelper<Record>(sheet.DocumentId, _account.ServiceAccountId, sheet.SheetName);
                     sheetHelper.Init(_credential.ToString());
-                    var appender = new SheetAppender(sheetHelper);
-                    appender.AppendRow(
-                    [
-                        EnrollNumber,
-                        $"{IsInValid}",
-                        $"{AttState}",
-                        $"{WorkCode}",
-                        $"{new DateTime(Year, Month, Day, Hour, Minute, Second).ToShortDateString()}",
-                    ]);
+                    _sheetsHelper.Add(sheetHelper);
+                    _logger.LogInformation($"Init sheet sheetName={sheet.SheetName} documentId={sheet.DocumentId} Successfully!");
                 }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+        }
 
+        public List<Employee> sta_getEmployees()
+        {
+            if (!GetConnectState())
+            {
+                return [];
+            }
+
+            List<Employee> employees = [];
+
+            string empnoStr = string.Empty;
+            string name = string.Empty;
+            string pwd = string.Empty;
+            int pri = 0;
+            bool enable = true;
+            var cardNum = string.Empty;
+
+            axCZKEM1.EnableDevice(iMachineNumber, false);
+            try
+            {
+                axCZKEM1.ReadAllUserID(iMachineNumber);
+
+                while (axCZKEM1.SSR_GetAllUserInfo(iMachineNumber, out empnoStr, out name, out pwd, out pri, out enable))
+                {
+                    cardNum = "";
+                    if (axCZKEM1.GetStrCardNumber(out cardNum))
+                    {
+                        if (string.IsNullOrEmpty(cardNum))
+                            cardNum = "";
+                    }
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        int index = name.IndexOf("\0");
+                        if (index > 0)
+                        {
+                            name = name.Substring(0, index);
+                        }
+                    }
+
+                    Employee emp = new();
+                    emp.pin = empnoStr;
+                    emp.name = name;
+                    emp.privilege = pri;
+                    emp.password = pwd;
+                    emp.cardNumber = cardNum;
+
+                    employees.Add(emp);
+                }
+                _logger.LogInformation($"Loaded User Information Successfully with Count={employees.Count}");
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogInformation(ex.Message);
+            }
+            finally
+            {
+                axCZKEM1.EnableDevice(iMachineNumber, true);
+            }
+            return employees;
+        }
+
+        private void axCZKEM1_OnAttTransactionEx(string EnrollNumber, int IsInValid, int attState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
+        {
+            var date = new DateTime(Year, Month, Day, Hour, Minute, Second);
+            var employee = _employees.FirstOrDefault(item => item.pin == EnrollNumber);
+
+            if(employee == null)
+            {
+                _logger.LogWarning($"Employee was not found with EnrollNumber={EnrollNumber}");
+                _logger.LogInformation($"Discard to push data into GGSheet");
+                return;
+            }
+
+            foreach (var sheetHelper in _sheetsHelper)
+            {
+                var appender = new SheetAppender(sheetHelper);
+                appender.AppendRow(
+                [
+                    _device.IP,
+                    EnrollNumber,
+                    employee.name,
+                    employee.cardNumber,
+                    UserPrivilege.GetUserPrivilegeName(employee.privilege),
+                    IsInValid == 0 ? "Success" : "Failed",
+                    AttState.GetAttState(attState),
+                    WorkCode.ToString(),
+                    date.ToString("HH:mm:ss MM/dd/yyyy"),
+                ]);
             }
 
         }
+
+        private static void axCZKEM1_OnAttTransaction(int EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second)
+        {
+            string time = Year + "-" + Month + "-" + Day + " " + Hour + ":" + Minute + ":" + Second;
+            //gRealEventListBox.Items.Add("Verify OK.UserID=" + EnrollNumber.ToString() + " isInvalid=" + IsInValid.ToString() + " state=" + AttState.ToString() + " verifystyle=" + VerifyMethod.ToString() + " time=" + time);
+
+            throw new NotImplementedException();
+        }
+
     }
 }

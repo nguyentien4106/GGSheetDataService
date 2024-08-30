@@ -65,18 +65,11 @@ namespace DataService.Web.Controllers
         }
 
         // POST: DevicesController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(string ip)
+        [HttpGet]
+        public ActionResult Delete([FromQuery]string ip)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return Json(_deviceService.Delete(ip));
+
         }
     }
 }

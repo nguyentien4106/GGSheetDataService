@@ -18,9 +18,11 @@ namespace DataService.Web.Services
             return _appSettingsService.AddToArray("Devices", JsonSerializer.Serialize(device));
         }
 
-        public Result Delete(Device device)
+        public Result Delete(string ip)
         {
-            return _appSettingsService.RemoveToArray("Devices", JsonSerializer.Serialize(device), device.IP);
+            var device = GetDevices().FirstOrDefault(item => item.IP == ip);
+
+            return _appSettingsService.RemoveToArray("Devices", JsonSerializer.Serialize(device), ip);
 
         }
 

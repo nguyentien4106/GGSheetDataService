@@ -7,7 +7,7 @@ namespace DataService.Web.Services
     {
         Result Add(Device device);
 
-        Result Delete(Device device);
+        Result Delete(string ip);
 
         Result Update(Device device);
 

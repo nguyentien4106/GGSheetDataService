@@ -54,16 +54,7 @@ namespace DataService.Web.Services
 
         private void UpdateJson()
         {
-            //open file stream
-            using (StreamWriter file = File.CreateText(_filePath))
-            {
-                var serializer = new Newtonsoft.Json.JsonSerializer();
-                //serialize object directly into file stream
-                string output = Newtonsoft.Json.JsonConvert.SerializeObject(_settingsObject, Newtonsoft.Json.Formatting.Indented);
-
-                serializer.Serialize(file, _settingsObject);
-            }
-
+            File.WriteAllText(_filePath, _settingsObject.ToString());
         }
 
         public Result AddToArray(string section, string value)
@@ -89,8 +80,8 @@ namespace DataService.Web.Services
             try
             {
                 var devices = JArray.FromObject(_settingsObject[section]).Where(item => (string)item["IP"] != ip).ToList();
-
-                _settingsObject[section]?.Replace(JToken.Parse(System.Text.Json.JsonSerializer.Serialize(devices)));
+                JArray.FromObject(devices);
+                _settingsObject[section]?.Replace(JArray.FromObject(devices));
                 UpdateJson();
             }
             catch (Exception ex)

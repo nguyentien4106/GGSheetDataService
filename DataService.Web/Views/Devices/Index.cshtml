@@ -11,7 +11,7 @@
     <a asp-action="Create" class="btn btn-primary">Add New Device</a>
 </p>
 
-<table class="table table-hover border-primary">
+<table class="table table-hover table-bordered">
     <thead>
         <tr>
             <th>
@@ -37,24 +37,34 @@
     <tbody>
         @{
             var index = 0;
-            foreach (var device in Model.Devices)
-            {
-                var color = index++ % 2 == 0 ? "#b4d3e0" : "#fff";
-                foreach(var sheet in device.Sheets)
-                {
-                    <tr style="background-color: @color">
-                        <td>@device.IP</td>
-                        <td>@device.Port</td>
-                        <td>@device.CommKey</td>
-                        <td>@sheet.SheetName</td>
-                        <td>@sheet.DocumentId</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@device.IP" class="btn btn-secondary">Edit</a>
-                            <a asp-action="Details" asp-route-id="@device.IP" class="btn btn-info">Details</a>
-                            <a ip="@device.IP" class="btn btn-danger delete">Delete</a>
-                        </td>
-                    </tr>
 
+            @foreach (var device in Model.Devices)
+            {
+                var color = (index++ % 2 == 0) ? "#b4d3e0" : "#fff";
+                var sheetCount = device.Sheets.Count;
+
+                foreach (var sheet in device.Sheets.Select((s, i) => new { Sheet = s, Index = i }))
+                {
+                    var rowSpan = sheet.Index == 0 ? sheetCount : 0;
+                    <tr style="background-color: @color">
+                        @if (sheet.Index == 0)
+                        {
+                            <td rowspan="@rowSpan" style="vertical-align : middle;text-align:center;">@device.IP</td>
+                            <td rowspan="@rowSpan" style="vertical-align : middle;text-align:center;">@device.Port</td>
+                            <td rowspan="@rowSpan" style="vertical-align : middle;text-align:center;">@device.CommKey</td>
+                        }
+                        <td>@sheet.Sheet.SheetName</td>
+                        <td>@sheet.Sheet.DocumentId</td>
+
+                        @if (sheet.Index == 0)
+                        {
+                            <td rowspan="@rowSpan" style="vertical-align : middle;text-align:center;">
+                                <a asp-action="Edit" asp-route-ip="@device.IP" class="btn btn-secondary">Edit</a>
+                                <a asp-action="Details" asp-route-ip="@device.IP" class="btn btn-info">Details</a>
+                                <a class="btn btn-danger" asp-action="Delete" asp-route-ip="@device.IP">Delete</a>
+                            </td>
+                        }
+                    </tr>
                 }
             }
         }

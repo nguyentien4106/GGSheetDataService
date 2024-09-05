@@ -15,6 +15,13 @@ namespace DataService.Web.Services
 
         public Result Add(Device device)
         {
+            var devices = GetDevices();
+            var existed = devices.Find(item => item.IP == device.IP);
+            if(existed != null)
+            {
+                return Result.Fail(-400, "Duplicated IP");
+            }
+            device.ID = devices.Last().ID + 1;
             return _appSettingsService.AddToArray("Devices", JsonSerializer.Serialize(device));
         }
 

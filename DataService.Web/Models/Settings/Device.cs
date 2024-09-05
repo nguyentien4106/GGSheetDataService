@@ -2,6 +2,8 @@
 {
     public class Device
     {
+        public int ID { get; set; }
+
         public string IP { get; set; } = "192.168.0.201";
 
         public string Port { get; set; } = "4370";

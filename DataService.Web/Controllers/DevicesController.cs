@@ -38,15 +38,21 @@ namespace DataService.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult Create(Device device)
+        public ActionResult Create(Device device)
         {
+            var result = _deviceService.Add(device);
+            if (result.IsSuccess)
+            {
+                return RedirectToAction(nameof(Index));
+            }
             return Json(_deviceService.Add(device));
         }
 
         // GET: DevicesController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit([FromQuery] string ip)
         {
-            return View();
+            var device = _deviceService.GetDevices().FirstOrDefault(item => item.IP == ip);
+            return View(device);
         }
 
         // POST: DevicesController/Edit/5
@@ -68,8 +74,14 @@ namespace DataService.Web.Controllers
         [HttpGet]
         public ActionResult Delete([FromQuery]string ip)
         {
-            return Json(_deviceService.Delete(ip));
+            var result = _deviceService.Delete(ip);
 
+            if(result.IsSuccess)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return Json(result);
         }
     }
 }

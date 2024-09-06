@@ -1,54 +1,54 @@
-﻿@model DataService.Web.Models.Settings.Device
+﻿@model DataService.Domain.Entities.Device
+
 @{
     ViewData["Title"] = "Create";
 }
 
-<form class="w-100 d-flex gap-lg-5" >
-    <div class="w-50">
-        <h2>Add New Device</h2>
-        <hr />
-        <div class="mb-3 row">
-            <label class="col-sm-4 col-form-label">Device's IP:</label>
-            <div class="col-sm-8">
-                <input type="text" class="form-control" value="192.168.0.201" id="ip">
-            </div>
+<h3>Add New Device</h3>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <div>
+            <a asp-action="Index" class="btn btn-primary">Back to List</a>
         </div>
-        <div class="mb-3 row">
-            <label class="col-sm-4 col-form-label">Device's Port:</label>
-            <div class="col-sm-8">
-                <input type="text" class="form-control" value="4370" id="port">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Ip" class="control-label"></label>
+                <input asp-for="Ip" class="form-control" />
+                <span asp-validation-for="Ip" class="text-danger"></span>
             </div>
-        </div>
-        <div class="mb-3 row">
-            <label class="col-sm-4 col-form-label">Device's CommKey:</label>
-            <div class="col-sm-8">
-                <input type="text" class="form-control" value="0" id="commKey">
+            <div class="form-group">
+                <label asp-for="Port" class="control-label"></label>
+                <input asp-for="Port" class="form-control" />
+                <span asp-validation-for="Port" class="text-danger"></span>
             </div>
-        </div>
+            <div class="form-group">
+                <label asp-for="CommKey" class="control-label"></label>
+                <input asp-for="CommKey" class="form-control" />
+                <span asp-validation-for="CommKey" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" id="add-device"/>
+            </div>
+        </form>
     </div>
-    <div class="w-50 sheets">
-        <div class="d-flex flex-row justify-content-between">
-            <h2>Sheets</h2>
-            <button type="button" id="add-sheet" class="btn btn-primary" >
-                Add Sheet
-            </button>
+    <div class="col-lg-6 sheets">
+        <div class="form-group mb-2">
+            <input type="button" value="Add New Sheet" class="btn btn-primary" id="add-sheet"/>
         </div>
-        <hr />
-        <div class="sheet w-100 d-flex flex-row gap-5 mb-3" >
-            <input class="form-control w-25 sheetName" placeholder="Sheet Name" value="Sheet1"/>
-            <input class="form-control w-75 documentId" placeholder="Document Id" value="" />
+        <div class="form-group d-flex flex-row gap-3 sheet mb-3">
+            <input class="form-control w-25 sheetName" placeholder="SheetName" />
+            <input class="form-control w-75 documentId" placeholder="DocumentId" />
         </div>
+           
 
     </div>
-</form>
-
-<div>
-    <button class="btn btn-primary mt-3" type="button" id="add-device">
-        <span role="status">Add Device</span>
-        <span class="spinner-border spinner-border-sm" aria-hidden="true" hidden></span>
-    </button>
 </div>
 
-@section Scripts{
-    <script src="~/js/devices/create.js" asp-append-version="true"></script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/devices/create.js"></script>
 }

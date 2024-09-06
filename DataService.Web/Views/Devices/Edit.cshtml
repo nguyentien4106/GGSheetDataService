@@ -1,49 +1,49 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model DataService.Domain.Entities.Device
+
 @{
+    ViewData["Title"] = "Edit";
 }
-@model DataService.Web.Models.Settings.Device
 
-<form class="w-100 d-flex gap-lg-5">
-    <div class="w-50">
-        <h2>Editw Device</h2>
-        <hr />
-        <div class="mb-3 row">
-            <label class="col-sm-4 col-form-label">Device's IP:</label>
-            <div class="col-sm-8">
-                <input type="text" class="form-control" value="@Model.IP">
-            </div>
-        </div>
-        <div class="mb-3 row">
-            <label class="col-sm-4 col-form-label">Device's Port:</label>
-            <div class="col-sm-8">
-                <input type="text" class="form-control" value="@Model.Port" id="port">
-            </div>
-        </div>
-        <div class="mb-3 row">
-            <label class="col-sm-4 col-form-label">Device's CommKey:</label>
-            <div class="col-sm-8">
-                <input type="text" class="form-control" value="@Model.CommKey" id="commKey">
-            </div>
-        </div>
-    </div>
-    <div class="w-50 sheets">
-        <div class="d-flex flex-row justify-content-between">
-            <h2>Sheets</h2>
-            <button type="button" id="add-sheet" class="btn btn-primary">
-                Add Sheet
-            </button>
-        </div>
-        <hr />
-        @foreach(var sheet in Model.Sheets)
-        {
-            <div class="sheet w-100 d-flex flex-row gap-5 mb-3">
-                <input class="form-control w-25 sheetName" placeholder="Sheet Name" value="@sheet.SheetName" />
-                <input class="form-control w-75 documentId" placeholder="Document Id" value="@sheet.DocumentId" />
-            </div>
-        }
+<h1>Edit</h1>
 
+<h4>Device</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Ip" class="control-label"></label>
+                <input asp-for="Ip" class="form-control" />
+                <span asp-validation-for="Ip" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CommKey" class="control-label"></label>
+                <input asp-for="CommKey" class="form-control" />
+                <span asp-validation-for="CommKey" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="DateCreated" class="control-label"></label>
+                <input asp-for="DateCreated" class="form-control" />
+                <span asp-validation-for="DateCreated" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateModified" class="control-label"></label>
+                <input asp-for="DateModified" class="form-control" />
+                <span asp-validation-for="DateModified" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
-</form>
-<button type="submit" class="btn btn-primary">Update</button>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

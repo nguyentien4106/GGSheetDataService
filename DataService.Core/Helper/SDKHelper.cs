@@ -1,37 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DataService;
+﻿using CleanArchitecture.Core.Interfaces;
+using CleanArchitecture.Core.Services;
+using DataService.Core.Entities;
+using DataService.Core.Helper;
+using DataService.Core.Models.AttMachine;
 using DataService.Models.AttMachine;
 using DataService.Settings;
 using DataWorkerService.Models;
 using DataWorkerService.Models.Config;
 using DataWorkerService.Models.Sheet;
-using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.EMMA;
-using DocumentFormat.OpenXml.Wordprocessing;
 using GoogleSheetsWrapper;
 using Microsoft.Extensions.Logging;
-using zkemkeeper;
 
 namespace DataWorkerService.Helper
 {
-    public class SDKHelper(GoogleApiAccount account, JSONCredential credential, ILogger<Worker> logger)
+    public class SDKHelper
     {
-        public CZKEMClass axCZKEM1 = new CZKEMClass();
-        private GoogleApiAccount _account = account;
-        private ILogger<Worker> _logger = logger;
-        private JSONCredential _credential = credential;
-        private static bool bIsConnected = false;//the boolean value identifies whether the device is connected
+        public zkemkeeper.CZKEMClass axCZKEM1 = new zkemkeeper.CZKEMClass();
+        private GoogleApiAccount _account;
+        private ILogger<SDKHelper> _logger;
+        private JSONCredential _credential;
+        private IRepository _repository;
+
+        private static bool bIsConnected = false;
         private static int iMachineNumber = 1;
         private static int idwErrorCode = 0;
         private static int iDeviceTpye = 1;
         private Device _device;
         private List<Employee> _employees = [];
         private List<SheetHelper> _sheetsHelper = [];
+        private List<SheetAppender> _appenders = [];
+        IQueueSender _queueSender;
 
-        #region ConnectDevice
+        public SDKHelper(IServiceLocator locator, Device device)
+        {
+            _account = locator.Get<GoogleApiAccount>();
+            _credential = locator.Get<JSONCredential>();
+            _logger = locator.Get<ILogger<SDKHelper>>();
+            _repository = locator.Get<IRepository>();
+            _queueSender = locator.Get<IQueueSender>();
+            _device = device;
+
+            sta_ConnectTCP();
+            
+        }
 
         public bool GetConnectState()
         {
@@ -40,9 +51,8 @@ namespace DataWorkerService.Helper
 
         public void SetConnectState(bool state)
         {
-            _logger.LogInformation($"SetConnectState to {state}");
+            _logger.LogInformation($"Connected state turn into {state}");
             bIsConnected = state;
-            //connected = state;
         }
 
         public int GetMachineNumber()
@@ -55,11 +65,10 @@ namespace DataWorkerService.Helper
             iMachineNumber = Number;
         }
 
-        public Result sta_ConnectTCP(Device device)
+        public Result sta_ConnectTCP()
         {
-            _logger.LogInformation($"Connecting to device {device.IP}");
 
-            if (device == null)
+            if (_device == null)
             {
                 _logger.LogError($"Device model given was null");
 
@@ -67,17 +76,7 @@ namespace DataWorkerService.Helper
 
             }
 
-            if (!device.IsValid())
-            {
-                _logger.LogError($"Parameter of device was invalid");
-                return Result.Fail(-1, "Device settings is invalid");// ip or port is null
-            }
-
-            _device = device;
-
-            int idwErrorCode = 0;
-
-            axCZKEM1.SetCommPassword(Convert.ToInt32(device.CommKey));
+            axCZKEM1.SetCommPassword(Convert.ToInt32(_device.CommKey));
 
             if (bIsConnected)
             {
@@ -88,10 +87,11 @@ namespace DataWorkerService.Helper
                 return Result.Fail(-2, "Disconnected"); //disconnect
             }
 
-            if (axCZKEM1.Connect_Net(device.IP, Convert.ToInt32(device.Port)))
+            _logger.LogInformation($"Connecting to device {_device.Ip}");
+            if (axCZKEM1.Connect_Net(_device.Ip, Convert.ToInt32(_device.Port)))
             {
                 SetConnectState(true);
-                _logger.LogInformation($"Connected successfully to device ${device.IP}!");
+                _logger.LogInformation($"Connected successfully to device ${_device.Ip}!");
                 sta_RegRealTime();
                 return Result.Success();
             }
@@ -109,13 +109,11 @@ namespace DataWorkerService.Helper
             if (GetConnectState())
             {
                 axCZKEM1.Disconnect();
-                _logger.LogInformation($"Disconnected device {_device.IP} successfully");
+                _logger.LogInformation($"Disconnected device {_device.Ip} successfully");
                 return;
             }
-            _logger.LogError($"Disconnected device {_device.IP} failed !!!");
+            _logger.LogError($"Disconnected device {_device.Ip} failed !!!");
         }
-
-        #endregion
 
         public Result sta_RegRealTime()
         {
@@ -124,8 +122,6 @@ namespace DataWorkerService.Helper
                 _logger.LogError("Register Real-Time Event fail because of unconnected device!");
                 return Result.Fail(-1024);
             }
-
-            int ret = 0;
 
             if (axCZKEM1.RegEvent(GetMachineNumber(), 65535))//Here you can register the realtime events that you want to be triggered(the parameters 65535 means registering all)
             {
@@ -166,7 +162,7 @@ namespace DataWorkerService.Helper
             return Result.Success("*No data");
         }
 
-        private void InitSheetsHelper()
+        private void InitSheetsHelper( )
         {
             try
             {
@@ -174,7 +170,8 @@ namespace DataWorkerService.Helper
                 {
                     var sheetHelper = new SheetHelper<Record>(sheet.DocumentId, _account.ServiceAccountId, sheet.SheetName);
                     sheetHelper.Init(_credential.ToString());
-                    _sheetsHelper.Add(sheetHelper);
+                    var appender = new SheetAppender(sheetHelper);
+                    _appenders.Add(appender);
                     _logger.LogInformation($"Init sheet sheetName={sheet.SheetName} documentId={sheet.DocumentId} Successfully!");
                 }
             }
@@ -223,11 +220,11 @@ namespace DataWorkerService.Helper
                     }
 
                     Employee emp = new();
-                    emp.pin = empnoStr;
-                    emp.name = name;
-                    emp.privilege = pri;
-                    emp.password = pwd;
-                    emp.cardNumber = cardNum;
+                    emp.Pin = empnoStr;
+                    emp.Name = name;
+                    emp.Privilege = pri;
+                    emp.Password = pwd;
+                    emp.CardNumber = cardNum;
 
                     employees.Add(emp);
                 }
@@ -247,31 +244,59 @@ namespace DataWorkerService.Helper
         private void axCZKEM1_OnAttTransactionEx(string EnrollNumber, int IsInValid, int attState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
         {
             var date = new DateTime(Year, Month, Day, Hour, Minute, Second);
-            var employee = _employees.FirstOrDefault(item => item.pin == EnrollNumber);
-
-            if(employee == null)
+            var employee = _employees.FirstOrDefault(item => item.Pin == EnrollNumber);
+            var attRecord = new OnAttendanceTransactionRecord
+            {
+                UserId = EnrollNumber,
+                AttState = attState,
+                VerifyMethod = VerifyMethod,
+                DateTimeRecord = date,
+                IsInvalid = IsInValid,
+                WorkCode = WorkCode
+            };
+            if (employee == null)
             {
                 _logger.LogWarning($"Employee was not found with EnrollNumber={EnrollNumber}");
                 _logger.LogInformation($"Discard to push data into GGSheet");
                 return;
             }
 
-            foreach (var sheetHelper in _sheetsHelper)
+            DataHelper.PublishData(_appenders, _repository, attRecord, employee);
+
+            foreach (var appender in _appenders)
             {
-                var appender = new SheetAppender(sheetHelper);
-                appender.AppendRow(
-                [
-                    _device.IP,
+                var row = new List<string> {
+                    _device.Ip,
                     EnrollNumber,
-                    employee.name,
-                    employee.cardNumber,
-                    UserPrivilege.GetUserPrivilegeName(employee.privilege),
+                    employee.Name,
+                    employee.CardNumber,
+                    UserPrivilege.GetUserPrivilegeName(employee.Privilege),
                     IsInValid == 0 ? "Success" : "Failed",
                     AttState.GetAttState(attState),
                     WorkCode.ToString(),
                     date.ToString("HH:mm:ss MM/dd/yyyy"),
-                ]);
-            }
+                    VerifyMethod.ToString(),
+                };
+
+                var result = DataHelper.PublishData(appender, row, _queueSender, _repository);
+                if (!result.IsSuccess)
+                {
+                    _logger.LogError(result.Message);
+                }
+                else
+                {
+                    _logger.LogInformation("A new AttRecord has pushed into sheet. {value}", appender.ToString());
+                }
+            }   
+
+            _repository.Add<Attendance>(new Attendance
+            {
+                UserId = employee.Id,
+                VerifyDate = date,
+                VerifyState = attState,
+                VerifyType = VerifyMethod,
+                WorkCode = WorkCode,
+            });
 
         }
 

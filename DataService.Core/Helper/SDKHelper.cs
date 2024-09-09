@@ -280,7 +280,7 @@ namespace DataWorkerService.Helper
 
             if (_isTest)
             {
-                DataHelper.PublishData(_appenders, _repository, attRecord, new Employee());
+                DataHelper.PublishData(_appenders, _repository, attRecord, new Employee(), _queueSender);
                 return;
             }
 
@@ -291,7 +291,7 @@ namespace DataWorkerService.Helper
                 return;
             }
 
-            DataHelper.PublishData(_appenders, _repository, attRecord, employee);
+            DataHelper.PublishData(_appenders, _repository, attRecord, employee, _queueSender);
         }
 
         private static void axCZKEM1_OnAttTransaction(int EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second)

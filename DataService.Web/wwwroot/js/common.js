@@ -18,3 +18,22 @@ export const showError = (text) => {
         },
     }).showToast();
 }
+
+export const showSuccess = (text) => {
+    Toastify({
+        text: text ? text : "Successfully !",
+        duration: 5000,
+        newWindow: true,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "center", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+            background: "#green",
+            "border-color": "gren",
+            color: "black"
+        },
+    }).showToast();
+}
+
+export const isNullOrEmpty = (text) => text === null || text === "" || text.trim() === "";

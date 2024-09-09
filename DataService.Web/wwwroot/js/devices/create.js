@@ -1,4 +1,4 @@
-﻿import { showError } from "../common.js"
+﻿import { showError, showSuccess, isNullOrEmpty } from "../common.js"
 
 console.log("test")
 
@@ -7,8 +7,13 @@ $("#add-device").click(function () {
 
     const sheetNames = $(".sheetName").map((i, el) => $(el).val()).get()
     const documentIds = $(".documentId").map((i, el) => $(el).val()).get()
+    const emptyIds = documentIds.some(item => isNullOrEmpty(item))
+    if (emptyIds) {
+        showError("Please input all documentId field.")
+        return
+    }
     const data = {
-        IP: $("#ip").val(),
+        Ip: $("#ip").val(),
         Port: $("#port").val(),
         CommKey: $("#commKey").val(),
         Sheets: sheetNames.map((val, idx) => {
@@ -19,12 +24,17 @@ $("#add-device").click(function () {
             }
         })
     }
-    console.log(data)
+    if (isNullOrEmpty(data.Ip) || isNullOrEmpty(data.Port) || isNullOrEmpty(data.CommKey) || data.Sheets.length === 0) {
+        showError("Please input all field.")
+        return
+    }
+
+
     $.post("https://localhost:7058/Devices/Create", data)
         .then(res => {
             console.log(res)
             if (res.isSuccess) {
-
+                showSuccess()
             }
             else {
                 showError(res.message)
@@ -34,7 +44,6 @@ $("#add-device").click(function () {
             showError("Some errors occur! Please contact admin to verify.")
         })
         .always(() => {
-            $spinner.hide()
             $("#add-device").prop("disabled", false)
             $(".spinner-border").prop("hidden", true)
         })

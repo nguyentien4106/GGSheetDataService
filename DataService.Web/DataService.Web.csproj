@@ -36,8 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataService.Application\DataService.Application.csproj" />
     <ProjectReference Include="..\DataService.Core\DataService.Core.csproj" />
     <ProjectReference Include="..\DataService.Infrastructure\DataService.Infrastructure.csproj" />
-    <ProjectReference Include="..\DataService.Persistence\DataService.Persistence.csproj" />
   </ItemGroup>
 </Project>

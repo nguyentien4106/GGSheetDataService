@@ -2,20 +2,20 @@
 using Microsoft.EntityFrameworkCore;
 using DataService.Core.Entities;
 using CleanArchitecture.Infrastructure.Data;
-using DataService.Persistence.Repositories;
 using CleanAchitecture.Application.Contracts.Persistence;
+using DataService.Application.Services;
 
 namespace DataService.Web.Controllers
 {
-    public class DevicesController(IGenericRepository<Device> repository) : Controller
+    public class DevicesController(IDeviceService service) : Controller
     {
         private readonly AppDbContext _context;
-        private readonly IGenericRepository<Device> _repository = repository;
+        private readonly IDeviceService _service = service;
 
         // GET: Devices
         public async Task<IActionResult> Index()
         {
-            return View(await _repository.Get());
+            return View(await _service.Get());
         }
 
         // GET: Devices/Details/5
@@ -26,7 +26,7 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var device = await _repository.GetById(id.Value, "Sheets");
+            var device = await _service.GetById(id.Value, "Sheets");
             
             if (device == null)
             {
@@ -45,8 +45,8 @@ namespace DataService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Device device)
         {
-            var result = await _repository.Insert(device);
-            
+            var result = await _service.Insert(device);
+
             return Json(result);
         }
 
@@ -58,7 +58,7 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var device = await _repository.GetById(id.Value);
+            var device = await _service.GetById(id.Value);
             if (device == null)
             {
                 return NotFound();
@@ -66,11 +66,8 @@ namespace DataService.Web.Controllers
             return View(device);
         }
 
-        // POST: Devices/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Ip,CommKey")] Device device)
         {
             if (id != device.Id)
@@ -82,7 +79,7 @@ namespace DataService.Web.Controllers
             {
                 try
                 {
-                    await _repository.Update(device);
+                    await _service.Update(device);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -108,7 +105,7 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var device = await _repository.GetById(id.Value);
+            var device = await _service.GetById(id.Value);
             if (device == null)
             {
                 return NotFound();
@@ -119,14 +116,13 @@ namespace DataService.Web.Controllers
 
         // POST: Devices/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var device = await _repository.GetById(id);
+            var device = await _service.GetById(id);
             if (device != null)
             {
-                await _repository.Delete(device);
-                return RedirectToAction(nameof(Index));
+                var result = await _service.Delete(device);
+                return Json(result);
 
             }
             return RedirectToAction(nameof(Index));

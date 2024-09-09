@@ -9,9 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataService.Core", "..\Data
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataService.Infrastructure", "..\DataService.Infrastructure\DataService.Infrastructure.csproj", "{1FEA7B93-F213-4612-A96A-FCFE5D1060C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService.Application", "..\DataService.Application\DataService.Application.csproj", "{72C6196B-7A56-49F5-BBCC-169A6096CE6E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService.Persistence", "..\DataService.Persistence\DataService.Persistence.csproj", "{7856DA53-F4C8-4BFD-A2FA-B682780FC412}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataService.Application", "..\DataService.Application\DataService.Application.csproj", "{72C6196B-7A56-49F5-BBCC-169A6096CE6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +33,6 @@ Global
 		{72C6196B-7A56-49F5-BBCC-169A6096CE6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72C6196B-7A56-49F5-BBCC-169A6096CE6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72C6196B-7A56-49F5-BBCC-169A6096CE6E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7856DA53-F4C8-4BFD-A2FA-B682780FC412}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7856DA53-F4C8-4BFD-A2FA-B682780FC412}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7856DA53-F4C8-4BFD-A2FA-B682780FC412}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7856DA53-F4C8-4BFD-A2FA-B682780FC412}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

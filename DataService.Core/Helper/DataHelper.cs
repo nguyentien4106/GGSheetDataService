@@ -15,7 +15,7 @@ namespace DataService.Core.Helper
 {
     public class DataHelper
     {
-        public static Result PublishData(IEnumerable<SheetAppender> appenders, IRepository repository, OnAttendanceTransactionRecord record, Employee employee)
+        public static Result PublishData(IEnumerable<SheetAppender> appenders, IRepository repository, OnAttendanceTransactionRecord record, Employee employee, IQueueSender sender)
         {
             var row = new List<string> {
                 record.UserId,
@@ -28,8 +28,8 @@ namespace DataService.Core.Helper
                 record.DateTimeRecord.ToString("HH:mm:ss MM/dd/yyyy"),
                 record.VerifyMethod.ToString(),
             };
-            PublishDataToSheet(appenders, row, null);
-            PublishDataToDB(repository, record.ToAttendance(), null);
+            PublishDataToSheet(appenders, row, sender);
+            PublishDataToDB(repository, record.ToAttendance(), sender);
 
             return Result.Success();
         }

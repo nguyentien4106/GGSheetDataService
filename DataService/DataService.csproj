@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-DataService-82a40de0-4171-45ea-bdaa-2f748958567a</UserSecretsId>
     <NoDefaultLaunchSettingsFile>True</NoDefaultLaunchSettingsFile>
+	<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,7 +1,6 @@
 ﻿using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Core.Services;
 using CleanArchitecture.Infrastructure.Data;
-using CleanArchitecture.Infrastructure.Http;
 using CleanArchitecture.Infrastructure.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,8 +29,4 @@ public static class ServiceCollectionSetupExtensions
         services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
     }
 
-    public static void AddUrlCheckingServices(this IServiceCollection services)
-    {
-        services.AddTransient<IHttpService, HttpService>();
-    }
 }

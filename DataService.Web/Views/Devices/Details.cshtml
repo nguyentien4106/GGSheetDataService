@@ -1,4 +1,5 @@
-﻿@model DataService.Domain.Entities.Device
+﻿@model DataService.Core.Entities.Device
+
 
 @{
     ViewData["Title"] = "Details";
@@ -7,7 +8,6 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Device</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -17,26 +17,40 @@
             @Html.DisplayFor(model => model.Ip)
         </dd>
         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Port)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Port)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CommKey)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CommKey)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateCreated)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateCreated)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateModified)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateModified)
-        </dd>
+    </dl>
+    <hr />
+    <dl class="row">
+        @{
+            foreach(var sheet in Model.Sheets)
+            {
+                <dt class="col-sm-2">
+                    Sheet Name: 
+                </dt>
+                <dd class="col-sm-10">
+                    @sheet.SheetName
+                </dd>
+                <dt class="col-sm-2">
+                    Document ID: 
+                </dt>
+                <dd class="col-sm-10">
+                    @sheet.DocumentId
+                </dd>
+            }
+        }
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

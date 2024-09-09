@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,4 +35,9 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataService.Core\DataService.Core.csproj" />
+    <ProjectReference Include="..\DataService.Infrastructure\DataService.Infrastructure.csproj" />
+    <ProjectReference Include="..\DataService.Persistence\DataService.Persistence.csproj" />
+  </ItemGroup>
 </Project>

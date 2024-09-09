@@ -1,54 +1,48 @@
-﻿@model DataService.Domain.Entities.Device
+﻿@model DataService.Core.Entities.Device
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h3>Add New Device</h3>
+<div class="d-flex">
+    <div class="">
+        <a asp-action="Index" class="btn btn-primary">Back to List</a>
+    </div>
+    <h3 class="">Add New Device</h3>
 
+</div>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <div>
-            <a asp-action="Index" class="btn btn-primary">Back to List</a>
-        </div>
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Ip" class="control-label"></label>
-                <input asp-for="Ip" class="form-control" />
-                <span asp-validation-for="Ip" class="text-danger"></span>
+        <form>
+            <div class="form-group mb-3">
+                <label class="control-label">IP: </label>
+                <input class="form-control" id="ip"/>
             </div>
-            <div class="form-group">
-                <label asp-for="Port" class="control-label"></label>
-                <input asp-for="Port" class="form-control" />
-                <span asp-validation-for="Port" class="text-danger"></span>
+            <div class="form-group mb-3">
+                <label class="control-label">Port: </label>
+                <input class="form-control" id="port"/>
             </div>
-            <div class="form-group">
-                <label asp-for="CommKey" class="control-label"></label>
-                <input asp-for="CommKey" class="form-control" />
-                <span asp-validation-for="CommKey" class="text-danger"></span>
+            <div class="form-group mb-3">
+                <label class="control-label">CommKey: </label>
+                <input class="form-control" itemid="commKey"/>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" id="add-device"/>
+            <div class="form-group mb-3">
+                <input type="button" value="Create" class="btn btn-primary" id="add-device"/>
             </div>
         </form>
     </div>
-    <div class="col-lg-6 sheets">
-        <div class="form-group mb-2">
-            <input type="button" value="Add New Sheet" class="btn btn-primary" id="add-sheet"/>
-        </div>
+    <div class="col-lg-6 sheets mb-3">
         <div class="form-group d-flex flex-row gap-3 sheet mb-3">
             <input class="form-control w-25 sheetName" placeholder="SheetName" />
             <input class="form-control w-75 documentId" placeholder="DocumentId" />
         </div>
-           
-
+        <input type="button" value="Add New Sheet" class="btn btn-primary" id="add-sheet" />
     </div>
 </div>
 
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="~/js/devices/create.js"></script>
+    <script src="~/js/devices/create.js" asp-append-version="true" type="module"></script>
 }

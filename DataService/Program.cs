@@ -22,10 +22,8 @@ builder.Services.AddSerilog(config =>
 });
 builder.Services.AddWindowsService(options =>
 {
-    options.ServiceName = ".NET DataService";
+    options.ServiceName = "DataServiceSheetDB";
 });
-
-builder.Services.AddSingleton(new CommandLineArgs(args));
 
 var credential = builder.Configuration.GetSection("JSONCredential").Get<JSONCredential>() ?? default!;
 if(credential == null)
@@ -47,7 +45,7 @@ builder.Services.AddSystemd();
 
 var host = builder.Build();
 
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+//AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 host.Run();
 

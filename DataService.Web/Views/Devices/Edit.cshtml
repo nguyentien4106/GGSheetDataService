@@ -1,12 +1,12 @@
-﻿@model DataService.Domain.Entities.Device
+﻿@model DataService.Core.Entities.Device
+
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h3>Edit Device</h3>
 
-<h4>Device</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -18,21 +18,17 @@
                 <span asp-validation-for="Ip" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Port" class="control-label"></label>
+                <input asp-for="Port" class="form-control" />
+                <span asp-validation-for="Port" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="CommKey" class="control-label"></label>
                 <input asp-for="CommKey" class="form-control" />
                 <span asp-validation-for="CommKey" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="DateCreated" class="control-label"></label>
-                <input asp-for="DateCreated" class="form-control" />
-                <span asp-validation-for="DateCreated" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateModified" class="control-label"></label>
-                <input asp-for="DateModified" class="form-control" />
-                <span asp-validation-for="DateModified" class="text-danger"></span>
-            </div>
+            
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

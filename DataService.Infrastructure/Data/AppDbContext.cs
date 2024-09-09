@@ -28,10 +28,8 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        //modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options) =>
-    //options.UseNpgsql("Host=localhost;Database=postgres;Port=5432;Username=postgres;Password=12345678"); 
-    options.UseNpgsql("Server=localhost;Port=5432;Database=AttDB;User Id=postgres;Password=Ti100600@;");
+        options.UseNpgsql("Server=localhost;Port=5432;Database=AttDB;User Id=postgres;Password=Ti100600@;");
 }

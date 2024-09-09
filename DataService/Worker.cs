@@ -13,14 +13,11 @@ namespace DataService;
 
 public class Worker : BackgroundService
 {
-    private readonly ILogger<Worker> _logger;
-    private GoogleApiAccount _account;
-    private JSONCredential _jsonCredential;
-    //private DevicesAppSettings _deviceSettings;
+    readonly ILogger<Worker> _logger;
+    List<SDKHelper> _sdks = [];
+    AppDbContext _context;
 
-    private List<SDKHelper> _sdks = [];
-    private AppDbContext _context;
-    private IRepository _repository;
+    IRepository _repository;
     IServiceLocator _locator;
     IQueueReceiver _receiver;
     IQueueSender _sender;
@@ -58,11 +55,11 @@ public class Worker : BackgroundService
             if(attendance != null)
             {
                 DataHelper.PublishDataToDB(_repository, attendance, _sender);
-                _logger.LogInformation($"Re-sending data to DB {attendance.UserId} - {attendance.VerifyDate.ToString()}");
+                _logger.LogInformation($"Re-sending data to DB {attendance.UserId} - {attendance.VerifyDate}");
             }
 
             await Task.Delay(5000, stoppingToken);
-            foreach(var sdk in  _sdks)
+            foreach(var sdk in _sdks)
             {
                 sdk.TestRealTimeEvent();
             }

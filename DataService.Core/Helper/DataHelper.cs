@@ -17,25 +17,25 @@ namespace DataService.Core.Helper
     {
         public static Result PublishData(IEnumerable<SheetAppender> appenders, IRepository repository, OnAttendanceTransactionRecord record, Employee employee)
         {
-            PublishDataToSheet(appenders, employee, null, record);
-            PublishDataToDB(repository, record, null);
+            var row = new List<string> {
+                record.UserId,
+                employee.Name,
+                employee.CardNumber,
+                UserPrivilege.GetUserPrivilegeName(employee.Privilege),
+                record.IsInvalid == 0 ? "Success" : "Failed",
+                AttState.GetAttState(record.AttState),
+                record.WorkCode.ToString(),
+                record.DateTimeRecord.ToString("HH:mm:ss MM/dd/yyyy"),
+                record.VerifyMethod.ToString(),
+            };
+            PublishDataToSheet(appenders, row, null);
+            PublishDataToDB(repository, record.ToAttendance(), null);
 
             return Result.Success();
         }
 
-        public static Result PublishDataToSheet(IEnumerable<SheetAppender> appenders, Employee employee, IQueueSender queueSender, OnAttendanceTransactionRecord record)
+        public static Result PublishDataToSheet(IEnumerable<SheetAppender> appenders, List<string> row, IQueueSender queueSender)
         {
-            var row = new List<string> {
-                    record.UserId,
-                    employee.Name,
-                    employee.CardNumber,
-                    UserPrivilege.GetUserPrivilegeName(employee.Privilege),
-                    record.IsInvalid == 0 ? "Success" : "Failed",
-                    AttState.GetAttState(record.AttState),
-                    record.WorkCode.ToString(),
-                    record.DateTimeRecord.ToString("HH:mm:ss MM/dd/yyyy"),
-                    record.VerifyMethod.ToString(),
-                };
             foreach (var appender in appenders)
             {
                 try
@@ -44,10 +44,10 @@ namespace DataService.Core.Helper
                 }
                 catch (Exception e)
                 {
-                    queueSender.SendMessageToQueue(new Dictionary<SheetAppender, List<string>>
+                    queueSender.SendAttendancesSheet(new Dictionary<SheetAppender, List<string>>
                     {
                         { appender, row }
-                    }, "MissRows");
+                    });
                     return Result.Fail(400, e.Message);
                 }
             }
@@ -56,16 +56,16 @@ namespace DataService.Core.Helper
 
         }
 
-        public static Result PublishDataToDB(IRepository repository, OnAttendanceTransactionRecord record, IQueueSender sender)
+        public static Result PublishDataToDB(IRepository repository, Attendance attendance, IQueueSender sender)
         {
             try
             {
-                repository.Add<Attendance>(record.ToAttendance());
+                repository.Add<Attendance>(attendance);
                 return Result.Success();
             }
             catch (Exception ex)
             {
-                sender.SendAttendance(record.ToAttendance());
+                sender.SendAttendanceDB(attendance);
                 return Result.Fail(00, $"Cannot send attendace to database because of {ex.Message}");
             }
         }

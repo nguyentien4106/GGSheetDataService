@@ -6,6 +6,7 @@ using DataService.Core.Helper;
 using DataService.Settings;
 using DataWorkerService.Helper;
 using DataWorkerService.Models.Config;
+using DocumentFormat.OpenXml.Vml.Office;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataService;
@@ -39,21 +40,32 @@ public class Worker : BackgroundService
         const int Hour = 1 * 60 * 60 * 1000;
         while (!stoppingToken.IsCancellationRequested)
         {
-            var dictionary = await _receiver.GetRowSheets();
+            var sheets = await _receiver.GetAttendanceRowsSheet();
             _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            if (dictionary != null)
+            if (sheets != null)
             {
-                foreach (var entry in dictionary)
+                foreach (var entry in sheets)
                 {
-                    //DataHelper.PublishDataToSheet(entry.Key, entry.Value, _sender, _repository);
-                    _logger.LogInformation($"Re-sending data {string.Join("-", entry.Value)}");
+                    DataHelper.PublishDataToSheet([entry.Key], entry.Value, _sender);
+                    _logger.LogInformation($"Re-sending data to sheets {string.Join("-", entry.Value)}");
 
-                    await Task.Delay(1000, stoppingToken);
+                    await Task.Delay(500, stoppingToken);
 
                 }
             }
-            await Task.Delay(5000, stoppingToken);
 
+            var attendance = await _receiver.GetAttendanceRowsDB();
+            if(attendance != null)
+            {
+                DataHelper.PublishDataToDB(_repository, attendance, _sender);
+                _logger.LogInformation($"Re-sending data to DB {attendance.UserId} - {attendance.VerifyDate.ToString()}");
+            }
+
+            await Task.Delay(5000, stoppingToken);
+            foreach(var sdk in  _sdks)
+            {
+                sdk.TestRealTimeEvent();
+            }
         }
     }
 
@@ -63,7 +75,7 @@ public class Worker : BackgroundService
         
         foreach(var device in devices)
         {
-            var sdk = new SDKHelper(_locator, device);
+            var sdk = new SDKHelper(_locator, device, true);
             _sdks.Add(sdk);
         }
 

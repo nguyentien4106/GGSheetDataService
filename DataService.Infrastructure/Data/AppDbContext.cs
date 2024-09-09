@@ -7,7 +7,11 @@ namespace CleanArchitecture.Infrastructure.Data;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    public AppDbContext()
+    {
+        
+    }
+    public AppDbContext(DbContextOptions options) : base(options)
     {
     }
 
@@ -26,4 +30,8 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         //modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder options) =>
+    //options.UseNpgsql("Host=localhost;Database=postgres;Port=5432;Username=postgres;Password=12345678"); 
+    options.UseNpgsql("Server=localhost;Port=5432;Database=AttDB;User Id=postgres;Password=Ti100600@;");
 }

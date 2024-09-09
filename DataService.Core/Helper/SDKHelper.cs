@@ -30,8 +30,8 @@ namespace DataWorkerService.Helper
         private List<SheetHelper> _sheetsHelper = [];
         private List<SheetAppender> _appenders = [];
         IQueueSender _queueSender;
-
-        public SDKHelper(IServiceLocator locator, Device device)
+        bool _isTest = false;
+        public SDKHelper(IServiceLocator locator, Device device, bool isTest = false)
         {
             _account = locator.Get<GoogleApiAccount>();
             _credential = locator.Get<JSONCredential>();
@@ -39,7 +39,7 @@ namespace DataWorkerService.Helper
             _repository = locator.Get<IRepository>();
             _queueSender = locator.Get<IQueueSender>();
             _device = device;
-
+            _isTest = isTest;
             sta_ConnectTCP();
             
         }
@@ -65,8 +65,21 @@ namespace DataWorkerService.Helper
             iMachineNumber = Number;
         }
 
+        public void TestRealTimeEvent()
+        {
+            axCZKEM1_OnAttTransactionEx("10001", 0, 1, 1, 2024, 12, 12, 12, 12, 12, 0);
+        }
+
         public Result sta_ConnectTCP()
         {
+
+            if (_isTest)
+            {
+                SetConnectState(true);
+                _logger.LogInformation($"Connected successfully to device ${_device.Ip}!");
+                sta_RegRealTime();
+                return Result.Success();
+            }
 
             if (_device == null)
             {
@@ -86,7 +99,7 @@ namespace DataWorkerService.Helper
 
                 return Result.Fail(-2, "Disconnected"); //disconnect
             }
-
+            
             _logger.LogInformation($"Connecting to device {_device.Ip}");
             if (axCZKEM1.Connect_Net(_device.Ip, Convert.ToInt32(_device.Port)))
             {
@@ -117,12 +130,22 @@ namespace DataWorkerService.Helper
 
         public Result sta_RegRealTime()
         {
+            if (_isTest)
+            {
+                _employees = sta_getEmployees();
+                InitSheetsHelper();
+                this.axCZKEM1.OnAttTransactionEx += axCZKEM1_OnAttTransactionEx;
+                return Result.Success();
+            }
+
+
             if (!GetConnectState())
             {
                 _logger.LogError("Register Real-Time Event fail because of unconnected device!");
                 return Result.Fail(-1024);
             }
 
+            
             if (axCZKEM1.RegEvent(GetMachineNumber(), 65535))//Here you can register the realtime events that you want to be triggered(the parameters 65535 means registering all)
             {
                 //common interface
@@ -254,6 +277,13 @@ namespace DataWorkerService.Helper
                 IsInvalid = IsInValid,
                 WorkCode = WorkCode
             };
+
+            if (_isTest)
+            {
+                DataHelper.PublishData(_appenders, _repository, attRecord, new Employee());
+                return;
+            }
+
             if (employee == null)
             {
                 _logger.LogWarning($"Employee was not found with EnrollNumber={EnrollNumber}");
@@ -262,42 +292,6 @@ namespace DataWorkerService.Helper
             }
 
             DataHelper.PublishData(_appenders, _repository, attRecord, employee);
-
-            foreach (var appender in _appenders)
-            {
-                var row = new List<string> {
-                    _device.Ip,
-                    EnrollNumber,
-                    employee.Name,
-                    employee.CardNumber,
-                    UserPrivilege.GetUserPrivilegeName(employee.Privilege),
-                    IsInValid == 0 ? "Success" : "Failed",
-                    AttState.GetAttState(attState),
-                    WorkCode.ToString(),
-                    date.ToString("HH:mm:ss MM/dd/yyyy"),
-                    VerifyMethod.ToString(),
-                };
-
-                var result = DataHelper.PublishData(appender, row, _queueSender, _repository);
-                if (!result.IsSuccess)
-                {
-                    _logger.LogError(result.Message);
-                }
-                else
-                {
-                    _logger.LogInformation("A new AttRecord has pushed into sheet. {value}", appender.ToString());
-                }
-            }   
-
-            _repository.Add<Attendance>(new Attendance
-            {
-                UserId = employee.Id,
-                VerifyDate = date,
-                VerifyState = attState,
-                VerifyType = VerifyMethod,
-                WorkCode = WorkCode,
-            });
-
         }
 
         private static void axCZKEM1_OnAttTransaction(int EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second)

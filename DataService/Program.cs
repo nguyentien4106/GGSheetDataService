@@ -1,8 +1,11 @@
 using CleanArchitecture.Infrastructure;
+using CleanArchitecture.Infrastructure.Data;
 using DataService;
 using DataService.Settings;
 using DataWorkerService.Models;
 using DataWorkerService.Models.Config;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 
 
@@ -23,12 +26,6 @@ builder.Services.AddWindowsService(options =>
 });
 
 builder.Services.AddSingleton(new CommandLineArgs(args));
-
-//var devices = builder.Configuration.GetSection("Devices").Get<List<Device>>() ?? default!;
-//if (devices == null)
-//{
-//    throw new ArgumentNullException(nameof(DevicesAppSettings));
-//}
 
 var credential = builder.Configuration.GetSection("JSONCredential").Get<JSONCredential>() ?? default!;
 if(credential == null)

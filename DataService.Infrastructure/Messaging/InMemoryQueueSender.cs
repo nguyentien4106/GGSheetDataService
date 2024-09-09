@@ -10,10 +10,10 @@ namespace CleanArchitecture.Infrastructure.Messaging;
 /// </summary>
 public class InMemoryQueueSender : IQueueSender
 {
-    public async Task SendAttendance(Attendance att)
+    public async Task SendAttendanceDB(Attendance att)
     {
         await Task.CompletedTask; // just so async is allowed
-        InMemoryQueueReceiver.Attendances.Enqueue(att);
+        InMemoryQueueReceiver.AttendanceRowsDB.Enqueue(att);
     }
 
     public async Task SendMessageToQueue(List<string> message, string queueName)
@@ -22,9 +22,9 @@ public class InMemoryQueueSender : IQueueSender
         InMemoryQueueReceiver.MessageQueue.Enqueue(message);
       }
 
-    public async Task SendMessageToQueue(Dictionary<SheetAppender, List<string>> rowSheet, string queueName)
+    public async Task SendAttendancesSheet(Dictionary<SheetAppender, List<string>> rowSheet)
     {
         await Task.CompletedTask; // just so async is allowed
-        InMemoryQueueReceiver.SheetRowQueues.Enqueue(rowSheet);
+        InMemoryQueueReceiver.AttendanceRowsSheet.Enqueue(rowSheet);
     }
 }

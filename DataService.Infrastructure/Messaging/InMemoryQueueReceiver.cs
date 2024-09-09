@@ -12,16 +12,16 @@ namespace CleanArchitecture.Infrastructure.Messaging;
 public class InMemoryQueueReceiver : IQueueReceiver
 {
     public static Queue<List<string>> MessageQueue = new Queue<List<string>>();
-    public static Queue<Dictionary<SheetAppender, List<string>>> SheetRowQueues = new ();
-    public static Queue<Attendance> Attendances = new();
+    public static Queue<Dictionary<SheetAppender, List<string>>> AttendanceRowsSheet = new ();
+    public static Queue<Attendance> AttendanceRowsDB = new();
 
-    public async Task<Attendance> GetAttendances()
+    public async Task<Attendance> GetAttendanceRowsDB()
     {
         await Task.CompletedTask; // just so async is allowed
 
-        if (Attendances.Count == 0) return null;
+        if (AttendanceRowsDB.Count == 0) return null;
 
-        return Attendances.Dequeue();
+        return AttendanceRowsDB.Dequeue();
     }
 
     public async Task<List<string>> GetMessageFromQueue(string queueName)
@@ -37,11 +37,11 @@ public class InMemoryQueueReceiver : IQueueReceiver
         throw new NotImplementedException();
     }
 
-    public async Task<Dictionary<SheetAppender, List<string>>> GetRowSheets()
+    public async Task<Dictionary<SheetAppender, List<string>>> GetAttendanceRowsSheet()
     {
         await Task.CompletedTask; // just so async is allowed
         //Guard.Against.NullOrWhiteSpace(queueName, nameof(queueName));
-        if (SheetRowQueues.Count == 0) return null;
-        return SheetRowQueues.Dequeue();
+        if (AttendanceRowsSheet.Count == 0) return null;
+        return AttendanceRowsSheet.Dequeue();
     }
 }

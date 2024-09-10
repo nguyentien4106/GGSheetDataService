@@ -14,6 +14,7 @@ namespace CleanAchitecture.Application
         {
             services.AddScoped<IGenericRepository<Device>, GenericRepository<Device>>();
             services.AddScoped<IDeviceService, DeviceService>();
+            services.AddScoped<IAttendanceService, AttendanceService>();
             return services;
         }
     }

@@ -1,5 +1,6 @@
 using CleanAchitecture.Application;
 using CleanAchitecture.Application.Contracts.Persistence;
+using CleanArchitecture.Core.Services;
 using CleanArchitecture.Infrastructure;
 using DataService.Core.Entities;
 
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddPostgresDB(builder.Configuration);
+builder.Services.AddScoped<IServiceLocator, ServiceScopeFactoryLocator>();
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 

@@ -25,9 +25,10 @@ public class AppDbContext : DbContext
 
     public DbSet<Sheet> Sheets { get; set; }    
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
+        builder.Entity<Sheet>().HasOne(t => t.Device).WithMany(t => t.Sheets).OnDelete(DeleteBehavior.ClientCascade);
+        base.OnModelCreating(builder);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options) =>

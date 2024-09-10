@@ -58,7 +58,7 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var device = await _service.GetById(id.Value);
+            var device = await _service.GetById(id.Value, "Sheets");
             if (device == null)
             {
                 return NotFound();
@@ -68,70 +68,19 @@ namespace DataService.Web.Controllers
 
         
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("Ip,CommKey")] Device device)
+        public async Task<IActionResult> Edit(Device device)
         {
-            if (id != device.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await _service.Update(device);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DeviceExists(device.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(device);
-        }
-
-        // GET: Devices/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var device = await _service.GetById(id.Value);
-            if (device == null)
-            {
-                return NotFound();
-            }
-
-            return View(device);
+            var result = await _service.Update(device);
+            return Json(result);
         }
 
         // POST: Devices/Delete/5
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost]
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var device = await _service.GetById(id);
-            if (device != null)
-            {
-                var result = await _service.Delete(device);
-                return Json(result);
-
-            }
-            return RedirectToAction(nameof(Index));
-
+            var result = await _service.Delete(id);
+            return Json(result);
         }
 
-        private bool DeviceExists(int id)
-        {
-            return _context.Devices.Any(e => e.Id == id);
-        }
     }
 }

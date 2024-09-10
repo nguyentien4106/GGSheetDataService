@@ -2,6 +2,7 @@
 using CleanArchitecture.Core.Entities;
 using CleanArchitecture.Infrastructure.Data;
 using DataWorkerService.Models;
+using DocumentFormat.OpenXml.Office.CustomUI;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -65,7 +66,7 @@ namespace DataService.Application.Repositories
             }
         }
 
-        public async Task<Result> Delete(object id)
+        public async Task<Result> Delete(int id)
         {
             TEntity entityToDelete = await dbSet.FindAsync(id);
             
@@ -84,16 +85,18 @@ namespace DataService.Application.Repositories
                 dbSet.Attach(entityToDelete);
             }
             dbSet.Remove(entityToDelete);
-
+            await _context.SaveChangesAsync();
             return Result.Success();
         }
 
-        public async Task<Result> Update(TEntity entityToUpdate)
+        public virtual async Task<Result> Update(TEntity entityToUpdate)
         {
             try
             {
                 dbSet.Attach(entityToUpdate);
                 _context.Entry(entityToUpdate).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+
                 return Result.Success();
             }
             catch (Exception ex)

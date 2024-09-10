@@ -1,13 +1,23 @@
 ﻿import { showError, showSuccess, isNullOrEmpty } from "../common.js"
-
-console.log("test")
-
+$("#loading").hide()
 
 $(".delete").click(function () {
     const result = confirm("Do you confirm to delete this device")
-    const id = $(this).attr("device-id");
-    console.log(id)
     if (result) {
-        $.post("https://localhost:7058/Devices/Delete", id).then(res => console.log(res))
+        const id = $(this).attr("device-id");
+        $("#loading").show()
+
+        $.post("https://localhost:7058/Devices/Delete/" + id).then(res => {
+            if (res.isSuccess) {
+                location.reload();
+            }
+            else {
+                showError(res.message)
+            }
+        }).catch(e => {
+            showError(e.message)
+        }).finally(() => 
+            $("#loading").hide()
+        )
     }
 })

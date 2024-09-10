@@ -110,6 +110,7 @@ namespace DataWorkerService.Helper
             }
             else
             {
+                SetConnectState(false);
                 axCZKEM1.GetLastError(ref idwErrorCode);
                 _logger.LogError($"Refer to documentation for more details with errorCode={idwErrorCode}");
 

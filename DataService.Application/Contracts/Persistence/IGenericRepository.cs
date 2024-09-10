@@ -17,7 +17,7 @@ namespace CleanAchitecture.Application.Contracts.Persistence
 
         Task<Result> Insert(TEntity entity);
 
-        Task<Result> Delete(object id);
+        Task<Result> Delete(int id);
 
         Task<Result> Delete(TEntity entityToDelete);
 

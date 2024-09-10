@@ -5,41 +5,61 @@
     ViewData["Title"] = "Edit";
 }
 
-<h3>Edit Device</h3>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Ip" class="control-label"></label>
-                <input asp-for="Ip" class="form-control" />
-                <span asp-validation-for="Ip" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Port" class="control-label"></label>
-                <input asp-for="Port" class="form-control" />
-                <span asp-validation-for="Port" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CommKey" class="control-label"></label>
-                <input asp-for="CommKey" class="form-control" />
-                <span asp-validation-for="CommKey" class="text-danger"></span>
-            </div>
-            <input type="hidden" asp-for="Id" />
-            
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="d-flex justify-content-between">
+    <h3 class="">Edit Device</h3>
+    <div class="">
+        <a asp-action="Index" class="btn btn-primary">Back to List</a>
     </div>
 </div>
+<hr />
+<form class="row g-3 needs-validation" novalidate id="needs-validation">
+    <input id="id" value="@Model.Id" type="hidden">
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <div class="col-md-4">
+        <label for="ip" class="form-label">IP</label>
+        <input type="text" class="form-control" id="ip" value="@Model.Ip" required disabled>
+    </div>
+    <div class="col-md-4">
+        <label for="port" class="form-label">Port</label>
+        <input type="text" class="form-control" id="port" value="@Model.Port" required>
+    </div>
+    <div class="col-md-4">
+        <label for="commKey" class="form-label">CommKey</label>
+        <input type="text" class="form-control" id="commKey" value="@Model.CommKey" required>
+    </div>
+    <h3>Sheets</h3>
+    <hr />
+    <div class="sheets">
+        @foreach (var sheet in Model.Sheets)
+        {
+            <div class="row sheet d-flex gap-3 mb-2">
+                <input type="text" class="form-control w-10" value="@sheet.Id" hidden>
+                <input type="text" class="form-control w-25" placeholder="SheetName" value="@sheet.SheetName" required>
+                <input type="text" class="form-control w-50" placeholder="DocumentId" value="@sheet.DocumentId" required>
+                <button class="btn btn-danger remove-sheet w-10" type="button">
+                    <i class="bi bi-trash"></i>
+                </button>
+
+            </div>
+        }
+        <button id="add-sheet" class="mt-3 btn btn-primary" type="button"><i class="bi bi-plus-circle"> Sheet</i> </button>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit" id="update-device">Update</button>
+    </div>
+</form>
+
+<div class="g-3 row d-flex flex-row gap-3 mb-2 d-none" id="templateSheet" >
+    <input type="text" class="form-control w-10" value="0" hidden>
+    <input type="text" class="form-control w-25" placeholder="SheetName" value="Sheet1" required>
+    <input type="text" class="form-control w-50" placeholder="DocumentId" required>
+    <button class="btn btn-danger remove-sheet w-10" type="button">
+        <i class="bi bi-trash"></i>
+    </button>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/devices/edit.js" asp-append-version="true" type="module"></script>
 }

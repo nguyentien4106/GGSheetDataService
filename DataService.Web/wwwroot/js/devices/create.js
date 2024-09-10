@@ -1,60 +1,72 @@
-﻿import { showError, showSuccess, isNullOrEmpty } from "../common.js"
+﻿"use strict";
+import { showError, showSuccess, isNullOrEmpty } from "../common.js";
 
-console.log("test")
+const form = document.getElementById("needs-validation");
+$("#loading").hide()
 
-$("#add-device").click(function () {
-    $("form").prop("disabled", true)
+// Loop over them and prevent submission
+form.addEventListener(
+    "submit",
+    (event) => {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
 
-    const sheetNames = $(".sheetName").map((i, el) => $(el).val()).get()
-    const documentIds = $(".documentId").map((i, el) => $(el).val()).get()
-    const emptyIds = documentIds.some(item => isNullOrEmpty(item))
-    if (emptyIds) {
-        showError("Please input all documentId field.")
-        return
-    }
-    const data = {
-        Ip: $("#ip").val(),
-        Port: $("#port").val(),
-        CommKey: $("#commKey").val(),
-        Sheets: sheetNames.map((val, idx) => {
-            return {
-                SheetName: val,
-                DocumentId: documentIds[idx],
-                DeviceId: 0
-            }
-        })
-    }
-    if (isNullOrEmpty(data.Ip) || isNullOrEmpty(data.Port) || isNullOrEmpty(data.CommKey) || data.Sheets.length === 0) {
-        showError("Please input all field.")
-        return
-    }
-
-
-    $.post("https://localhost:7058/Devices/Create", data)
-        .then(res => {
-            console.log(res)
-            if (res.isSuccess) {
-                showSuccess()
-            }
-            else {
-                showError(res.message)
-            }
-        })
-        .catch(e => {
-            showError("Some errors occur! Please contact admin to verify.")
-        })
-        .always(() => {
-            $("#add-device").prop("disabled", false)
-            $(".spinner-border").prop("hidden", true)
-        })
-});
+        form.classList.add("was-validated");
+    },
+    false
+);
 
 $("#add-sheet").click(() => {
     const MAX_SHEETS = 5;
     const length = $(".sheet").length;
     if (length >= MAX_SHEETS) {
-        showError(`Maximum sheets is ${MAX_SHEETS}`)
+        showError(`Maximum sheets is ${MAX_SHEETS}`);
         return;
     }
-    $(".sheet:first").clone().prependTo(".sheets")
-})
+    const $template = $("#templateSheet").clone(true);
+    $template.addClass("sheet");
+    $template.removeClass("d-none");
+    $template.prependTo(".sheets");
+});
+
+function removeSheet() {
+    $(this).parent().remove();
+}
+
+$(".remove-sheet").click(removeSheet);
+
+$("#add-device").click(function (event) {
+    const sheetDoms = $(".sheet");
+    const sheets = Array.from(sheetDoms).map((val) => ({
+        sheetName: $(val).find("input:first").val(),
+        documentId: $(val).find("input:last").val(),
+    }));
+    const data = {
+        Ip: $("#ip").val(),
+        Port: $("#port").val(),
+        CommKey: $("#commKey").val(),
+        Sheets: sheets,
+    };
+
+    if (form.checkValidity()) {
+        event.preventDefault();
+        $( "#loading" ).show();
+
+        $.post("https://localhost:7058/Devices/Create", data)
+            .then((res) => {
+                if (res.isSuccess) {
+                    showSuccess();
+                } else {
+                    showError(res.message);
+                }
+            })
+            .catch((e) => {
+                showError("Some errors occur! Please contact admin to verify.");
+            })
+            .always(() => {
+                $( "#loading" ).hide();
+            });
+    }
+});

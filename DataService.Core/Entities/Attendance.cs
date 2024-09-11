@@ -6,6 +6,10 @@ namespace DataService.Core.Entities
     {
         public int UserId { get; set; }
 
+        public int DeviceId { get; set; }
+
+        public Device? Device { get; set; }
+
         public DateTime VerifyDate { get; set; }
         
         public int VerifyType { get;set; }

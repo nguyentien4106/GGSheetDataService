@@ -15,8 +15,10 @@ public static class ServiceCollectionSetupExtensions
             options.UseNpgsql(
                 configuration.GetConnectionString("DefaultConnection")));
 
-    public static void AddRepositories(this IServiceCollection services) =>
-        services.AddScoped<IRepository, EfRepository>();
+    public static void AddRepositories(this IServiceCollection services)
+    {
+
+    }
 
     public static void AddMessageQueues(this IServiceCollection services)
     {

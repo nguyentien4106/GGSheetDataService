@@ -4,6 +4,8 @@ namespace DataService.Core.Models.AttMachine
 {
     public class OnAttendanceTransactionRecord
     {
+        public int DeviceId { get; set; }
+
         public string UserId { get; set; }
 
         public int WorkCode { get; set; }
@@ -24,7 +26,8 @@ namespace DataService.Core.Models.AttMachine
                 WorkCode = WorkCode,
                 VerifyDate = DateTimeRecord,
                 VerifyState = AttState,
-                VerifyType = VerifyMethod
+                VerifyType = VerifyMethod,
+                DeviceId = DeviceId,
             };
         }
     }

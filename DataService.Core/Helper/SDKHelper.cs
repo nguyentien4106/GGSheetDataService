@@ -276,7 +276,8 @@ namespace DataWorkerService.Helper
                 VerifyMethod = VerifyMethod,
                 DateTimeRecord = date,
                 IsInvalid = IsInValid,
-                WorkCode = WorkCode
+                WorkCode = WorkCode,
+                DeviceId = _device.Id
             };
 
             if (_isTest)

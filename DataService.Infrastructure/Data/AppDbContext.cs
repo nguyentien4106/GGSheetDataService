@@ -15,8 +15,6 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<Test> Tests { get; set; }
-
     public DbSet<Device> Devices { get; set; }
 
     public DbSet<Attendance> Attendances { get; set; }

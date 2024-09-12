@@ -3,7 +3,7 @@ using DataService.Infrastructure.Entities;
 
 namespace DataService.Application.Services
 {
-    public interface IAttendanceService : IGenericRepository<Attendance>
+    public interface IEmployeeService : IGenericRepository<Employee>
     {
     }
 }

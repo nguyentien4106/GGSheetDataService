@@ -1,5 +1,5 @@
 ﻿using CleanArchitecture.Core.Services;
-using DataService.Application.Repositories;
+using DataService.Core.Repositories;
 using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;
 namespace DataService.Application.Services

@@ -20,7 +20,7 @@ namespace DataService.Core.Helper
         {
             PublishDataToSheet(appenders, record.ToRow(), sender);
             PublishDataToDB(repository, record.ToAttendance(), sender);
-
+            
             return Result.Success();
         }
 

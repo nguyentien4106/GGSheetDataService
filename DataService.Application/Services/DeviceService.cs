@@ -1,5 +1,5 @@
 ﻿using CleanArchitecture.Core.Services;
-using DataService.Application.Repositories;
+using DataService.Core.Repositories;
 using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;
 using DataWorkerService.Helper;
@@ -19,7 +19,7 @@ namespace DataService.Application.Services
 
         public override async Task<Result> Insert(Device device)
         {
-            var devices = await base.Get();
+            var devices = await base.GetAsync();
 
             var existedIp = devices.FirstOrDefault(item => item.Ip == device.Ip);
             if (existedIp != null) 

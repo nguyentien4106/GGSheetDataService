@@ -8,7 +8,7 @@ namespace DataService.Models.AttMachine
 {
     public static class UserPrivilege
     {
-        private static readonly Dictionary<int, string> _userPrivileges = new Dictionary<int, string>()
+        public static readonly Dictionary<int, string> UserPrivileges = new Dictionary<int, string>()
         {
             { 0, "Common User" },
             { 1, "Registrar User" },
@@ -16,6 +16,7 @@ namespace DataService.Models.AttMachine
             { 3, "Super Administrator" },
         };
 
-        public static string GetUserPrivilegeName(int code) => _userPrivileges.ContainsKey(code) ? _userPrivileges[code] : _userPrivileges[0];
+
+        public static string GetUserPrivilegeName(int code) => UserPrivileges.ContainsKey(code) ? UserPrivileges[code] : UserPrivileges[0];
     }
 }

@@ -2,30 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;
-using DataService.Web.Models.Att;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using DataService.Models.AttMachine;
+using DataService.Core.Contracts;
 
 namespace DataService.Web.Controllers
 {
-    public class AttendancesController : Controller
+    public class EmployeesController : Controller
     {
-        private readonly AppDbContext _context;
-
-        public AttendancesController(AppDbContext context)
+        private readonly IGenericRepository<Employee> _respo;
+        AppDbContext _context;
+        public EmployeesController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Attendances
+        // GET: Employees
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Attendances.Select(i => new AttendanceViewModel(i)).ToListAsync());
+            return View(await _context.Employees.ToListAsync());
         }
 
-        // GET: Attendances/Details/5
+        // GET: Employees/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +35,44 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var attendance = await _context.Attendances
+            var employee = await _context.Employees
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (attendance == null)
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            return View(attendance);
+            return View(employee);
         }
 
-        // GET: Attendances/Create
+        // GET: Employees/Create
         public IActionResult Create()
         {
+            ViewData["Privileges"] = UserPrivilege.UserPrivileges.Select(item => new SelectListItem()
+            {
+                Value = item.Key.ToString(),
+                Text = item.Value
+            });
             return View();
         }
 
-        // POST: Attendances/Create
+        // POST: Employees/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,VerifyDate,VerifyType,VerifyState,WorkCode,Id")] Attendance attendance)
+        public async Task<IActionResult> Create([Bind("Pin,Name,Password,Privilege,CardNumber,Id")] Employee employee)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(attendance);
+                _context.Add(employee);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(attendance);
+            return View(employee);
         }
 
-        // GET: Attendances/Edit/5
+        // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +80,22 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var attendance = await _context.Attendances.FindAsync(id);
-            if (attendance == null)
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
             {
                 return NotFound();
             }
-            return View(attendance);
+            return View(employee);
         }
 
-        // POST: Attendances/Edit/5
+        // POST: Employees/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,VerifyDate,VerifyType,VerifyState,WorkCode,Id")] Attendance attendance)
+        public async Task<IActionResult> Edit(int id, [Bind("Pin,Name,Password,Privilege,CardNumber,Id")] Employee employee)
         {
-            if (id != attendance.Id)
+            if (id != employee.Id)
             {
                 return NotFound();
             }
@@ -97,12 +104,12 @@ namespace DataService.Web.Controllers
             {
                 try
                 {
-                    _context.Update(attendance);
+                    _context.Update(employee);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AttendanceExists(attendance.Id))
+                    if (!EmployeeExists(employee.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +120,10 @@ namespace DataService.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(attendance);
+            return View(employee);
         }
 
-        // GET: Attendances/Delete/5
+        // GET: Employees/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,34 +131,34 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var attendance = await _context.Attendances
+            var employee = await _context.Employees
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (attendance == null)
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            return View(attendance);
+            return View(employee);
         }
 
-        // POST: Attendances/Delete/5
+        // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var attendance = await _context.Attendances.FindAsync(id);
-            if (attendance != null)
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee != null)
             {
-                _context.Attendances.Remove(attendance);
+                _context.Employees.Remove(employee);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AttendanceExists(int id)
+        private bool EmployeeExists(int id)
         {
-            return _context.Attendances.Any(e => e.Id == id);
+            return _context.Employees.Any(e => e.Id == id);
         }
     }
 }

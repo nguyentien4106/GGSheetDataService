@@ -1,0 +1,45 @@
+﻿@model DataService.Infrastructure.Entities.Employee
+
+@{
+    ViewData["Title"] = "Create";
+    var privileges = ViewData["Privileges"] as IEnumerable<SelectListItem>;
+}
+
+<div class="d-flex justify-content-between">
+    <h3 class="">Add New Employee</h3>
+    <div class="">
+        <a asp-action="Index" class="btn btn-primary">Back to List</a>
+    </div>
+</div>
+<hr />
+<form class="row g-3 employee-validation" novalidate id="employee-validation" asp-action="Create" method="post">
+    <div class="col-md-4">
+        <label for="ip" class="form-label" asp-for="Pin">Employee Code</label>
+        <input type="text" class="form-control" id="ip" value="" required asp-for="Pin">
+    </div>
+    <div class="col-md-4">
+        <label for="port" class="form-label" asp-for="Name">Employee's Name</label>
+        <input type="text" class="form-control" value="" required asp-for="Name">
+    </div>
+    <div class="col-md-4">
+        <label for="commKey" class="form-label" asp-for="Password">Employee Password</label>
+        <input type="text" class="form-control" required asp-for="Password">
+    </div>
+    <div class="col-md-4">
+        <label for="commKey" class="form-label" asp-for="Privilege">Employee Privilege</label>
+        <select asp-for="Privilege" asp-items="@(privileges)" class="form-control custom-select">
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="commKey" class="form-label" asp-for="CardNumber">Employee Card Number</label>
+        <input type="text" class="form-control" required asp-for="CardNumber">
+    </div>
+    
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit" id="add-employee">Add Employee</button>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

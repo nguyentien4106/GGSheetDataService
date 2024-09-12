@@ -42,7 +42,6 @@ namespace DataWorkerService.Helper
             _device = device;
             _isTest = isTest;
             sta_ConnectTCP();
-            
         }
 
         public bool GetConnectState()
@@ -68,7 +67,8 @@ namespace DataWorkerService.Helper
 
         public void TestRealTimeEvent()
         {
-            axCZKEM1_OnAttTransactionEx("10001", 0, 1, 1, 2024, 12, 12, 12, 12, 12, 0);
+            var random = new Random();
+            axCZKEM1_OnAttTransactionEx("-1", random.Next(0, 1), random.Next(0, 5), random.Next(0, 14), 2024, 12, 12, 12, 12, 12, 0);
         }
 
         public Result sta_ConnectTCP()

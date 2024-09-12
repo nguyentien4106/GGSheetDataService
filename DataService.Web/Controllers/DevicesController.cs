@@ -14,7 +14,7 @@ namespace DataService.Web.Controllers
         // GET: Devices
         public async Task<IActionResult> Index()
         {
-            return View(await _service.Get());
+            return View(await _service.GetAsync());
         }
 
         // GET: Devices/Details/5

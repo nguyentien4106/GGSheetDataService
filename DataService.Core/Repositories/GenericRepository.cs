@@ -1,4 +1,4 @@
-﻿using CleanAchitecture.Application.Contracts.Persistence;
+﻿using DataService.Core.Contracts;
 using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;
 using DataWorkerService.Models;
@@ -6,7 +6,7 @@ using DocumentFormat.OpenXml.Office.CustomUI;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace DataService.Application.Repositories
+namespace DataService.Core.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseEntity
     {
@@ -16,10 +16,10 @@ namespace DataService.Application.Repositories
         public GenericRepository(AppDbContext context)
         {
             _context = context;
-            this.dbSet = context.Set<TEntity>();
+            dbSet = context.Set<TEntity>();
         }
 
-        public async Task<IEnumerable<TEntity>> Get(
+        public async Task<IEnumerable<TEntity>> GetAsync(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "")
@@ -46,6 +46,33 @@ namespace DataService.Application.Repositories
                 return await query.ToListAsync();
             }
         }
+        public IEnumerable<TEntity> Get(
+            Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includeProperties = "")
+        {
+            IQueryable<TEntity> query = dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            if (orderBy != null)
+            {
+                return orderBy(query).ToList();
+            }
+            else
+            {
+                return query.ToList();
+            }
+        }
 
         public async Task<TEntity> GetByID(object id)
         {
@@ -60,7 +87,7 @@ namespace DataService.Application.Repositories
                 await _context.SaveChangesAsync();
                 return Result.Success();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Result.Fail(500, ex.Message);
             }
@@ -69,13 +96,13 @@ namespace DataService.Application.Repositories
         public async Task<Result> Delete(int id)
         {
             TEntity entityToDelete = await dbSet.FindAsync(id);
-            
+
             return await Delete(entityToDelete);
         }
 
         public async Task<Result> Delete(TEntity entityToDelete)
         {
-            if(entityToDelete == null)
+            if (entityToDelete == null)
             {
                 return Result.Fail(404, "Object not found");
             }
@@ -109,7 +136,7 @@ namespace DataService.Application.Repositories
         {
             IQueryable<TEntity> query = dbSet;
 
-            
+
             foreach (var includeProperty in includeProperties.Split
                 (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {

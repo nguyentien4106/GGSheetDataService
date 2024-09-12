@@ -1,4 +1,4 @@
-﻿using DataService.Core.Entities;
+﻿using DataService.Infrastructure.Entities;
 using GoogleSheetsWrapper;
 
 namespace CleanArchitecture.Core.Interfaces;

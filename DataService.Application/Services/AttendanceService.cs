@@ -1,16 +1,7 @@
 ﻿using CleanArchitecture.Core.Services;
-using CleanArchitecture.Infrastructure.Data;
 using DataService.Application.Repositories;
-using DataService.Core.Entities;
-using DataWorkerService.Helper;
-using DataWorkerService.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using DataService.Infrastructure.Data;
+using DataService.Infrastructure.Entities;
 namespace DataService.Application.Services
 {
     public class AttendanceService : GenericRepository<Attendance>, IAttendanceService

@@ -1,8 +1,9 @@
 ﻿using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Core.Services;
-using DataService.Core.Entities;
+using DataService.Core.Contracts;
 using DataService.Core.Helper;
 using DataService.Core.Models.AttMachine;
+using DataService.Infrastructure.Entities;
 using DataService.Models.AttMachine;
 using DataService.Settings;
 using DataWorkerService.Models;
@@ -19,7 +20,7 @@ namespace DataWorkerService.Helper
         private GoogleApiAccount _account;
         private ILogger<SDKHelper> _logger;
         private JSONCredential _credential;
-        private IRepository _repository;
+        private IGenericRepository<Attendance> _repository;
 
         private static bool bIsConnected = false;
         private static int iMachineNumber = 1;
@@ -36,7 +37,7 @@ namespace DataWorkerService.Helper
             _account = locator.Get<GoogleApiAccount>();
             _credential = locator.Get<JSONCredential>();
             _logger = locator.Get<ILogger<SDKHelper>>();
-            _repository = locator.Get<IRepository>();
+            _repository = locator.Get<IGenericRepository<Attendance>>();
             _queueSender = locator.Get<IQueueSender>();
             _device = device;
             _isTest = isTest;

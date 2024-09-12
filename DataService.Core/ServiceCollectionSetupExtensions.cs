@@ -1,12 +1,15 @@
 ﻿using CleanArchitecture.Core.Interfaces;
+using CleanArchitecture.Core.Messaging;
 using CleanArchitecture.Core.Services;
-using CleanArchitecture.Infrastructure.Data;
-using CleanArchitecture.Infrastructure.Messaging;
+using DataService.Core.Contracts;
+using DataService.Core.Repositories;
+using DataService.Infrastructure.Data;
+using DataService.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CleanArchitecture.Infrastructure;
+namespace DataService.Core;
 
 public static class ServiceCollectionSetupExtensions
 {
@@ -17,6 +20,8 @@ public static class ServiceCollectionSetupExtensions
 
     public static void AddRepositories(this IServiceCollection services)
     {
+        services.AddTransient<IGenericRepository<Attendance>, GenericRepository<Attendance>>();
+        services.AddTransient<IGenericRepository<Device>, GenericRepository<Device>>();
 
     }
 

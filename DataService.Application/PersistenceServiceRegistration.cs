@@ -1,9 +1,9 @@
-﻿using CleanAchitecture.Application.Contracts.Persistence;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using DataService.Core.Entities;
-using DataService.Application.Repositories;
 using DataService.Application.Services;
+using CleanAchitecture.Application.Contracts.Persistence;
+using DataService.Infrastructure.Entities;
+using DataService.Application.Repositories;
 
 namespace CleanAchitecture.Application
 {

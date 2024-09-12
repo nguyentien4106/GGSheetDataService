@@ -1,5 +1,5 @@
 ﻿using CleanAchitecture.Application.Contracts.Persistence;
-using DataService.Core.Entities;
+using DataService.Infrastructure.Entities;
 
 namespace DataService.Application.Services
 {

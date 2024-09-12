@@ -2,17 +2,22 @@
 using DataWorkerService.Models;
 using System.Linq.Expressions;
 
-namespace CleanAchitecture.Application.Contracts.Persistence
+namespace DataService.Core.Contracts
 {
     public interface IGenericRepository<TEntity> where TEntity : BaseEntity
     {
-        Task<IEnumerable<TEntity>> Get(
+        Task<IEnumerable<TEntity>> GetAsync(
+            Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        string includeProperties = "");
+
+        IEnumerable<TEntity> Get(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
         string includeProperties = "");
 
         Task<TEntity> GetById(
-            int id, 
+            int id,
             string includeProperties = "");
 
         Task<Result> Insert(TEntity entity);
@@ -22,6 +27,6 @@ namespace CleanAchitecture.Application.Contracts.Persistence
         Task<Result> Delete(TEntity entityToDelete);
 
         Task<Result> Update(TEntity entityToUpdate);
-        
+
     }
 }

@@ -1,6 +1,5 @@
-﻿using CleanArchitecture.Core.Entities;
-
-namespace DataService.Core.Entities
+﻿
+namespace DataService.Infrastructure.Entities
 {
     public class Attendance : BaseEntity
     {

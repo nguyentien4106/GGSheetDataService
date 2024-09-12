@@ -1,5 +1,5 @@
 ﻿
-namespace DataService.Models.AttMachine
+namespace DataService.Core.Models.AttMachine
 {
     public static class AttState
     {

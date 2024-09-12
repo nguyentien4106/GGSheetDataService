@@ -1,13 +1,9 @@
 using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Core.Services;
-using CleanArchitecture.Infrastructure.Data;
-using DataService.Core.Entities;
+using DataService.Core.Contracts;
 using DataService.Core.Helper;
-using DataService.Settings;
+using DataService.Infrastructure.Entities;
 using DataWorkerService.Helper;
-using DataWorkerService.Models.Config;
-using DocumentFormat.OpenXml.Vml.Office;
-using Microsoft.EntityFrameworkCore;
 
 namespace DataService;
 
@@ -15,26 +11,27 @@ public class Worker : BackgroundService
 {
     readonly ILogger<Worker> _logger;
     List<SDKHelper> _sdks = [];
-    AppDbContext _context;
 
-    IRepository _repository;
+    IGenericRepository<Attendance> _attendanceRepos;
+    IGenericRepository<Device> _deviceRepos;
     IServiceLocator _locator;
     IQueueReceiver _receiver;
     IQueueSender _sender;
 
-    public Worker(ILogger<Worker> logger, IServiceLocator locator, IRepository repository, IQueueReceiver receiver, IQueueSender sender)
+    public Worker(ILogger<Worker> logger, IServiceLocator locator)
     {
         _locator = locator;
         _logger = logger;
-        _context = locator.Get<AppDbContext>();
-        _repository = repository;
-        _receiver = receiver;
-        _sender = sender;
+        _deviceRepos = locator.Get<IGenericRepository<Device>>();
+        _attendanceRepos = locator.Get<IGenericRepository<Attendance>>();
+        _receiver = locator.Get<IQueueReceiver>();
+        _sender = locator.Get<IQueueSender>();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         const int ThirtyMinutes = 1 * 30 * 60 * 1000;
+        const int TenSeconds = 10 * 1000;
         while (!stoppingToken.IsCancellationRequested)
         {
             var sheets = await _receiver.GetAttendanceRowsSheet();
@@ -54,7 +51,7 @@ public class Worker : BackgroundService
             var attendance = await _receiver.GetAttendanceRowsDB();
             if(attendance != null)
             {
-                DataHelper.PublishDataToDB(_repository, attendance, _sender);
+                DataHelper.PublishDataToDB(_attendanceRepos, attendance, _sender);
                 _logger.LogInformation($"Re-sending data to DB {attendance.UserId} - {attendance.VerifyDate}");
             }
 
@@ -62,14 +59,14 @@ public class Worker : BackgroundService
             {
                 sdk.TestRealTimeEvent();
             }
-            await Task.Delay(ThirtyMinutes, stoppingToken);
+            await Task.Delay(TenSeconds, stoppingToken);
             
         }
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {
-        var devices = _context.Devices.Include(i => i.Sheets).ToList();
+        var devices = _deviceRepos.Get(includeProperties: "Sheets");
         
         foreach(var device in devices)
         {

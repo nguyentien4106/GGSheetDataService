@@ -1,11 +1,7 @@
-using CleanArchitecture.Infrastructure;
-using CleanArchitecture.Infrastructure.Data;
 using DataService;
+using DataService.Core;
 using DataService.Settings;
-using DataWorkerService.Models;
 using DataWorkerService.Models.Config;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 
 
@@ -37,7 +33,6 @@ if (googleAccount == null)
     throw new ArgumentNullException(nameof(GoogleApiAccount));
 }
 
-//builder.Services.AddSingleton(new DevicesAppSettings(devices));
 builder.Services.AddSingleton(credential);
 builder.Services.AddSingleton(googleAccount);
 builder.Services.AddHostedService<Worker>();
@@ -45,7 +40,7 @@ builder.Services.AddSystemd();
 
 var host = builder.Build();
 
-//AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 host.Run();
 

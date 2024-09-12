@@ -1,6 +1,7 @@
 ﻿using CleanArchitecture.Core.Interfaces;
-using DataService.Core.Entities;
+using DataService.Core.Contracts;
 using DataService.Core.Models.AttMachine;
+using DataService.Infrastructure.Entities;
 using DataService.Models.AttMachine;
 using DataWorkerService.Models;
 using GoogleSheetsWrapper;
@@ -15,20 +16,9 @@ namespace DataService.Core.Helper
 {
     public class DataHelper
     {
-        public static Result PublishData(IEnumerable<SheetAppender> appenders, IRepository repository, OnAttendanceTransactionRecord record, Employee employee, IQueueSender sender)
+        public static Result PublishData(IEnumerable<SheetAppender> appenders, IGenericRepository<Attendance> repository, OnAttendanceTransactionRecord record, Employee employee, IQueueSender sender)
         {
-            var row = new List<string> {
-                record.UserId,
-                employee.Name,
-                employee.CardNumber,
-                UserPrivilege.GetUserPrivilegeName(employee.Privilege),
-                record.IsInvalid == 0 ? "Success" : "Failed",
-                AttState.GetAttState(record.AttState),
-                record.WorkCode.ToString(),
-                record.DateTimeRecord.ToString("HH:mm:ss MM/dd/yyyy"),
-                record.VerifyMethod.ToString(),
-            };
-            PublishDataToSheet(appenders, row, sender);
+            PublishDataToSheet(appenders, record.ToRow(), sender);
             PublishDataToDB(repository, record.ToAttendance(), sender);
 
             return Result.Success();
@@ -56,11 +46,11 @@ namespace DataService.Core.Helper
 
         }
 
-        public static Result PublishDataToDB(IRepository repository, Attendance attendance, IQueueSender sender)
+        public static Result PublishDataToDB(IGenericRepository<Attendance> repository, Attendance attendance, IQueueSender sender)
         {
             try
             {
-                repository.Add<Attendance>(attendance);
+                repository.Insert(attendance);
                 return Result.Success();
             }
             catch (Exception ex)

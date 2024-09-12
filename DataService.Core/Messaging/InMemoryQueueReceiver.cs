@@ -1,10 +1,10 @@
 ﻿using CleanArchitecture.Core.Interfaces;
-using DataService.Core.Entities;
+using DataService.Infrastructure.Entities;
 using GoogleSheetsWrapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CleanArchitecture.Infrastructure.Messaging;
+namespace CleanArchitecture.Core.Messaging;
 
 /// <summary>
 /// A simple implementation using the built-in Queue type and a single static instance.

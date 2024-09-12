@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DataService.Core.Entities;
-using CleanArchitecture.Infrastructure.Data;
-using CleanAchitecture.Application.Contracts.Persistence;
 using DataService.Application.Services;
+using DataService.Infrastructure.Data;
+using DataService.Infrastructure.Entities;
 
 namespace DataService.Web.Controllers
 {

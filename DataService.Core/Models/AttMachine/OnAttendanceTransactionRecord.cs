@@ -1,4 +1,4 @@
-﻿using DataService.Core.Entities;
+﻿using DataService.Infrastructure.Entities;
 
 namespace DataService.Core.Models.AttMachine
 {
@@ -23,11 +23,23 @@ namespace DataService.Core.Models.AttMachine
             return new Attendance()
             {
                 UserId = int.Parse(UserId),
+                DeviceId = DeviceId,
                 WorkCode = WorkCode,
                 VerifyDate = DateTimeRecord,
                 VerifyState = AttState,
                 VerifyType = VerifyMethod,
-                DeviceId = DeviceId,
+            };
+        }
+
+        public List<string> ToRow()
+        {
+            return new List<string>()
+            {
+                UserId,
+                DeviceId.ToString(),
+                DateTimeRecord.ToString("f"),
+                AttMachine.VerifyMethod.GetVerifyMethod(VerifyMethod),
+                AttMachine.AttState.GetAttState(AttState)
             };
         }
     }

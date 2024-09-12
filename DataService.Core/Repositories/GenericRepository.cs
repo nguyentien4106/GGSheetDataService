@@ -19,7 +19,7 @@ namespace DataService.Core.Repositories
             dbSet = context.Set<TEntity>();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAsync(
+        public virtual async Task<IEnumerable<TEntity>> GetAsync(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "")
@@ -46,7 +46,7 @@ namespace DataService.Core.Repositories
                 return await query.ToListAsync();
             }
         }
-        public IEnumerable<TEntity> Get(
+        public virtual IEnumerable<TEntity> Get(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "")
@@ -74,7 +74,7 @@ namespace DataService.Core.Repositories
             }
         }
 
-        public async Task<TEntity> GetByID(object id)
+        public virtual async Task<TEntity> GetByID(object id)
         {
             return await dbSet.FindAsync(id);
         }
@@ -93,14 +93,14 @@ namespace DataService.Core.Repositories
             }
         }
 
-        public async Task<Result> Delete(int id)
+        public virtual async Task<Result> Delete(int id)
         {
             TEntity entityToDelete = await dbSet.FindAsync(id);
 
             return await Delete(entityToDelete);
         }
 
-        public async Task<Result> Delete(TEntity entityToDelete)
+        public virtual async Task<Result> Delete(TEntity entityToDelete)
         {
             if (entityToDelete == null)
             {
@@ -132,7 +132,7 @@ namespace DataService.Core.Repositories
             }
         }
 
-        public async Task<TEntity> GetById(int id, string includeProperties = "")
+        public virtual async Task<TEntity> GetById(int id, string includeProperties = "")
         {
             IQueryable<TEntity> query = dbSet;
 

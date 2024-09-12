@@ -9,22 +9,22 @@ using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;
 using DataService.Models.AttMachine;
 using DataService.Core.Contracts;
+using DataService.Application.Services;
 
 namespace DataService.Web.Controllers
 {
     public class EmployeesController : Controller
     {
-        private readonly IGenericRepository<Employee> _respo;
-        AppDbContext _context;
-        public EmployeesController(AppDbContext context)
+        private readonly IEmployeeService _service;
+        public EmployeesController(IEmployeeService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Employees.ToListAsync());
+            return View(await _service.GetAsync());
         }
 
         // GET: Employees/Details/5
@@ -35,8 +35,7 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employees
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var employee = await _service.GetById(id.Value);
             if (employee == null)
             {
                 return NotFound();
@@ -63,12 +62,7 @@ namespace DataService.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Pin,Name,Password,Privilege,CardNumber,Id")] Employee employee)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(employee);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            _service.Insert(employee);
             return View(employee);
         }
 
@@ -80,7 +74,7 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await _service.GetById(id.Value);
             if (employee == null)
             {
                 return NotFound();
@@ -99,27 +93,7 @@ namespace DataService.Web.Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(employee);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EmployeeExists(employee.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
+            await _service.Update(employee);
             return View(employee);
         }
 
@@ -131,8 +105,7 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employees
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var employee = await _service.GetById(id.Value);
             if (employee == null)
             {
                 return NotFound();
@@ -146,19 +119,15 @@ namespace DataService.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await _service.GetById(id);
             if (employee != null)
             {
-                _context.Employees.Remove(employee);
+                await _service.Delete(employee);
             }
 
-            await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeExists(int id)
-        {
-            return _context.Employees.Any(e => e.Id == id);
-        }
     }
 }

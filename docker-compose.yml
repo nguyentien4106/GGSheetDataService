@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Ti100600@
+      POSTGRES_DB: attdb
+    ports:
+      - "5432:5432"
+    networks:
+      - container_network
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Database=attdb;Username=postgres;Password=Ti100600@
+    depends_on:
+      - db
+    networks:
+      - container_network
+  service:
+    build: 
+      dockerfile: Dockerfile.service
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db;Database=attdb;Username=postgres;Password=Ti100600@
+    depends_on:
+      - db
+    networks:
+      - container_network
+
+networks:
+  container_network:
+    driver: bridge

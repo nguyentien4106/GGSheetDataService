@@ -11,6 +11,9 @@ using DataWorkerService.Models.Config;
 using DataWorkerService.Models.Sheet;
 using GoogleSheetsWrapper;
 using Microsoft.Extensions.Logging;
+using BiometricDevices.NET.Abstract;
+using BiometricDevices.NET.Concrete.ZKUFace800;
+using BiometricDevices.NET.Enums;
 
 namespace DataWorkerService.Helper
 {
@@ -32,6 +35,7 @@ namespace DataWorkerService.Helper
         private List<SheetAppender> _appenders = [];
         IQueueSender _queueSender;
         bool _isTest = false;
+
         public SDKHelper(IServiceLocator locator, Device device, bool isTest = false)
         {
             _account = locator.Get<GoogleApiAccount>();

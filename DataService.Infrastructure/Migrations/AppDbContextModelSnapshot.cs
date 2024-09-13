@@ -22,7 +22,7 @@ namespace DataService.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("DataService.Core.Entities.Attendance", b =>
+            modelBuilder.Entity("DataService.Infrastructure.Entities.Attendance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,7 +37,7 @@ namespace DataService.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("VerifyDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("VerifyState")
                         .HasColumnType("integer");
@@ -55,7 +55,7 @@ namespace DataService.Infrastructure.Migrations
                     b.ToTable("Attendances");
                 });
 
-            modelBuilder.Entity("DataService.Core.Entities.Device", b =>
+            modelBuilder.Entity("DataService.Infrastructure.Entities.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -80,7 +80,7 @@ namespace DataService.Infrastructure.Migrations
                     b.ToTable("Devices");
                 });
 
-            modelBuilder.Entity("DataService.Core.Entities.Employee", b =>
+            modelBuilder.Entity("DataService.Infrastructure.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -112,7 +112,7 @@ namespace DataService.Infrastructure.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("DataService.Core.Entities.Sheet", b =>
+            modelBuilder.Entity("DataService.Infrastructure.Entities.Sheet", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -138,9 +138,26 @@ namespace DataService.Infrastructure.Migrations
                     b.ToTable("Sheets");
                 });
 
-            modelBuilder.Entity("DataService.Core.Entities.Attendance", b =>
+            modelBuilder.Entity("DataService.Infrastructure.Entities.Test", b =>
                 {
-                    b.HasOne("DataService.Core.Entities.Device", "Device")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tests");
+                });
+
+            modelBuilder.Entity("DataService.Infrastructure.Entities.Attendance", b =>
+                {
+                    b.HasOne("DataService.Infrastructure.Entities.Device", "Device")
                         .WithMany("Attendances")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -149,9 +166,9 @@ namespace DataService.Infrastructure.Migrations
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("DataService.Core.Entities.Sheet", b =>
+            modelBuilder.Entity("DataService.Infrastructure.Entities.Sheet", b =>
                 {
-                    b.HasOne("DataService.Core.Entities.Device", "Device")
+                    b.HasOne("DataService.Infrastructure.Entities.Device", "Device")
                         .WithMany("Sheets")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.ClientCascade)
@@ -160,7 +177,7 @@ namespace DataService.Infrastructure.Migrations
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("DataService.Core.Entities.Device", b =>
+            modelBuilder.Entity("DataService.Infrastructure.Entities.Device", b =>
                 {
                     b.Navigation("Attendances");
 

@@ -1,6 +1,8 @@
 using CleanAchitecture.Application;
-using CleanArchitecture.Core.Services;
 using DataService.Core;
+using DataService.Infrastructure.Data;
+using Google;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +26,22 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<AppDbContext>();
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("Logger");
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        logger.LogInformation("context.Database.GetPendingMigrations().Any()");
+        context.Database.Migrate();
+        logger.LogInformation("context.Database.GetPendingMigrations().Any() Migrate() ");
+
+    }
 }
 
 app.UseHttpsRedirection();

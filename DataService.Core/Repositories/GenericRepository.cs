@@ -4,6 +4,7 @@ using DataService.Infrastructure.Entities;
 using DataWorkerService.Models;
 using DocumentFormat.OpenXml.Office.CustomUI;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
 namespace DataService.Core.Repositories
@@ -12,11 +13,12 @@ namespace DataService.Core.Repositories
     {
         protected readonly AppDbContext _context;
         protected DbSet<TEntity> dbSet;
-
-        public GenericRepository(AppDbContext context)
+        protected ILogger<GenericRepository<TEntity>> _logger;
+        public GenericRepository(AppDbContext context, ILogger<GenericRepository<TEntity>> logger)
         {
             _context = context;
             dbSet = context.Set<TEntity>();
+            _logger = logger;
         }
 
         public virtual async Task<IEnumerable<TEntity>> GetAsync(
@@ -89,6 +91,7 @@ namespace DataService.Core.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return Result.Fail(500, ex.Message);
             }
         }
@@ -102,18 +105,26 @@ namespace DataService.Core.Repositories
 
         public virtual async Task<Result> Delete(TEntity entityToDelete)
         {
-            if (entityToDelete == null)
+            try
             {
-                return Result.Fail(404, "Object not found");
-            }
+                if (entityToDelete == null)
+                {
+                    return Result.Fail(404, "Object not found");
+                }
 
-            if (_context.Entry(entityToDelete).State == EntityState.Detached)
-            {
-                dbSet.Attach(entityToDelete);
+                if (_context.Entry(entityToDelete).State == EntityState.Detached)
+                {
+                    dbSet.Attach(entityToDelete);
+                }
+                dbSet.Remove(entityToDelete);
+                await _context.SaveChangesAsync();
+                return Result.Success();
             }
-            dbSet.Remove(entityToDelete);
-            await _context.SaveChangesAsync();
-            return Result.Success();
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return Result.Fail(500, ex.Message);
+            }
         }
 
         public virtual async Task<Result> Update(TEntity entityToUpdate)
@@ -128,6 +139,7 @@ namespace DataService.Core.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return Result.Fail(500, ex.Message);
             }
         }

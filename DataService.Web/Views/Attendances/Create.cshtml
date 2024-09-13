@@ -1,52 +1,59 @@
-﻿@model DataService.Infrastructure.Entities.Attendance
+﻿@using DataService.Infrastructure.Entities
+@model DataService.Infrastructure.Entities.Attendance
 
 @{
     ViewData["Title"] = "Create";
+    var users = ViewData["Employees"] as IEnumerable<SelectListItem>;
+    var devices = ViewData["Devices"] as IEnumerable<SelectListItem>;
+    var states = ViewData["VerifyStates"] as IEnumerable<SelectListItem>;
+    var types = ViewData["VerifyTypes"] as IEnumerable<SelectListItem>;
 }
 
-<h1>Create</h1>
-
-<h4>Attendance</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VerifyDate" class="control-label"></label>
-                <input asp-for="VerifyDate" class="form-control" />
-                <span asp-validation-for="VerifyDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VerifyType" class="control-label"></label>
-                <input asp-for="VerifyType" class="form-control" />
-                <span asp-validation-for="VerifyType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VerifyState" class="control-label"></label>
-                <input asp-for="VerifyState" class="form-control" />
-                <span asp-validation-for="VerifyState" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="WorkCode" class="control-label"></label>
-                <input asp-for="WorkCode" class="form-control" />
-                <span asp-validation-for="WorkCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="d-flex justify-content-between">
+    <h3 class="">Add new Attendance</h3>
+    <div class="">
+        <a asp-action="Index" class="btn btn-primary">Back to List</a>
     </div>
 </div>
+<hr />
+<form class="row g-3 employee-validation" novalidate id="employee-validation" asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-4">
+        <label asp-for="UserId" class="control-label"></label>
+        @Html.DropDownListFor(item => item.UserId, users, "Select User", new { @class = "form-control" })
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="DeviceId" class="control-label"></label>
+        @Html.DropDownListFor(item => item.DeviceId, devices, "Select Device", new { @class = "form-control" })
+        <span asp-validation-for="DeviceId" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="VerifyDate" class="control-label"></label>
+        <input asp-for="VerifyDate" class="form-control" />
+        <span asp-validation-for="VerifyDate" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="VerifyType" class="control-label"></label>
+        <select asp-for="VerifyType" asp-items="@(types)" class="form-control"></select>
+        <span asp-validation-for="VerifyType" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="VerifyState" class="control-label"></label>
+        <select asp-for="VerifyState" asp-items="@(states)" class="form-control"></select>
+        <span asp-validation-for="VerifyState" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="WorkCode" class="control-label"></label>
+        <input asp-for="WorkCode" class="form-control" value="0"/>
+        <span asp-validation-for="WorkCode" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

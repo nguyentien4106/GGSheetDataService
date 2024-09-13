@@ -22,6 +22,7 @@ public static class ServiceCollectionSetupExtensions
     {
         services.AddTransient<IGenericRepository<Attendance>, GenericRepository<Attendance>>();
         services.AddTransient<IGenericRepository<Device>, GenericRepository<Device>>();
+        services.AddTransient<IGenericRepository<Employee>, GenericRepository<Employee>>();
 
     }
 

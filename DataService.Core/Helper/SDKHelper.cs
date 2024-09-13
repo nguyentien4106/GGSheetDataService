@@ -31,7 +31,6 @@ namespace DataWorkerService.Helper
         private static int iDeviceTpye = 1;
         private Device _device;
         private List<Employee> _employees = [];
-        private List<SheetHelper> _sheetsHelper = [];
         private List<SheetAppender> _appenders = [];
         IQueueSender _queueSender;
         bool _isTest = false;

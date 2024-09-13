@@ -8,16 +8,21 @@ $(".delete").click(function () {
         $("#loading").show()
 
         $.post("https://localhost:7058/Devices/Delete/" + id).then(res => {
+            console.log(res)
+
             if (res.isSuccess) {
-                location.reload();
+                showSuccess("Delete Successfully!")
+                //location.reload();
+                window.location.href = res.message;
+
             }
             else {
                 showError(res.message)
             }
         }).catch(e => {
             showError(e.message)
-        }).finally(() => 
+        }).finally(() => {
             $("#loading").hide()
-        )
+        })
     }
 })

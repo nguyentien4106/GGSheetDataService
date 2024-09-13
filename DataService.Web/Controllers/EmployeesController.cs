@@ -62,7 +62,12 @@ namespace DataService.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Pin,Name,Password,Privilege,CardNumber,Id")] Employee employee)
         {
-            _service.Insert(employee);
+            var result = await _service.Insert(employee);
+            if (result.IsSuccess)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            ModelState.AddModelError("add", result.Message);
             return View(employee);
         }
 

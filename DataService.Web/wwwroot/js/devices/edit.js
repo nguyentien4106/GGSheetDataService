@@ -46,6 +46,18 @@ $("#update-device").click(function (event) {
             sheetName: $(val).find("input:nth-child(2)").val(),
             documentId: $(val).find("input:last").val()
         }))
+        console.log(sheets)
+
+        const documents = sheets.map(item => item.documentId)
+        console.log(documents)
+
+        const isDuplicated = documents.some((item, index) => documents.indexOf(item) !== index)
+        console.log(isDuplicated)
+        if (isDuplicated) {
+            showError("Document ID is duplicated! Please check again.")
+            return
+        }
+
         const data = {
             Id: $("#id").val(),
             Ip: $("#ip").val(),

@@ -1,1 +1,1 @@
-﻿ $('#loading').hide() 
+﻿$('#loading').hide() 

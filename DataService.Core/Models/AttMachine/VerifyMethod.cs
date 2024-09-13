@@ -8,7 +8,7 @@ namespace DataService.Core.Models.AttMachine
 {
     public static class VerifyMethod
     {
-        private static readonly Dictionary<int, string> _methods = new Dictionary<int, string>()
+        public static readonly Dictionary<int, string> VerifyMethods = new Dictionary<int, string>()
         {
             { 0, "FP_OR_PW_OR_RF" },
             { 1, "FP" },
@@ -27,6 +27,7 @@ namespace DataService.Core.Models.AttMachine
             { 14, "FP_AND_RF_OR_PIN" },
         };
 
-        public static string GetVerifyMethod(int code) => _methods.ContainsKey(code) ? _methods[code] : _methods[0];
+        public static string GetVerifyMethod(int code) => VerifyMethods.ContainsKey(code) ? VerifyMethods[code] : VerifyMethods[0];
+
     }
 }

@@ -3,7 +3,7 @@ namespace DataService.Core.Models.AttMachine
 {
     public static class AttState
     {
-        private static Dictionary<int, string> _attStates = new() 
+        public static Dictionary<int, string> VeriryStates = new() 
         {
             { 0, "Check in" },
             { 1, "Check out" },
@@ -13,9 +13,6 @@ namespace DataService.Core.Models.AttMachine
             { 5, "OT out" },
         };
 
-        public static string GetAttState(int attState)
-        {
-            return _attStates.ContainsKey(attState) ? _attStates[attState] : _attStates[0];
-        }
+        public static string GetAttState(int attState) => VeriryStates.ContainsKey(attState) ? VeriryStates[attState] : VeriryStates[0];
     }
 }

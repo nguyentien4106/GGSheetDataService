@@ -25,7 +25,7 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<Sheet>().HasOne(t => t.Device).WithMany(t => t.Sheets).OnDelete(DeleteBehavior.ClientCascade);
+        builder.Entity<Sheet>().HasOne(t => t.Device).WithMany(t => t.Sheets).HasForeignKey(item => item.DeviceId).OnDelete(DeleteBehavior.Cascade);
         builder.Entity<Attendance>().HasOne(t => t.Device).WithMany(t => t.Attendances).HasForeignKey(i => i.DeviceId).OnDelete(DeleteBehavior.Restrict);
         base.OnModelCreating(builder);
     }

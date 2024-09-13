@@ -5,6 +5,7 @@ using DataService.Infrastructure.Entities;
 using DataWorkerService.Helper;
 using DataWorkerService.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 
 namespace DataService.Application.Services
@@ -12,7 +13,7 @@ namespace DataService.Application.Services
     public class DeviceService : GenericRepository<Device>, IDeviceService
     {
         IServiceLocator _serviceLocator;
-        public DeviceService(AppDbContext context, IServiceLocator locator) : base(context)
+        public DeviceService(AppDbContext context, IServiceLocator locator, ILogger<GenericRepository<Device>> logger) : base(context, logger)
         {
             _serviceLocator = locator;
         }
@@ -77,6 +78,18 @@ namespace DataService.Application.Services
             {
                 return Result.Fail(500, ex.Message);
             }
+        }
+
+        public override async Task<Result> Delete(int id)
+        {
+            var entity = await GetById(id, "Sheets");
+
+            foreach(var sheet in entity.Sheets)
+            {
+                _context.Sheets.Entry(sheet).State = EntityState.Deleted;
+            }
+
+            return await base.Delete(entity);
         }
     }
 }

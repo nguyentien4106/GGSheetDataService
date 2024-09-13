@@ -43,6 +43,13 @@ $("#add-device").click(function (event) {
         sheetName: $(val).find("input:first").val(),
         documentId: $(val).find("input:last").val(),
     }));
+
+    const isDuplicated = sheets.map(item => item.documentId).some(item => sheets.indexOf(item) !== -1)
+    console.log(isDuplicated)
+    if (isDuplicated) {
+        showError("Document ID is duplicated! Please check again.")
+        return
+    }
     const data = {
         Ip: $("#ip").val(),
         Port: $("#port").val(),

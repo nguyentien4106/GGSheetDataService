@@ -33,6 +33,9 @@ namespace DataService.Infrastructure.Migrations
                     b.Property<int>("DeviceId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
@@ -52,6 +55,8 @@ namespace DataService.Infrastructure.Migrations
 
                     b.HasIndex("DeviceId");
 
+                    b.HasIndex("EmployeeId");
+
                     b.ToTable("Attendances");
                 });
 
@@ -70,6 +75,9 @@ namespace DataService.Infrastructure.Migrations
                     b.Property<string>("Ip")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsConnected")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Port")
                         .IsRequired()
@@ -160,10 +168,16 @@ namespace DataService.Infrastructure.Migrations
                     b.HasOne("DataService.Infrastructure.Entities.Device", "Device")
                         .WithMany("Attendances")
                         .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DataService.Infrastructure.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
                     b.Navigation("Device");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("DataService.Infrastructure.Entities.Sheet", b =>
@@ -171,7 +185,7 @@ namespace DataService.Infrastructure.Migrations
                     b.HasOne("DataService.Infrastructure.Entities.Device", "Device")
                         .WithMany("Sheets")
                         .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Device");

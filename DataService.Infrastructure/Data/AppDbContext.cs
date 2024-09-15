@@ -25,11 +25,11 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<Sheet>().HasOne(t => t.Device).WithMany(t => t.Sheets).HasForeignKey(item => item.DeviceId).OnDelete(DeleteBehavior.Cascade);
-        builder.Entity<Attendance>().HasOne(t => t.Device).WithMany(t => t.Attendances).HasForeignKey(i => i.DeviceId).OnDelete(DeleteBehavior.Restrict);
+        //builder.Entity<Sheet>().HasOne(t => t.Device).WithMany(t => t.Sheets).HasForeignKey(item => item.DeviceId).OnDelete(DeleteBehavior.Cascade);
+        //builder.Entity<Attendance>().HasOne(t => t.Device).WithMany(t => t.Attendances).HasForeignKey(i => i.DeviceId).OnDelete(DeleteBehavior.Restrict);
         base.OnModelCreating(builder);
     }
 
-    //protected override void OnConfiguring(DbContextOptionsBuilder options) =>
-    //    options.UseNpgsql("Server=localhost;Port=5432;Database=AttDB;User Id=postgres;Password=Ti100600@;");
+    protected override void OnConfiguring(DbContextOptionsBuilder options) =>
+        options.UseNpgsql("Server=localhost;Port=5432;Database=attdb;User Id=postgres;Password=Ti100600@;");
 }

@@ -30,3 +30,5 @@
     <ProjectReference Include="..\DataService.Infrastructure\DataService.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
+
+

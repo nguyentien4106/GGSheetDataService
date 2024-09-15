@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using DataService.Application.Services;
 using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;
+using DataWorkerService.Helper;
+using DataService.Web.Models.Devices;
 
 namespace DataService.Web.Controllers
 {
@@ -14,7 +16,10 @@ namespace DataService.Web.Controllers
         // GET: Devices
         public async Task<IActionResult> Index()
         {
-            return View(await _service.GetAsync());
+            var devices = await _service.GetAsync(includeProperties: "Sheets");
+            var model = devices.Select(item => new DeviceViewModel(item, SDKHelper.Ping(item).IsSuccess));
+
+            return View(model);
         }
 
         // GET: Devices/Details/5
@@ -45,6 +50,23 @@ namespace DataService.Web.Controllers
         public async Task<IActionResult> Create(Device device)
         {
             var result = await _service.Insert(device);
+
+            return Json(result);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Connect(int id)
+        {
+            var result = await _service.Connect(id);
+
+            return Json(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Disconnect(int id)
+        {
+            var result = await _service.Disconnect(id);
 
             return Json(result);
         }

@@ -17,7 +17,7 @@ using BiometricDevices.NET.Enums;
 
 namespace DataWorkerService.Helper
 {
-    public class SDKHelper
+    public class SDKHelper : IDisposable
     {
         public zkemkeeper.CZKEMClass axCZKEM1 = new zkemkeeper.CZKEMClass();
         private GoogleApiAccount _account;
@@ -34,6 +34,7 @@ namespace DataWorkerService.Helper
         private List<SheetAppender> _appenders = [];
         IQueueSender _queueSender;
         bool _isTest = false;
+        private bool disposed = false;
 
         public SDKHelper(IServiceLocator locator, Device device, bool isTest = false)
         {
@@ -47,6 +48,19 @@ namespace DataWorkerService.Helper
             sta_ConnectTCP();
         }
 
+        public static Result Ping(Device device)
+        {
+            var ping = new zkemkeeper.CZKEMClass();
+            if(ping.Connect_Net(device.Ip, Int32.Parse(device.Port)))
+            {
+                ping.Disconnect();
+                return Result.Success();
+            }
+
+            return Result.Fail(503, "Connection Time out");
+        }
+
+        public Device GetDevice() => _device;
         public bool GetConnectState()
         {
             return bIsConnected;
@@ -76,6 +90,11 @@ namespace DataWorkerService.Helper
 
         public Result sta_ConnectTCP()
         {
+
+            if (!_device.IsConnected)
+            {
+                return Result.Success("Device was not connected because of settings.");
+            }
 
             if (_isTest)
             {
@@ -167,6 +186,14 @@ namespace DataWorkerService.Helper
                 _employees = sta_getEmployees();
                 InitSheetsHelper();
                 this.axCZKEM1.OnAttTransactionEx += axCZKEM1_OnAttTransactionEx;
+                this.axCZKEM1.OnDisConnected += () =>
+                {
+                    _logger.LogInformation("Disconnected");
+                };
+                this.axCZKEM1.OnConnected += () =>
+                {
+                    _logger.LogInformation("Connected");
+                };
                 //this.axCZKEM1.OnEnrollFingerEx += new zkemkeeper._IZKEMEvents_OnEnrollFingerExEventHandler(axCZKEM1_OnEnrollFingerEx);
 
                 //only for black&white device
@@ -308,5 +335,27 @@ namespace DataWorkerService.Helper
             throw new NotImplementedException();
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    _logger.LogInformation("Disconnecting...");
+                    axCZKEM1.Disconnect();
+                }
+
+                // Giải phóng tài nguyên không quản lý ở đây
+
+                disposed = true;
+            }
+        }
     }
+
 }

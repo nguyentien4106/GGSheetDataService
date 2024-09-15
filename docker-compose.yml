@@ -16,7 +16,7 @@ services:
     build: .
     ports:
       - "8080:8080"
-    image: nguyentien0620/dataservice.web:latest
+    image: nguyentien0620/dataservice.web-arm:latest
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Database=attdb;Username=postgres;Password=Ti100600@
@@ -24,10 +24,11 @@ services:
       - db
     networks:
       - container_network
+    platform: linux/arm64/v8
   service:
     build: 
       dockerfile: Dockerfile.service
-    image: nguyentien0620/dataservice:latest
+    image: nguyentien0620/dataservice-arm:latest
 
     environment:
       - ConnectionStrings__DefaultConnection=Host=db;Database=attdb;Username=postgres;Password=Ti100600@
@@ -35,6 +36,7 @@ services:
       - db
     networks:
       - container_network
+    platform: linux/arm64/v8
 
 networks:
   container_network:

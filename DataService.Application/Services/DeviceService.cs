@@ -13,6 +13,7 @@ namespace DataService.Application.Services
     public class DeviceService : GenericRepository<Device>, IDeviceService
     {
         IServiceLocator _serviceLocator;
+        SDKHelper _sdk;
         public DeviceService(AppDbContext context, IServiceLocator locator, ILogger<GenericRepository<Device>> logger) : base(context, logger)
         {
             _serviceLocator = locator;
@@ -28,7 +29,7 @@ namespace DataService.Application.Services
                 return Result.Fail(400, "Device's IP is existed in the system. Please add another device!");
             }
 
-            var sdk = new SDKHelper(_serviceLocator, device);
+            using var sdk = new SDKHelper(_serviceLocator, device);
             if (sdk.GetConnectState())
             {
                 var result = await base.Insert(device);
@@ -90,6 +91,28 @@ namespace DataService.Application.Services
             }
 
             return await base.Delete(entity);
+        }
+
+        public async Task<Result> Connect(int deviceid)
+        {
+            var device = await GetById(deviceid);
+
+            using var sdk = new SDKHelper(_serviceLocator, device);
+            var connected = sdk.GetConnectState();
+            if (connected)
+            {
+                device.IsConnected = true;
+                return await Update(device);
+            }
+
+            return Result.Fail(500, "Can not connect");
+        }
+        public async Task<Result> Disconnect(int deviceid)
+        {
+            var device = await GetById(deviceid);
+            device.IsConnected = false;
+
+            return await Update(device);
         }
     }
 }

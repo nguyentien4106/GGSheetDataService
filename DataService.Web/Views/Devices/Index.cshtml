@@ -1,4 +1,5 @@
-﻿@model IEnumerable<DataService.Infrastructure.Entities.Device>
+﻿@using DataService.Web.Models.Devices
+@model IEnumerable<DeviceViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,17 +13,25 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Ip)
+                IP
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CommKey)
+               CommKey
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Port)
+                Port
             </th>
-            
             <th>
+                Status
+            </th>
+            <th>
+                Health Check
+            </th>
+            <th class="text-center">
                 Action
+            </th>
+            <th>
+                Device's Status Action
             </th>
         </tr>
     </thead>
@@ -30,21 +39,44 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Ip)
+                @Html.DisplayFor(modelItem => item.Device.Ip)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CommKey)
+                @Html.DisplayFor(modelItem => item.Device.CommKey)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Port)
+                @Html.DisplayFor(modelItem => item.Device.Port)
             </td>
-           
             <td>
-                <div class="d-flex gap-2">
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
-                    <a class="btn btn-danger delete" device-id="@item.Id">Delete</a>
+                @if (item.Device.IsConnected)
+                {
+                    <div>Connected</div>
+                }
+                else
+                {
+                    <div>Disconnected</div>
+                }
+            </td>
+            <td>
+                @if (item.Status)
+                {
+                    <div>Healthy</div>
+                }
+                else
+                {
+                    <div>Unhealthy</div>
+                }
+            </td>
+            <td>
+                <div class="d-flex gap-2 justify-content-center">
+                    <a asp-action="Edit" asp-route-id="@item.Device.Id" class="btn btn-primary">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Device.Id" class="btn btn-primary">Details</a>
+                    <a class="btn btn-danger delete" device-id="@item.Device.Id">Delete</a>
                 </div>
+            </td>
+            <td>
+                    <a class="btn btn-primary @(item.Device.IsConnected ? "disconnect" : "connect")" device-id="@item.Device.Id">@(item.Device.IsConnected ? "Disconnect" : "Connect")</a>
+                @* <a asp-action="Disconnect" asp-route-id="@item.Device.Id" class="btn btn-primary">Disconnect</a> *@
             </td>
         </tr>
 }

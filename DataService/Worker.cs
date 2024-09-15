@@ -55,10 +55,15 @@ public class Worker : BackgroundService
                 _logger.LogInformation($"Re-sending data to DB {attendance.UserId} - {attendance.VerifyDate}");
             }
 
-            foreach (var sdk in _sdks)
+            var devices = await _deviceRepos.GetAsync(includeProperties: "Sheets");
+            foreach (var device in devices)
             {
-                sdk.TestRealTimeEvent();
+
             }
+            //foreach (var sdk in _sdks)
+            //{
+            //    sdk.TestRealTimeEvent();
+            //}
             await Task.Delay(TenSeconds, stoppingToken);
             
         }

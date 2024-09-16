@@ -12,7 +12,7 @@ namespace DataService.Web.Models.Att
             Id = attendance.Id;
             VerifyDate = attendance.VerifyDate;
             DeviceId = attendance.DeviceId;
-            UserId = attendance.UserId;
+            UserId = attendance.EmployeeId;
         }
 
 

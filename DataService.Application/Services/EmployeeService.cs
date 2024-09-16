@@ -9,10 +9,8 @@ namespace DataService.Application.Services
 {
     public class EmployeeService : GenericRepository<Employee>, IEmployeeService
     {
-        private IDeviceService _deviceSerivce;
-        public EmployeeService(AppDbContext context, IDeviceService deviceService, ILogger<GenericRepository<Employee>> logger) : base(context, logger)
+        public EmployeeService(AppDbContext context, ILogger<GenericRepository<Employee>> logger) : base(context, logger)
         {
-            _deviceSerivce = deviceService;
         }
 
 

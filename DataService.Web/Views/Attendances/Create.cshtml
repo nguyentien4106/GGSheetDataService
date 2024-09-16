@@ -19,9 +19,9 @@
 <form class="row g-3 employee-validation" novalidate id="employee-validation" asp-action="Create" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="col-md-4">
-        <label asp-for="UserId" class="control-label"></label>
-        @Html.DropDownListFor(item => item.UserId, users, "Select User", new { @class = "form-control" })
-        <span asp-validation-for="UserId" class="text-danger"></span>
+        <label asp-for="EmployeeId" class="control-label"></label>
+        @Html.DropDownListFor(item => item.EmployeeId, users, "Select User", new { @class = "form-control" })
+        <span asp-validation-for="EmployeeId" class="text-danger"></span>
     </div>
     <div class="col-md-4">
         <label asp-for="DeviceId" class="control-label"></label>

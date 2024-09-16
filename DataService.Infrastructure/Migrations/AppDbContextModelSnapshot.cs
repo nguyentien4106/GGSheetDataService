@@ -33,10 +33,7 @@ namespace DataService.Infrastructure.Migrations
                     b.Property<int>("DeviceId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("EmployeeId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("VerifyDate")
@@ -168,12 +165,14 @@ namespace DataService.Infrastructure.Migrations
                     b.HasOne("DataService.Infrastructure.Entities.Device", "Device")
                         .WithMany("Attendances")
                         .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
                     b.HasOne("DataService.Infrastructure.Entities.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId");
+                        .WithMany("Attendances")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Device");
 
@@ -196,6 +195,11 @@ namespace DataService.Infrastructure.Migrations
                     b.Navigation("Attendances");
 
                     b.Navigation("Sheets");
+                });
+
+            modelBuilder.Entity("DataService.Infrastructure.Entities.Employee", b =>
+                {
+                    b.Navigation("Attendances");
                 });
 #pragma warning restore 612, 618
         }

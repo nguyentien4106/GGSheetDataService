@@ -1,5 +1,5 @@
-﻿using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Core.Services;
+﻿using DataService.Core.Interfaces;
+using DataService.Core.Services;
 using DataService.Core.Contracts;
 using DataService.Core.Helper;
 using DataService.Core.Models.AttMachine;
@@ -21,22 +21,22 @@ namespace DataWorkerService.Helper
     {
         public zkemkeeper.CZKEMClass axCZKEM1 = new zkemkeeper.CZKEMClass();
         private GoogleApiAccount _account;
-        private ILogger<SDKHelper> _logger;
         private JSONCredential _credential;
+
+        private ILogger<SDKHelper> _logger;
         private IGenericRepository<Attendance> _repository;
 
         private static bool bIsConnected = false;
         private static int iMachineNumber = 1;
         private static int idwErrorCode = 0;
-        private static int iDeviceTpye = 1;
+
         private Device _device;
         private List<Employee> _employees = [];
         private List<SheetAppender> _appenders = [];
         IQueueSender _queueSender;
-        bool _isTest = false;
         private bool disposed = false;
 
-        public SDKHelper(IServiceLocator locator, Device device, bool isTest = false)
+        public SDKHelper(IServiceLocator locator, Device device)
         {
             _account = locator.Get<GoogleApiAccount>();
             _credential = locator.Get<JSONCredential>();
@@ -44,14 +44,18 @@ namespace DataWorkerService.Helper
             _repository = locator.Get<IGenericRepository<Attendance>>();
             _queueSender = locator.Get<IQueueSender>();
             _device = device;
-            _isTest = isTest;
-            sta_ConnectTCP();
         }
+
+        public string DeviceIP => _device.Ip;
+
+        public bool IsConnected => _device.IsConnected;
 
         public static Result Ping(Device device)
         {
             var ping = new zkemkeeper.CZKEMClass();
-            if(ping.Connect_Net(device.Ip, Int32.Parse(device.Port)))
+            return Result.Success();
+
+            if (ping.Connect_Net(device.Ip, Int32.Parse(device.Port)))
             {
                 ping.Disconnect();
                 return Result.Success();
@@ -61,6 +65,7 @@ namespace DataWorkerService.Helper
         }
 
         public Device GetDevice() => _device;
+
         public bool GetConnectState()
         {
             return bIsConnected;
@@ -90,18 +95,9 @@ namespace DataWorkerService.Helper
 
         public Result sta_ConnectTCP()
         {
-
             if (!_device.IsConnected)
             {
-                return Result.Success("Device was not connected because of settings.");
-            }
-
-            if (_isTest)
-            {
-                SetConnectState(true);
-                _logger.LogInformation($"Connected successfully to device ${_device.Ip}!");
-                sta_RegRealTime();
-                return Result.Success();
+                return Result.Success("Connect fail because of settings.");
             }
 
             if (_device == null)
@@ -116,11 +112,9 @@ namespace DataWorkerService.Helper
 
             if (bIsConnected)
             {
-                axCZKEM1.Disconnect();
-                SetConnectState(false);
-                _logger.LogError($"Device was connected then disconnected");
+                _logger.LogError($"Device connected already!");
 
-                return Result.Fail(-2, "Disconnected"); //disconnect
+                return Result.Success("Device connected already!"); //disconnect
             }
             
             _logger.LogInformation($"Connecting to device {_device.Ip}");
@@ -145,24 +139,18 @@ namespace DataWorkerService.Helper
         {
             if (GetConnectState())
             {
+                _logger.LogInformation($"Disconnecting device {_device.Ip}");
+
                 axCZKEM1.Disconnect();
                 _logger.LogInformation($"Disconnected device {_device.Ip} successfully");
                 return;
             }
-            _logger.LogError($"Disconnected device {_device.Ip} failed !!!");
+            _logger.LogError($"Device was disconnected already.");
         }
 
         public Result sta_RegRealTime()
         {
-            if (_isTest)
-            {
-                _employees = sta_getEmployees();
-                InitSheetsHelper();
-                this.axCZKEM1.OnAttTransactionEx += axCZKEM1_OnAttTransactionEx;
-                return Result.Success();
-            }
-
-
+           
             if (!GetConnectState())
             {
                 _logger.LogError("Register Real-Time Event fail because of unconnected device!");
@@ -310,12 +298,6 @@ namespace DataWorkerService.Helper
                 WorkCode = WorkCode,
                 DeviceId = _device.Id
             };
-
-            if (_isTest)
-            {
-                DataHelper.PublishData(_appenders, _repository, attRecord, new Employee(), _queueSender);
-                return;
-            }
 
             if (employee == null)
             {

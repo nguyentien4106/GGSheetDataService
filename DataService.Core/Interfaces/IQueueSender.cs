@@ -1,7 +1,7 @@
 ﻿using DataService.Infrastructure.Entities;
 using GoogleSheetsWrapper;
 
-namespace CleanArchitecture.Core.Interfaces;
+namespace DataService.Core.Interfaces;
 
 public interface IQueueSender
 {

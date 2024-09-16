@@ -7,7 +7,7 @@ namespace DataService.Infrastructure.Entities
     {
         [Display(Name = "User")]
         [Required(ErrorMessage = "{0} is required!")]
-        public int UserId { get; set; }
+        public int EmployeeId { get; set; }
 
         public Employee? Employee { get; set; }
 

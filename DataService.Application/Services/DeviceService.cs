@@ -1,7 +1,9 @@
-﻿using CleanArchitecture.Core.Services;
+﻿using DataService.Core.Services;
+using DataService.Core.Messaging;
 using DataService.Core.Repositories;
 using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;
+using DeviceEntity = DataService.Infrastructure.Entities.Device;
 using DataWorkerService.Helper;
 using DataWorkerService.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,35 +12,37 @@ using Microsoft.Extensions.Logging;
 
 namespace DataService.Application.Services
 {
-    public class DeviceService : GenericRepository<Device>, IDeviceService
+    public class DeviceService : GenericRepository<DeviceEntity>, IDeviceService
     {
         IServiceLocator _serviceLocator;
         SDKHelper _sdk;
-        public DeviceService(AppDbContext context, IServiceLocator locator, ILogger<GenericRepository<Device>> logger) : base(context, logger)
+        public DeviceService(AppDbContext context, IServiceLocator locator, ILogger<GenericRepository<DeviceEntity>> logger) : base(context, logger)
         {
             _serviceLocator = locator;
         }
 
-        public override async Task<Result> Insert(Device device)
+        public override async Task<Result> Insert(DeviceEntity device)
         {
             var devices = await base.GetAsync();
 
             var existedIp = devices.FirstOrDefault(item => item.Ip == device.Ip);
             if (existedIp != null) 
             {
-                return Result.Fail(400, "Device's IP is existed in the system. Please add another device!");
+                return Result.Fail(400, "Device's Ip is existed in the system. Please add another device!");
             }
 
-            using var sdk = new SDKHelper(_serviceLocator, device);
-            if (sdk.GetConnectState())
+            var result = SDKHelper.Ping(device);
+
+            if (result.IsSuccess)
             {
-                var result = await base.Insert(device);
-                sdk.sta_DisConnect();
-                return result;
+                RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
+                {
+                    ActionType = ActionType.Added,
+                    Data = device
+                }.ToString());
             }
-            
 
-            return Result.Fail(503, "Can not connect to device! Please check and correct the information !");
+            return result;
         }
 
         public override async Task<Result> Update(Device entityToUpdate)
@@ -73,6 +77,13 @@ namespace DataService.Application.Services
                     }
                 }
                 await _context.SaveChangesAsync();
+
+                RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
+                {
+                    ActionType = ActionType.Deleted,
+                    Data = entityToUpdate
+                }.ToString());
+
                 return Result.Success();
             }
             catch (Exception ex)
@@ -83,36 +94,39 @@ namespace DataService.Application.Services
 
         public override async Task<Result> Delete(int id)
         {
-            var entity = await GetById(id, "Sheets");
+            var device = await GetById(id, "Sheets,Attendances");
 
-            foreach(var sheet in entity.Sheets)
+            RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
             {
-                _context.Sheets.Entry(sheet).State = EntityState.Deleted;
-            }
+                ActionType = ActionType.Deleted,
+                Data = device
+            }.ToString());
 
-            return await base.Delete(entity);
+            return Result.Success("Requested to Delete! Please wait....");
         }
 
         public async Task<Result> Connect(int deviceid)
         {
             var device = await GetById(deviceid);
 
-            using var sdk = new SDKHelper(_serviceLocator, device);
-            var connected = sdk.GetConnectState();
-            if (connected)
+            RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
             {
-                device.IsConnected = true;
-                return await Update(device);
-            }
+                ActionType = ActionType.Connect,
+                Data = device
+            }.ToString());
 
-            return Result.Fail(500, "Can not connect");
+            return Result.Success("Requested to Connect! Please wait....");
         }
         public async Task<Result> Disconnect(int deviceid)
         {
             var device = await GetById(deviceid);
-            device.IsConnected = false;
+            RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
+            {
+                ActionType = ActionType.Disconnect,
+                Data = device
+            }.ToString());
 
-            return await Update(device);
+            return Result.Success("Requested to Disconnect! Please wait....");
         }
     }
 }

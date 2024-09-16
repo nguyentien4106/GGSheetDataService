@@ -2,7 +2,7 @@
 using GoogleSheetsWrapper;
 using System.Threading.Tasks;
 
-namespace CleanArchitecture.Core.Interfaces;
+namespace DataService.Core.Interfaces;
 
 public interface IQueueReceiver
 {

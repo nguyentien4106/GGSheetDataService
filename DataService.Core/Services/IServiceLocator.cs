@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CleanArchitecture.Core.Services;
+namespace DataService.Core.Services;
 
 public interface IServiceLocator : IDisposable
 {

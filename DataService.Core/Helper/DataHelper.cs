@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Core.Interfaces;
+﻿using DataService.Core.Interfaces;
 using DataService.Core.Contracts;
 using DataService.Core.Models.AttMachine;
 using DataService.Infrastructure.Entities;

@@ -22,7 +22,7 @@ namespace DataService.Core.Models.AttMachine
         {
             return new Attendance()
             {
-                UserId = int.Parse(UserId),
+                EmployeeId = int.Parse(UserId),
                 DeviceId = DeviceId,
                 WorkCode = WorkCode,
                 VerifyDate = DateTimeRecord,

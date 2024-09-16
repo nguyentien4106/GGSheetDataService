@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Core.Services;
+﻿using DataService.Core.Services;
 using DataService.Core.Repositories;
 using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;

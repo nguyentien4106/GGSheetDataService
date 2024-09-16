@@ -10,7 +10,7 @@ namespace DataService.Infrastructure.Entities
 
         public string CommKey { get; set; } = string.Empty;
 
-        public bool IsConnected { get; set; }
+        public bool IsConnected { get; set; } = false;
 
         public List<Sheet> Sheets { get; set; } = [];
 

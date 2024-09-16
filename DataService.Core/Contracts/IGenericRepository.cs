@@ -1,5 +1,6 @@
 ﻿using DataService.Infrastructure.Entities;
 using DataWorkerService.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace DataService.Core.Contracts
@@ -27,6 +28,8 @@ namespace DataService.Core.Contracts
         Task<Result> Delete(TEntity entityToDelete);
 
         Task<Result> Update(TEntity entityToUpdate);
+
+        //DbSet<TEntity> DbSet();
 
     }
 }

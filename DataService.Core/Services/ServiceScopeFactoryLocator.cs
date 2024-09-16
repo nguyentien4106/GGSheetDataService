@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace CleanArchitecture.Core.Services;
+namespace DataService.Core.Services;
 
 /// <summary>
 /// A wrapper around ServiceScopeFactory to make it easier to fake out with MOQ.

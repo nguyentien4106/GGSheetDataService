@@ -1,6 +1,6 @@
-﻿using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Core.Messaging;
-using CleanArchitecture.Core.Services;
+﻿using DataService.Core.Interfaces;
+using DataService.Core.Messaging;
+using DataService.Core.Services;
 using DataService.Core.Contracts;
 using DataService.Core.Repositories;
 using DataService.Infrastructure.Data;
@@ -35,6 +35,7 @@ public static class ServiceCollectionSetupExtensions
     public static void AddOtherServices(this IServiceCollection services)
     {
         services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
+        services.AddSingleton<ISDKService, SDKService>();
     }
 
 }

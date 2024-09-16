@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -23,5 +24,7 @@ namespace DataWorkerService.Models
         public static Result Fail(int code, string message = "Didn't connect to device. Please connect to device first!") => new Result(code, message);
 
         public bool IsSuccess => Code == SuccessCode;
+
+        public string ToString() => JsonConvert.SerializeObject(this);
     }
 }

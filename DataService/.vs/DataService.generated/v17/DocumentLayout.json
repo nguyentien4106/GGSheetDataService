@@ -3,77 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\services\\sdkservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\interfaces\\isdkservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\dataservice.core.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\messaging\\rabbitmqconsumer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\helper\\sdkhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\repositories\\genericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\contracts\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\helper\\datahelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice\\worker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E3C59FF3-9E26-4AF0-9A3C-E202CE589A9C}|DataService.csproj|solutionrelative:worker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\models\\attmachine\\onattendancetransactionrecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\messaging\\inmemoryqueuesender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\messaging\\inmemoryqueuereceiver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\interfaces\\iqueuesender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\interfaces\\iqueuereceiver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{DF87BD57-5815-4054-B74B-443010A4E059}|..\\DataService.Infrastructure\\DataService.Infrastructure.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.infrastructure\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DF87BD57-5815-4054-B74B-443010A4E059}|..\\DataService.Infrastructure\\DataService.Infrastructure.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.infrastructure\\entities\\sheet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\contracts\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DF87BD57-5815-4054-B74B-443010A4E059}|..\\DataService.Infrastructure\\DataService.Infrastructure.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.infrastructure\\entities\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DF87BD57-5815-4054-B74B-443010A4E059}|..\\DataService.Infrastructure\\DataService.Infrastructure.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.infrastructure\\entities\\device.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DF87BD57-5815-4054-B74B-443010A4E059}|..\\DataService.Infrastructure\\DataService.Infrastructure.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.infrastructure\\entities\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DF87BD57-5815-4054-B74B-443010A4E059}|..\\DataService.Infrastructure\\DataService.Infrastructure.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.infrastructure\\dataservice.infrastructure.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\models\\attmachine\\attstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\models\\attmachine\\verifymethod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\models\\attmachine\\userprivilege.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{54FC73F0-5BCE-49E0-9B55-84B3A56D7788}|..\\DataService.Core\\DataService.Core.csproj|c:\\users\\walter.nguyen\\desktop\\ggsheetdataservice\\dataservice.core\\messaging\\rabbitmqhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -87,301 +42,119 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "appsettings.Development.json",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\appsettings.Development.json",
-              "RelativeDocumentMoniker": "appsettings.Development.json",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\appsettings.Development.json",
-              "RelativeToolTip": "appsettings.Development.json",
-              "ViewState": "AQIAABIAAAAAAAAAAAAqwCwAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-09-13T06:56:29.395Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "DataService.Core",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\DataService.Core.csproj",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\DataService.Core.csproj",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\DataService.Core.csproj",
-              "RelativeToolTip": "..\\DataService.Core\\DataService.Core.csproj",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-09-13T06:43:21.87Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AQIAAA8AAAAAAAAAAAAAAAgAAAAjAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-09-12T04:44:15.859Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Worker.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\Worker.cs",
-              "RelativeDocumentMoniker": "Worker.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\Worker.cs",
-              "RelativeToolTip": "Worker.cs",
-              "ViewState": "AQIAABMAAAAAAAAAAAAywBoAAAAyAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-27T07:03:36.026Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "IQueueSender.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Interfaces\\IQueueSender.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Interfaces\\IQueueSender.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Interfaces\\IQueueSender.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Interfaces\\IQueueSender.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAgAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T04:27:56.026Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "IGenericRepository.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Contracts\\IGenericRepository.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Contracts\\IGenericRepository.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Contracts\\IGenericRepository.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Contracts\\IGenericRepository.cs",
-              "ViewState": "AQIAAAoAAAAAAAAAAAAWwBYAAAAbAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T04:28:42.732Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 3,
               "Title": "SDKHelper.cs",
               "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Helper\\SDKHelper.cs",
               "RelativeDocumentMoniker": "..\\DataService.Core\\Helper\\SDKHelper.cs",
               "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Helper\\SDKHelper.cs",
               "RelativeToolTip": "..\\DataService.Core\\Helper\\SDKHelper.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAvwBsAAAAQAAAA",
+              "ViewState": "AQIAAHsAAAAAAAAAAAAnwJMAAAA/AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-11T02:49:00.852Z",
+              "WhenOpened": "2024-09-16T09:48:26.068Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "OnAttendanceTransactionRecord.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Models\\AttMachine\\OnAttendanceTransactionRecord.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Models\\AttMachine\\OnAttendanceTransactionRecord.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Models\\AttMachine\\OnAttendanceTransactionRecord.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Models\\AttMachine\\OnAttendanceTransactionRecord.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAnwBYAAAAAAAAA",
+              "DocumentIndex": 1,
+              "Title": "ISDKService.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Interfaces\\ISDKService.cs",
+              "RelativeDocumentMoniker": "..\\DataService.Core\\Interfaces\\ISDKService.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Interfaces\\ISDKService.cs",
+              "RelativeToolTip": "..\\DataService.Core\\Interfaces\\ISDKService.cs",
+              "ViewState": "AQIAAAgAAAAAAAAAAIAwwBMAAAAVAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T03:13:17.695Z",
+              "WhenOpened": "2024-09-16T09:35:01.547Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "DataHelper.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Helper\\DataHelper.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Helper\\DataHelper.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Helper\\DataHelper.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Helper\\DataHelper.cs",
-              "ViewState": "AQIAACIAAAAAAAAAAIAzwDQAAAAeAAAA",
+              "DocumentIndex": 0,
+              "Title": "SDKService.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Services\\SDKService.cs",
+              "RelativeDocumentMoniker": "..\\DataService.Core\\Services\\SDKService.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Services\\SDKService.cs",
+              "RelativeToolTip": "..\\DataService.Core\\Services\\SDKService.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAIAywC4AAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-11T02:48:10.982Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "InMemoryQueueSender.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Messaging\\InMemoryQueueSender.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Messaging\\InMemoryQueueSender.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Messaging\\InMemoryQueueSender.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Messaging\\InMemoryQueueSender.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAwAAAAnAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T04:17:16.403Z",
+              "WhenOpened": "2024-09-16T09:35:13.061Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "GenericRepository.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Repositories\\GenericRepository.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Repositories\\GenericRepository.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Repositories\\GenericRepository.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Repositories\\GenericRepository.cs",
-              "ViewState": "AQIAAEQAAAAAAAAAAAAEwFcAAAAgAAAA",
+              "Title": "DataHelper.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Helper\\DataHelper.cs",
+              "RelativeDocumentMoniker": "..\\DataService.Core\\Helper\\DataHelper.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Helper\\DataHelper.cs",
+              "RelativeToolTip": "..\\DataService.Core\\Helper\\DataHelper.cs",
+              "ViewState": "AQIAABYAAAAAAAAAAAAswAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T04:13:27.968Z",
+              "WhenOpened": "2024-09-16T09:30:12.245Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "RabbitMQConsumer.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Messaging\\RabbitMQConsumer.cs",
+              "RelativeDocumentMoniker": "..\\DataService.Core\\Messaging\\RabbitMQConsumer.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Messaging\\RabbitMQConsumer.cs",
+              "RelativeToolTip": "..\\DataService.Core\\Messaging\\RabbitMQConsumer.cs",
+              "ViewState": "AQIAAGAAAAAAAAAAAAAgwHAAAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-16T09:29:28.084Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAcAAAA",
+              "Title": "IGenericRepository.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Contracts\\IGenericRepository.cs",
+              "RelativeDocumentMoniker": "..\\DataService.Core\\Contracts\\IGenericRepository.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Contracts\\IGenericRepository.cs",
+              "RelativeToolTip": "..\\DataService.Core\\Contracts\\IGenericRepository.cs",
+              "ViewState": "AQIAAA0AAAAAAAAAAAAswB8AAAAhAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T03:32:42.483Z",
+              "WhenOpened": "2024-09-16T09:28:16.149Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "InMemoryQueueReceiver.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Messaging\\InMemoryQueueReceiver.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Messaging\\InMemoryQueueReceiver.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Messaging\\InMemoryQueueReceiver.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Messaging\\InMemoryQueueReceiver.cs",
-              "ViewState": "AQIAAAEAAAAAAAAAAIAzwA8AAAAYAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T04:17:13.38Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "IQueueReceiver.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Interfaces\\IQueueReceiver.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Interfaces\\IQueueReceiver.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Interfaces\\IQueueReceiver.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Interfaces\\IQueueReceiver.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAEAAAAaAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T04:27:49.642Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 6,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "..\\DataService.Infrastructure\\Data\\AppDbContext.cs",
               "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\Data\\AppDbContext.cs",
               "RelativeToolTip": "..\\DataService.Infrastructure\\Data\\AppDbContext.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAABOwAsAAAAFAAAA",
+              "ViewState": "AQIAABEAAAAAAAAAAAAqwB8AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T02:29:40.873Z",
+              "WhenOpened": "2024-09-16T07:49:53.336Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Sheet.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\Entities\\Sheet.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Infrastructure\\Entities\\Sheet.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\Entities\\Sheet.cs",
-              "RelativeToolTip": "..\\DataService.Infrastructure\\Entities\\Sheet.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAANAAAA",
+              "DocumentIndex": 8,
+              "Title": "RabbitMQHandler.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Messaging\\RabbitMQHandler.cs",
+              "RelativeDocumentMoniker": "..\\DataService.Core\\Messaging\\RabbitMQHandler.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Messaging\\RabbitMQHandler.cs",
+              "RelativeToolTip": "..\\DataService.Core\\Messaging\\RabbitMQHandler.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAjwC0AAAAOAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T04:16:37.236Z",
+              "WhenOpened": "2024-09-16T06:57:03.555Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "Employee.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\Entities\\Employee.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Infrastructure\\Entities\\Employee.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\Entities\\Employee.cs",
-              "RelativeToolTip": "..\\DataService.Infrastructure\\Entities\\Employee.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAANAAAA",
+              "DocumentIndex": 5,
+              "Title": "Worker.cs",
+              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\Worker.cs",
+              "RelativeDocumentMoniker": "Worker.cs",
+              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService\\Worker.cs",
+              "RelativeToolTip": "Worker.cs",
+              "ViewState": "AQIAABkAAAAAAAAAAIA7wCcAAAAWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T04:16:31.978Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "Device.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\Entities\\Device.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Infrastructure\\Entities\\Device.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\Entities\\Device.cs",
-              "RelativeToolTip": "..\\DataService.Infrastructure\\Entities\\Device.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAANAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T04:16:25.732Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "BaseEntity.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\Entities\\BaseEntity.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Infrastructure\\Entities\\BaseEntity.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\Entities\\BaseEntity.cs",
-              "RelativeToolTip": "..\\DataService.Infrastructure\\Entities\\BaseEntity.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAkAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T04:15:31.355Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "DataService.Infrastructure.csproj",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\DataService.Infrastructure.csproj",
-              "RelativeDocumentMoniker": "..\\DataService.Infrastructure\\DataService.Infrastructure.csproj",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Infrastructure\\DataService.Infrastructure.csproj",
-              "RelativeToolTip": "..\\DataService.Infrastructure\\DataService.Infrastructure.csproj",
-              "ViewState": "AQIAAAAAAAAAAAAAAABEwBcAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-09-12T04:06:11.889Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "VerifyMethod.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Models\\AttMachine\\VerifyMethod.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Models\\AttMachine\\VerifyMethod.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Models\\AttMachine\\VerifyMethod.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Models\\AttMachine\\VerifyMethod.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAABOwAYAAAAaAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T03:37:32.224Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "UserPrivilege.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Models\\AttMachine\\UserPrivilege.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Models\\AttMachine\\UserPrivilege.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Models\\AttMachine\\UserPrivilege.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Models\\AttMachine\\UserPrivilege.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAACLAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T03:37:35.672Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "AttState.cs",
-              "DocumentMoniker": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Models\\AttMachine\\AttState.cs",
-              "RelativeDocumentMoniker": "..\\DataService.Core\\Models\\AttMachine\\AttState.cs",
-              "ToolTip": "C:\\Users\\walter.nguyen\\Desktop\\GGSheetDataService\\DataService.Core\\Models\\AttMachine\\AttState.cs",
-              "RelativeToolTip": "..\\DataService.Core\\Models\\AttMachine\\AttState.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAEAAAAaAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-12T03:48:26.772Z",
+              "WhenOpened": "2024-09-16T05:29:42.524Z",
               "EditorCaption": ""
             }
           ]

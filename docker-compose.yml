@@ -11,7 +11,12 @@ services:
       - "5432:5432"
     networks:
       - container_network
-
+  messagequeue:
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+    networks:
+      - container_network
   app:
     build: .
     ports:

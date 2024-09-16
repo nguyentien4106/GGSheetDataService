@@ -25,6 +25,21 @@ namespace DataService.Core.Services
             _repository = locator.Get<IGenericRepository<Device>>();
             _locator = locator;
         }
+        public void Init(bool connect = false)
+        {
+            var devices = _repository.Get(includeProperties: "Sheets");
+            foreach (var device in devices)
+            {
+                _sdks.Add(new SDKHelper(_locator, device));
+            }
+
+            if (connect)
+            {
+                ConnectAll();
+            }
+        }
+
+        public List<SDKHelper> GetCurrentSDKs() => _sdks;
 
         public Result Add(Device device, bool connect = false)
         {
@@ -38,13 +53,16 @@ namespace DataService.Core.Services
             return Result.Success();
         }
 
-        public List<SDKHelper> GetCurrentSDKs()
+        public Result Remove(Device device)
         {
-            return _sdks;
-        }
+            var item = _sdks.FirstOrDefault(item => item.DeviceIP == device.Ip);
+            if (item == null)
+            {
+                return Result.Fail(404, "Device not found");
+            }
 
-        public Result Remove(SDKHelper device)
-        {
+            _sdks.Remove(item);
+
             return Result.Success();
         }
 
@@ -57,27 +75,12 @@ namespace DataService.Core.Services
             }
         }
 
-        public void Init()
+        public void ConnectAll()
         {
-            var devices = _repository.Get(includeProperties: "Sheets");
-            foreach(var device in devices)
+            foreach (var sdk in _sdks)
             {
-                _sdks.Add(new SDKHelper(_locator, device));
+                sdk.sta_ConnectTCP();
             }
-        }
-
-        public Result Remove(Device device)
-        {
-            foreach(var sdk in _sdks)
-            {
-                if(sdk.DeviceIP == device.Ip)
-                {
-                    sdk.sta_DisConnect();
-                    return Result.Success();
-                }
-            }
-
-            return Result.Fail(404, "Device not found");
         }
     }
 }

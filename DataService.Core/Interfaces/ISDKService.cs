@@ -11,16 +11,16 @@ namespace DataService.Core.Interfaces
 {
     public interface ISDKService
     {
-        void Init();
+        void Init(bool connect = false);
 
         Result Add(Device device, bool connect = false);
-
-        Result Remove(SDKHelper device);
 
         Result Remove(DataService.Infrastructure.Entities.Device device);
 
         List<SDKHelper> GetCurrentSDKs();
 
         void DisconnectAll();
+
+        void ConnectAll();
     }
 }

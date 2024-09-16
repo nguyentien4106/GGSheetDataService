@@ -14,8 +14,6 @@ namespace DataService.Infrastructure.Entities
 
         public List<Sheet> Sheets { get; set; } = [];
 
-        public List<Attendance> Attendances { get; set; } = [];
-
         public bool IsSameValue(Device other) => JsonConvert.SerializeObject(this) == JsonConvert.SerializeObject(other);
     }
 }

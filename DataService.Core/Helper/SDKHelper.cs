@@ -95,25 +95,24 @@ namespace DataWorkerService.Helper
 
         public Result sta_ConnectTCP()
         {
-            if (!_device.IsConnected)
-            {
-                return Result.Success("Connect fail because of settings.");
-            }
-
+            
             if (_device == null)
             {
                 _logger.LogError($"Device model given was null");
+                SetConnectState(false);
 
                 return Result.Fail(-1, "Do not recognize device settings");// ip or port is null
 
             }
-
+            //axCZKEM1.GetDeviceStatus();
             axCZKEM1.SetCommPassword(Convert.ToInt32(_device.CommKey));
 
             if (bIsConnected)
             {
                 _logger.LogError($"Device connected already!");
+                sta_DisConnect();
 
+                SetConnectState(false);
                 return Result.Success("Device connected already!"); //disconnect
             }
             
@@ -140,11 +139,12 @@ namespace DataWorkerService.Helper
             if (GetConnectState())
             {
                 _logger.LogInformation($"Disconnecting device {_device.Ip}");
-
+                SetConnectState(false);
                 axCZKEM1.Disconnect();
                 _logger.LogInformation($"Disconnected device {_device.Ip} successfully");
                 return;
             }
+            axCZKEM1.Disconnect();
             _logger.LogError($"Device was disconnected already.");
         }
 

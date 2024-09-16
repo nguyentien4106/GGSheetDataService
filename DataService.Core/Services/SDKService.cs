@@ -46,10 +46,21 @@ namespace DataService.Core.Services
             var sdk = new SDKHelper(_locator, device);
             if (connect)
             {
-                sdk.sta_ConnectTCP();
+                var result = sdk.sta_ConnectTCP();
+                if (result.IsSuccess)
+                {
+                    _sdks.Add(sdk);
+                    _logger.LogInformation("Connect successlyfully");
+                    return Result.Success();
+                }
+                else
+                {
+                    _logger.LogInformation("Connect Failed");
+                    return Result.Fail(503, "Can not connect");
+
+                }
             }
 
-            _sdks.Add(sdk);
             return Result.Success();
         }
 
@@ -60,7 +71,7 @@ namespace DataService.Core.Services
             {
                 return Result.Fail(404, "Device not found");
             }
-
+            item.sta_DisConnect();
             _sdks.Remove(item);
 
             return Result.Success();

@@ -14,6 +14,9 @@ namespace DataService.Core.Messaging
 
         public T Data { get; set;}
 
-        public string ToString() => JsonConvert.SerializeObject(this);
+        public string ToString() => JsonConvert.SerializeObject(this, Formatting.None, new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+        });
     }
 }

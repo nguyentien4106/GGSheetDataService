@@ -50,10 +50,6 @@ namespace DataService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId");
-
-                    b.HasIndex("EmployeeId");
-
                     b.ToTable("Attendances");
                 });
 
@@ -160,25 +156,6 @@ namespace DataService.Infrastructure.Migrations
                     b.ToTable("Tests");
                 });
 
-            modelBuilder.Entity("DataService.Infrastructure.Entities.Attendance", b =>
-                {
-                    b.HasOne("DataService.Infrastructure.Entities.Device", "Device")
-                        .WithMany("Attendances")
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
-                        .IsRequired();
-
-                    b.HasOne("DataService.Infrastructure.Entities.Employee", "Employee")
-                        .WithMany("Attendances")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Device");
-
-                    b.Navigation("Employee");
-                });
-
             modelBuilder.Entity("DataService.Infrastructure.Entities.Sheet", b =>
                 {
                     b.HasOne("DataService.Infrastructure.Entities.Device", "Device")
@@ -192,14 +169,7 @@ namespace DataService.Infrastructure.Migrations
 
             modelBuilder.Entity("DataService.Infrastructure.Entities.Device", b =>
                 {
-                    b.Navigation("Attendances");
-
                     b.Navigation("Sheets");
-                });
-
-            modelBuilder.Entity("DataService.Infrastructure.Entities.Employee", b =>
-                {
-                    b.Navigation("Attendances");
                 });
 #pragma warning restore 612, 618
         }

@@ -18,7 +18,5 @@ namespace DataService.Infrastructure.Entities
 
         public string CardNumber { get; set; } = string.Empty;
 
-        public List<Attendance> Attendances { get; set; } = [];
-
     }
 }

@@ -9,14 +9,11 @@ namespace DataService.Infrastructure.Entities
         [Required(ErrorMessage = "{0} is required!")]
         public int EmployeeId { get; set; }
 
-        public Employee? Employee { get; set; }
 
         [Display(Name = "Device")]
         [Required(ErrorMessage = "{0} is required!")]
 
         public int DeviceId { get; set; }
-
-        public Device? Device { get; set; }
 
         [Display(Name = "Verify Date")]
         [Required(ErrorMessage = "{0} is required!")]

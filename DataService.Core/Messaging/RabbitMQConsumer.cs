@@ -114,6 +114,24 @@ namespace DataService.Core.Messaging
                 _logger.LogError($"Didn't find any SDK initilized with Device's IP = {device.Ip}");
                 return;
             }
+
+            var sheets = _context.Sheets.Where(item => item.DeviceId == device.Id);
+            foreach (var sheet in sheets)
+            {
+                _context.Entry(sheet).State = EntityState.Deleted;
+            }
+
+            foreach(var sheet in device.Sheets)
+            {
+                sheet.Id = 0;
+                sheet.DeviceId = device.Id;
+                _context.Sheets.Entry(sheet).State = EntityState.Added;
+            }
+            
+            //_context.Sheets.AddRange(device.Sheets);
+            _context.SaveChanges();
+            // determine
+
             _sdkService.Remove(device);
             _sdkService.Add(device, true);
         }
@@ -130,6 +148,8 @@ namespace DataService.Core.Messaging
             }
 
             sdk.sta_DisConnect();
+            _context.Devices.Where(item => item.Ip == device.Ip).ExecuteUpdate(setter => setter.SetProperty(i => i.IsConnected, false));
+
         }
 
         private void HandleConnectDevice(Device device)
@@ -141,12 +161,16 @@ namespace DataService.Core.Messaging
             if(sdk == null) 
             {
                 _logger.LogError($"Didn't find any SDK initilized with Device's IP = {device.Ip}");
+                var newSDK = new SDKHelper(_locator, device);
+                newSDK.sta_ConnectTCP();
+                _sdkService.Add(device);
                 return;
             }
 
             var result = sdk.sta_ConnectTCP();
             if (result.IsSuccess)
             {
+                _context.Devices.Where(item => item.Ip == device.Ip).ExecuteUpdate(setter => setter.SetProperty(i => i.IsConnected, true));
                 _logger.LogInformation($"Connected Successfully! Device's IP = {device.Ip}");
             }
             else
@@ -162,9 +186,9 @@ namespace DataService.Core.Messaging
             {
                 _context.Sheets.Entry(sheet).State = EntityState.Deleted;
             }
-
-            device.Attendances.Clear();
-            _deviceRepository.Delete(device);
+            
+            _context.Devices.Entry(device).State = EntityState.Deleted;
+            _context.SaveChanges();
         }
 
         private void HandleAddNewDevice(Device device)

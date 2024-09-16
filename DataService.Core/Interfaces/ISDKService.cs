@@ -13,13 +13,11 @@ namespace DataService.Core.Interfaces
     {
         void Init();
 
-        Result Add(Device device);
+        Result Add(Device device, bool connect = false);
 
         Result Remove(SDKHelper device);
 
         Result Remove(DataService.Infrastructure.Entities.Device device);
-
-        Result Update(int id, SDKHelper device);
 
         List<SDKHelper> GetCurrentSDKs();
 

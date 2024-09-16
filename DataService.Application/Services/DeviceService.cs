@@ -14,11 +14,8 @@ namespace DataService.Application.Services
 {
     public class DeviceService : GenericRepository<DeviceEntity>, IDeviceService
     {
-        IServiceLocator _serviceLocator;
-        SDKHelper _sdk;
-        public DeviceService(AppDbContext context, IServiceLocator locator, ILogger<GenericRepository<DeviceEntity>> logger) : base(context, logger)
+        public DeviceService(AppDbContext context, ILogger<GenericRepository<DeviceEntity>> logger) : base(context, logger)
         {
-            _serviceLocator = locator;
         }
 
         public override async Task<Result> Insert(DeviceEntity device)

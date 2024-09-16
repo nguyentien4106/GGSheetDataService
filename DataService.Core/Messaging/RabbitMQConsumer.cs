@@ -109,9 +109,13 @@ namespace DataService.Core.Messaging
             _logger.LogInformation("HandleModifiedDevice");
 
             var sdk = _sdkService.GetCurrentSDKs().FirstOrDefault(item => item.DeviceIP == device.Ip);
-
+            if (sdk == null)
+            {
+                _logger.LogError($"Didn't find any SDK initilized with Device's IP = {device.Ip}");
+                return;
+            }
             _sdkService.Remove(device);
-            _sdkService.Add(device);
+            _sdkService.Add(device, true);
         }
 
         private void HandleDisconnectDevice(Device device)

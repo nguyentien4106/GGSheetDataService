@@ -271,7 +271,6 @@ namespace DataWorkerService.Helper
 
                     employees.Add(emp);
                 }
-                _logger.LogInformation($"Loaded User Information Successfully with Count={employees.Count}");
             }
             catch(Exception ex) 
             {

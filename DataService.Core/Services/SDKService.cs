@@ -26,9 +26,15 @@ namespace DataService.Core.Services
             _locator = locator;
         }
 
-        public Result Add(Device device)
+        public Result Add(Device device, bool connect = false)
         {
-            _sdks.Add(new SDKHelper(_locator, device));
+            var sdk = new SDKHelper(_locator, device);
+            if (connect)
+            {
+                sdk.sta_ConnectTCP();
+            }
+
+            _sdks.Add(sdk);
             return Result.Success();
         }
 
@@ -49,11 +55,6 @@ namespace DataService.Core.Services
                 _logger.LogInformation($"Disconnecting Device's IP: {sdk.GetDevice().Ip}");
                 sdk.sta_DisConnect();
             }
-        }
-
-        public Result Update(int id, SDKHelper device)
-        {
-            throw new NotImplementedException();
         }
 
         public void Init()

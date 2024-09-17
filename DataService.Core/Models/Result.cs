@@ -15,6 +15,8 @@ namespace DataWorkerService.Models
             Message = message;
         }
 
+        public object Data { get; set; }
+
         public int Code { get; set; }
 
         public string Message { get; set; }

@@ -25,7 +25,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        const int TenSeconds = 5 * 1000;
+        const int TenSeconds = 60*10 * 1000;
         while (!stoppingToken.IsCancellationRequested)
         {
             var sdks = _sdkService.GetCurrentSDKs();

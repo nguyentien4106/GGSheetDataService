@@ -14,27 +14,26 @@ using Microsoft.Extensions.Logging;
 using BiometricDevices.NET.Abstract;
 using BiometricDevices.NET.Concrete.ZKUFace800;
 using BiometricDevices.NET.Enums;
+using zkemkeeper;
 
 namespace DataWorkerService.Helper
 {
     public class SDKHelper : IDisposable
     {
-        public zkemkeeper.CZKEMClass axCZKEM1 = new zkemkeeper.CZKEMClass();
-        private GoogleApiAccount _account;
-        private JSONCredential _credential;
+        private readonly CZKEMClass _zkem = new();
+        private readonly GoogleApiAccount _account;
+        private readonly JSONCredential _credential;
+        private readonly ILogger<SDKHelper> _logger;
+        private readonly IGenericRepository<Attendance> _repository;
+        private readonly IQueueSender _queueSender;
 
-        private ILogger<SDKHelper> _logger;
-        private IGenericRepository<Attendance> _repository;
+        private readonly Device _device;
+        private readonly List<Employee> _employees = new();
+        private readonly List<SheetAppender> _appenders = new();
 
-        private static bool bIsConnected = false;
-        private static int iMachineNumber = 1;
-        private static int idwErrorCode = 0;
-
-        private Device _device;
-        private List<Employee> _employees = [];
-        private List<SheetAppender> _appenders = [];
-        IQueueSender _queueSender;
-        private bool disposed = false;
+        private bool _isConnected;
+        private bool _disposed;
+        private int iMachineNumber = 1;
 
         public SDKHelper(IServiceLocator locator, Device device)
         {
@@ -43,7 +42,7 @@ namespace DataWorkerService.Helper
             _logger = locator.Get<ILogger<SDKHelper>>();
             _repository = locator.Get<IGenericRepository<Attendance>>();
             _queueSender = locator.Get<IQueueSender>();
-            _device = device;
+            _device = device ?? throw new ArgumentNullException(nameof(device));
         }
 
         public string DeviceIP => _device.Ip;
@@ -54,7 +53,6 @@ namespace DataWorkerService.Helper
         {
             var ping = new zkemkeeper.CZKEMClass();
             return Result.Success();
-
             if (ping.Connect_Net(device.Ip, Int32.Parse(device.Port)))
             {
                 ping.Disconnect();
@@ -66,224 +64,157 @@ namespace DataWorkerService.Helper
 
         public Device GetDevice() => _device;
 
-        public bool GetConnectState()
-        {
-            return bIsConnected;
-        }
+        public bool GetConnectState() => _isConnected;
 
         public void SetConnectState(bool state)
         {
+            _isConnected = state;
             _logger.LogInformation($"Connected state turn into {state}");
-            bIsConnected = state;
         }
 
-        public int GetMachineNumber()
-        {
-            return iMachineNumber;
-        }
+        public int GetMachineNumber() => iMachineNumber;
 
         public void SetMachineNumber(int Number)
         {
             iMachineNumber = Number;
         }
 
-        public void TestRealTimeEvent()
-        {
-            var random = new Random();
-            axCZKEM1_OnAttTransactionEx("-1", random.Next(0, 1), random.Next(0, 5), random.Next(0, 14), 2024, 12, 12, 12, 12, 12, 0);
-        }
+        //public void TestRealTimeEvent()
+        //{
+        //    var random = new Random();
+        //    axCZKEM1_OnAttTransactionEx("-1", random.Next(0, 1), random.Next(0, 5), random.Next(0, 14), 2024, 12, 12, 12, 12, 12, 0);
+        //}
 
-        public Result sta_ConnectTCP()
+        public Result ConnectTCP()
         {
-            
             if (_device == null)
             {
-                _logger.LogError($"Device model given was null");
+                _logger.LogError("Device is null");
                 SetConnectState(false);
-
-                return Result.Fail(-1, "Do not recognize device settings");// ip or port is null
-
+                return Result.Fail(-1, "Invalid device settings");
             }
-            //axCZKEM1.GetDeviceStatus();
-            axCZKEM1.SetCommPassword(Convert.ToInt32(_device.CommKey));
 
-            if (bIsConnected)
+            if (_isConnected)
             {
-                _logger.LogError($"Device connected already!");
-                sta_DisConnect();
-
-                SetConnectState(false);
-                return Result.Success("Device connected already!"); //disconnect
+                _logger.LogWarning("Device already connected");
+                //Disconnect();
+                return Result.Success("Already connected");
             }
-            
-            _logger.LogInformation($"Connecting to device {_device.Ip}");
-            if (axCZKEM1.Connect_Net(_device.Ip, Convert.ToInt32(_device.Port)))
+
+            _logger.LogInformation($"Connecting to {_device.Ip}");
+            _zkem.SetCommPassword(int.Parse(_device.CommKey));
+
+            if (_zkem.Connect_Net(_device.Ip, int.Parse(_device.Port)))
             {
                 SetConnectState(true);
-                _logger.LogInformation($"Connected successfully to device ${_device.Ip}!");
-                sta_RegRealTime();
+                _logger.LogInformation($"Connected to {_device.Ip}");
+                RegisterRealTimeEvents();
                 return Result.Success();
+            }
+            int errorCode = 1;
+            _zkem.GetLastError(ref errorCode);
+            _logger.LogError($"Connection failed with error code {errorCode}");
+            return Result.Fail(errorCode, "Connection failed");
+        }
+
+        public void Disconnect()
+        {
+            if (_isConnected)
+            {
+                _logger.LogInformation($"Disconnecting {_device.Ip}");
+                _zkem.Disconnect();
+                SetConnectState(false);
             }
             else
             {
-                SetConnectState(false);
-                axCZKEM1.GetLastError(ref idwErrorCode);
-                _logger.LogError($"Refer to documentation for more details with errorCode={idwErrorCode}");
-
-                return Result.Fail(idwErrorCode, $"Refer to documentation for more details with errorCode={idwErrorCode}");
+                _logger.LogWarning("Device already disconnected");
             }
         }
 
-        public void sta_DisConnect()
+        public Result RegisterRealTimeEvents()
         {
-            if (GetConnectState())
-            {
-                _logger.LogInformation($"Disconnecting device {_device.Ip}");
-                SetConnectState(false);
-                axCZKEM1.Disconnect();
-                _logger.LogInformation($"Disconnected device {_device.Ip} successfully");
-                return;
-            }
-            axCZKEM1.Disconnect();
-            _logger.LogError($"Device was disconnected already.");
-        }
 
-        public Result sta_RegRealTime()
-        {
-           
-            if (!GetConnectState())
+            if (!_isConnected)
             {
-                _logger.LogError("Register Real-Time Event fail because of unconnected device!");
-                return Result.Fail(-1024);
+                _logger.LogError("Failed to register real-time events. Device is not connected.");
+                return Result.Fail(-1024, "Device not connected");
             }
 
-            
-            if (axCZKEM1.RegEvent(GetMachineNumber(), 65535))//Here you can register the realtime events that you want to be triggered(the parameters 65535 means registering all)
+
+            if (_zkem.RegEvent(GetMachineNumber(), 65535))//Here you can register the realtime events that you want to be triggered(the parameters 65535 means registering all)
             {
-                //common interface
-                //this.axCZKEM1.OnFinger += new zkemkeeper._IZKEMEvents_OnFingerEventHandler(axCZKEM1_OnFinger);
-                //this.axCZKEM1.OnVerify += new zkemkeeper._IZKEMEvents_OnVerifyEventHandler(axCZKEM1_OnVerify);
-                //this.axCZKEM1.OnFingerFeature += new zkemkeeper._IZKEMEvents_OnFingerFeatureEventHandler(axCZKEM1_OnFingerFeature);
-                //this.axCZKEM1.OnDeleteTemplate += new zkemkeeper._IZKEMEvents_OnDeleteTemplateEventHandler(axCZKEM1_OnDeleteTemplate);
-                //this.axCZKEM1.OnNewUser += new zkemkeeper._IZKEMEvents_OnNewUserEventHandler(axCZKEM1_OnNewUser);
-                //this.axCZKEM1.OnHIDNum += new zkemkeeper._IZKEMEvents_OnHIDNumEventHandler(axCZKEM1_OnHIDNum);
-                //this.axCZKEM1.OnAlarm += new zkemkeeper._IZKEMEvents_OnAlarmEventHandler(axCZKEM1_OnAlarm);
-                //this.axCZKEM1.OnDoor += new zkemkeeper._IZKEMEvents_OnDoorEventHandler(axCZKEM1_OnDoor);
+                _employees.AddRange(GetEmployees());
+                InitializeSheetsHelper();
+                _zkem.OnAttTransactionEx += HandleAttendanceTransaction;
 
-                //only for color device
-                _employees = sta_getEmployees();
-                InitSheetsHelper();
-                this.axCZKEM1.OnAttTransactionEx += axCZKEM1_OnAttTransactionEx;
-                this.axCZKEM1.OnDisConnected += () =>
-                {
-                    _logger.LogInformation("Disconnected");
-                };
-                this.axCZKEM1.OnConnected += () =>
-                {
-                    _logger.LogInformation("Connected");
-                };
-                //this.axCZKEM1.OnEnrollFingerEx += new zkemkeeper._IZKEMEvents_OnEnrollFingerExEventHandler(axCZKEM1_OnEnrollFingerEx);
-
-                //only for black&white device
-                //this.axCZKEM1.OnAttTransaction -= new zkemkeeper._IZKEMEvents_OnAttTransactionEventHandler(axCZKEM1_OnAttTransaction);
-                //this.axCZKEM1.OnWriteCard += new zkemkeeper._IZKEMEvents_OnWriteCardEventHandler(axCZKEM1_OnWriteCard);
-                //this.axCZKEM1.OnEmptyCard += new zkemkeeper._IZKEMEvents_OnEmptyCardEventHandler(axCZKEM1_OnEmptyCard);
-                //this.axCZKEM1.OnKeyPress += new zkemkeeper._IZKEMEvents_OnKeyPressEventHandler(axCZKEM1_OnKeyPress);
-                //this.axCZKEM1.OnEnrollFinger += new zkemkeeper._IZKEMEvents_OnEnrollFingerEventHandler(axCZKEM1_OnEnrollFinger);
-
+                _zkem.OnDisConnected += () => _logger.LogInformation("Device disconnected");
+                _zkem.OnConnected += () => _logger.LogInformation("Device connected");
 
                 return Result.Success();
             }
-            axCZKEM1.GetLastError(ref idwErrorCode);
+            int errorCode = 1;
+            _zkem.GetLastError(ref errorCode);
+            return Result.Fail(errorCode, "Failed to register events");
 
-            if (idwErrorCode != 0)
-            {
-                return Result.Fail(idwErrorCode, "*RegEvent failed,ErrorCode: " + idwErrorCode.ToString());
-            }
-
-
-            return Result.Success("*No data");
         }
 
-        private void InitSheetsHelper( )
+        private void InitializeSheetsHelper()
         {
-            try
+            foreach (var sheet in _device.Sheets)
             {
-                foreach (var sheet in _device.Sheets)
+                try
                 {
                     var sheetHelper = new SheetHelper<Record>(sheet.DocumentId, _account.ServiceAccountId, sheet.SheetName);
                     sheetHelper.Init(_credential.ToString());
-                    var appender = new SheetAppender(sheetHelper);
-                    _appenders.Add(appender);
-                    _logger.LogInformation($"Init sheet sheetName={sheet.SheetName} documentId={sheet.DocumentId} Successfully!");
+                    _appenders.Add(new SheetAppender(sheetHelper));
+                    _logger.LogInformation($"Initialized sheet {sheet.SheetName} (ID: {sheet.DocumentId})");
                 }
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex.Message);
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error initializing sheet: {ex.Message}");
+                }
             }
         }
 
-        public List<Employee> sta_getEmployees()
+        public List<Employee> GetEmployees()
         {
-            if (!GetConnectState())
+            var employees = new List<Employee>();
+
+            if (!_isConnected)
             {
-                return [];
+                return employees;
             }
 
-            List<Employee> employees = [];
-
-            string empnoStr = string.Empty;
-            string name = string.Empty;
-            string pwd = string.Empty;
-            int pri = 0;
-            bool enable = true;
-            var cardNum = string.Empty;
-
-            axCZKEM1.EnableDevice(iMachineNumber, false);
+            _zkem.EnableDevice(1, false);
             try
             {
-                axCZKEM1.ReadAllUserID(iMachineNumber);
-
-                while (axCZKEM1.SSR_GetAllUserInfo(iMachineNumber, out empnoStr, out name, out pwd, out pri, out enable))
+                _zkem.ReadAllUserID(1);
+                while (_zkem.SSR_GetAllUserInfo(1, out var empNo, out var name, out var pwd, out var pri, out var enable))
                 {
-                    cardNum = "";
-                    if (axCZKEM1.GetStrCardNumber(out cardNum))
+                    var cardNum = _zkem.GetStrCardNumber(out var cn) ? cn : string.Empty;
+                    employees.Add(new Employee
                     {
-                        if (string.IsNullOrEmpty(cardNum))
-                            cardNum = "";
-                    }
-                    if (!string.IsNullOrEmpty(name))
-                    {
-                        int index = name.IndexOf("\0");
-                        if (index > 0)
-                        {
-                            name = name.Substring(0, index);
-                        }
-                    }
-
-                    Employee emp = new();
-                    emp.Pin = empnoStr;
-                    emp.Name = name;
-                    emp.Privilege = pri;
-                    emp.Password = pwd;
-                    emp.CardNumber = cardNum;
-
-                    employees.Add(emp);
+                        Pin = empNo,
+                        Name = name.TrimEnd('\0'),
+                        Privilege = pri,
+                        Password = pwd,
+                        CardNumber = cardNum
+                    });
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
-                _logger.LogInformation(ex.Message);
+                _logger.LogError($"Error retrieving employees: {ex.Message}");
             }
             finally
             {
-                axCZKEM1.EnableDevice(iMachineNumber, true);
+                _zkem.EnableDevice(1, true);
             }
+
             return employees;
         }
 
-        private void axCZKEM1_OnAttTransactionEx(string EnrollNumber, int IsInValid, int attState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
+        private void HandleAttendanceTransaction(string EnrollNumber, int IsInValid, int attState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
         {
             var date = new DateTime(Year, Month, Day, Hour, Minute, Second);
             var employee = _employees.FirstOrDefault(item => item.Pin == EnrollNumber);
@@ -308,14 +239,6 @@ namespace DataWorkerService.Helper
             DataHelper.PublishData(_appenders, _repository, attRecord, employee, _queueSender);
         }
 
-        private static void axCZKEM1_OnAttTransaction(int EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second)
-        {
-            string time = Year + "-" + Month + "-" + Day + " " + Hour + ":" + Minute + ":" + Second;
-            //gRealEventListBox.Items.Add("Verify OK.UserID=" + EnrollNumber.ToString() + " isInvalid=" + IsInValid.ToString() + " state=" + AttState.ToString() + " verifystyle=" + VerifyMethod.ToString() + " time=" + time);
-
-            throw new NotImplementedException();
-        }
-
         public void Dispose()
         {
             Dispose(true);
@@ -324,18 +247,85 @@ namespace DataWorkerService.Helper
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (!_disposed)
             {
                 if (disposing)
                 {
-                    _logger.LogInformation("Disconnecting...");
-                    axCZKEM1.Disconnect();
+                    _logger.LogInformation("Disconnecting device...");
+                    _zkem.Disconnect();
+                }
+                _disposed = true;
+            }
+        }
+
+        public Result AddEmployee(Employee employee)
+        {
+            if (!_isConnected)
+            {
+                _logger.LogError($"Device {DeviceIP} was not connected");
+                return Result.Fail(500);
+            }
+
+            //int iPrivilege = cbPrivilege.SelectedIndex;
+
+            bool bFlag = false;
+        
+            int iPIN2Width = 0;
+            int iIsABCPinEnable = 0;
+            int iT9FunOn = 0;
+            string strTemp = "";
+            _zkem.GetSysOption(GetMachineNumber(), "~PIN2Width", out strTemp);
+            iPIN2Width = Convert.ToInt32(strTemp);
+            _zkem.GetSysOption(GetMachineNumber(), "~IsABCPinEnable", out strTemp);
+            iIsABCPinEnable = Convert.ToInt32(strTemp);
+            _zkem.GetSysOption(GetMachineNumber(), "~T9FunOn", out strTemp);
+            iT9FunOn = Convert.ToInt32(strTemp);
+
+
+            if (employee.Pin.Length > iPIN2Width)
+            {
+                _logger.LogError("*User ID error! The max length is " + iPIN2Width.ToString());
+                return Result.Fail(501, "*User ID error! The max length is " + iPIN2Width.ToString());
+            }
+
+            if (iIsABCPinEnable == 0 || iT9FunOn == 0)
+            {
+                if (employee.Pin.StartsWith("0"))
+                {
+                    _logger.LogError("PIN can not start with 0");
+
+                    return Result.Fail(501, "PIN can not start with 0");
                 }
 
-                // Giải phóng tài nguyên không quản lý ở đây
+                if (!employee.Pin.All(char.IsDigit))
+                {
+                    _logger.LogError("*User ID error! User ID only support digital");
+                    return Result.Fail(501, "*User ID error! User ID only support digital");
 
-                disposed = true;
+                }
+               
             }
+
+            int idwErrorCode = 0;
+
+            _zkem.EnableDevice(iMachineNumber, false);
+            _zkem.SetStrCardNumber(employee.CardNumber);//Before you using function SetUserInfo,set the card number to make sure you can upload it to the device
+            if (_zkem.SSR_SetUserInfo(iMachineNumber, employee.Pin.Trim(), employee.Name.Trim(), employee.Password.Trim(), employee.Privilege, true))//upload the user's information(card number included)
+            {
+                _logger.LogInformation("Set user information successfully");
+            }
+            else
+            {
+                _zkem.GetLastError(ref idwErrorCode);
+                _logger.LogError("*Operation failed,ErrorCode=" + idwErrorCode.ToString());
+                return Result.Fail(idwErrorCode, "*Operation failed,ErrorCode=" + idwErrorCode.ToString());
+
+            }
+            _zkem.RefreshData(iMachineNumber);//the data in the device should be refreshed
+            _zkem.EnableDevice(iMachineNumber, true);
+
+            return Result.Success();
+
         }
     }
 

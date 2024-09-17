@@ -69,12 +69,55 @@ namespace DataService.Core.Messaging
 
             channel.BasicConsume(queue: RabbitMQConstants.DeviceEventQueue, autoAck: true, consumer: consumer);
 
-            _logger.LogInformation("Worker service is listening for messages...");
+            return channel;
+        }
+
+        public IModel StartListeningOnEmployeesQueue()
+        {
+            var factory = new ConnectionFactory() { HostName = RabbitMQConstants.HostName, Port = RabbitMQConstants.Port };
+            var connection = factory.CreateConnection();
+            var channel = connection.CreateModel();
+            channel.QueueDeclare(queue: RabbitMQConstants.EmployeeEventQueue,
+                                durable: true,
+                                exclusive: false,
+                                autoDelete: false,
+                                arguments: null);
+
+            var consumer = new EventingBasicConsumer(channel);
+
+            consumer.Received += HandleEmployeeEventQueue;
+
+            channel.BasicConsume(queue: RabbitMQConstants.EmployeeEventQueue, autoAck: true, consumer: consumer);
 
             return channel;
         }
 
-        public void HandleDeviceEventQueue(object? sender, BasicDeliverEventArgs args)
+        private void HandleEmployeeEventQueue(object? sender, BasicDeliverEventArgs args)
+        {
+            var body = args.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body);
+            var eventObj = JsonConvert.DeserializeObject<RabbitMQEvent<Employee>>(message);
+            _logger.LogInformation("Received message: {0}", message);
+            if (eventObj == null) return;
+
+            switch (eventObj.ActionType)
+            {
+                case ActionType.Added:
+                    break;
+                case ActionType.Deleted:
+                    break;
+                case ActionType.Modified:
+                    break;
+                case ActionType.Connect:
+                    break;
+                case ActionType.Disconnect:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void HandleDeviceEventQueue(object? sender, BasicDeliverEventArgs args)
         {
             var body = args.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
@@ -128,9 +171,7 @@ namespace DataService.Core.Messaging
                 _context.Sheets.Entry(sheet).State = EntityState.Added;
             }
             
-            //_context.Sheets.AddRange(device.Sheets);
             _context.SaveChanges();
-            // determine
 
             _sdkService.Remove(device);
             _sdkService.Add(device, true);
@@ -147,9 +188,8 @@ namespace DataService.Core.Messaging
                 return;
             }
 
-            sdk.sta_DisConnect();
+            sdk.Disconnect();
             _context.Devices.Where(item => item.Ip == device.Ip).ExecuteUpdate(setter => setter.SetProperty(i => i.IsConnected, false));
-
         }
 
         private void HandleConnectDevice(Device device)
@@ -160,14 +200,12 @@ namespace DataService.Core.Messaging
 
             if(sdk == null) 
             {
-                _logger.LogError($"Didn't find any SDK initilized with Device's IP = {device.Ip}");
-                var newSDK = new SDKHelper(_locator, device);
-                newSDK.sta_ConnectTCP();
-                _sdkService.Add(device);
+                _logger.LogError($"Didn't find any SDK initilized with Device's IP = {device.Ip}, Started to initial SDK with this IP.");
+                _sdkService.Add(device, true);
                 return;
             }
 
-            var result = sdk.sta_ConnectTCP();
+            var result = sdk.ConnectTCP();
             if (result.IsSuccess)
             {
                 _context.Devices.Where(item => item.Ip == device.Ip).ExecuteUpdate(setter => setter.SetProperty(i => i.IsConnected, true));

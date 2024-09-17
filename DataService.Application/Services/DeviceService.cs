@@ -44,49 +44,13 @@ namespace DataService.Application.Services
 
         public override async Task<Result> Update(Device entityToUpdate)
         {
-            try
+            RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
             {
-                //var sheetsInDb = await _context.Sheets.AsNoTracking().Where(item => item.DeviceId == entityToUpdate.Id).ToListAsync();
-                //dbSet.Attach(entityToUpdate);
-                //_context.Entry(entityToUpdate).State = EntityState.Modified;
+                ActionType = ActionType.Modified,
+                Data = entityToUpdate
+            }.ToString());
 
-                //// added
-                //var added = entityToUpdate.Sheets.Where(item => item.Id == 0);
-                //foreach(var item in added)
-                //{
-                //    _context.Sheets.Entry(item).State = EntityState.Added;
-                //}
-
-                //// determine
-                //var items = entityToUpdate.Sheets.Where(item => item.Id != 0);
-                //foreach (var sheet in sheetsInDb)
-                //{
-                //    var item = items.FirstOrDefault(i => i.Id == sheet.Id);
-                //    if (item != null)
-                //    {
-                //        _context.Sheets.Entry(item).State = EntityState.Modified;
-                //    }
-
-                //    else
-                //    {
-                //        _context.Sheets.Entry(sheet).State = EntityState.Deleted;
-
-                //    }
-                //}
-                //await _context.SaveChangesAsync();
-
-                RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
-                {
-                    ActionType = ActionType.Modified,
-                    Data = entityToUpdate
-                }.ToString());
-
-                return Result.Success();
-            }
-            catch (Exception ex)
-            {
-                return Result.Fail(500, ex.Message);
-            }
+            return Result.Success("Requested to Update! Please wait....");
         }
 
         public override async Task<Result> Delete(int id)

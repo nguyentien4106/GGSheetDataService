@@ -29,7 +29,7 @@ services:
       - db
     networks:
       - container_network
-    platform: linux/arm64/v8
+    # platform: linux/arm64/v8
   service:
     build: 
       dockerfile: Dockerfile.service
@@ -41,7 +41,7 @@ services:
       - db
     networks:
       - container_network
-    platform: linux/arm64/v8
+    # platform: linux/arm64/v8
 
 networks:
   container_network:

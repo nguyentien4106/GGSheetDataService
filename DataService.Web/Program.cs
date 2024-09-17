@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddPostgresDB(builder.Configuration);
-builder.Services.AddOtherServices();
+builder.Services.AddOtherServices(builder.Configuration);
 builder.Services.AddRepositories();
 builder.Services.AddMessageQueues();
 

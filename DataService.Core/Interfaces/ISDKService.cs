@@ -22,5 +22,12 @@ namespace DataService.Core.Interfaces
         void DisconnectAll();
 
         void ConnectAll();
+
+        Result AddEmployee(Employee emp);
+
+        Result RemoveEmployee(Employee employy);
+
+        Result UpdateEmployee(Employee employy);
+
     }
 }

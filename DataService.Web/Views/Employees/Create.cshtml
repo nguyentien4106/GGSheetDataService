@@ -13,6 +13,8 @@
 </div>
 <hr />
 <form class="row g-3 employee-validation" novalidate id="employee-validation" asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <div class="col-md-4">
         <label for="ip" class="form-label" asp-for="Pin">Employee Code</label>
         <input type="text" class="form-control" id="ip" value="" required asp-for="Pin">

@@ -18,5 +18,7 @@ namespace DataService.Core.Messaging
         public static string EventQueue = "DataService.EventQueue";
 
         public static string DeviceEventQueue = "DataService.DeviceEventQueue";
+
+        public static string EmployeeEventQueue = "DataService.EmployeeEventQueue";
     }
 }

@@ -22,7 +22,8 @@ public class AppDbContext : DbContext
     public DbSet<Employee> Employees { get; set; }
 
     public DbSet<Sheet> Sheets { get; set; }    
-    public DbSet<Test> Tests { get; set; }
+
+    public DbSet<Notification> Notifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

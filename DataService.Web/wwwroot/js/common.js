@@ -36,4 +36,6 @@ export const showSuccess = (text) => {
     }).showToast();
 }
 
+export const show = (res) => res.isSuccess ? showSuccess(res.message) : showError(res.message)
+
 export const isNullOrEmpty = (text) => text === null || text === "" || text.trim() === "";

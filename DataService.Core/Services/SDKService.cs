@@ -25,6 +25,7 @@ namespace DataService.Core.Services
             _repository = locator.Get<IGenericRepository<Device>>();
             _locator = locator;
         }
+
         public void Init(bool connect = false)
         {
             var devices = _repository.Get(includeProperties: "Sheets");
@@ -44,23 +45,22 @@ namespace DataService.Core.Services
         public Result Add(Device device, bool connect = false)
         {
             var sdk = new SDKHelper(_locator, device);
+            _sdks.Add(sdk);
+
             if (connect)
             {
-                var result = sdk.sta_ConnectTCP();
+                var result = sdk.ConnectTCP();
                 if (result.IsSuccess)
                 {
-                    _sdks.Add(sdk);
-                    _logger.LogInformation("Connect successlyfully");
+                    _logger.LogInformation("Connect successfully");
                     return Result.Success();
                 }
                 else
                 {
                     _logger.LogInformation("Connect Failed");
                     return Result.Fail(503, "Can not connect");
-
                 }
             }
-
             return Result.Success();
         }
 
@@ -71,7 +71,8 @@ namespace DataService.Core.Services
             {
                 return Result.Fail(404, "Device not found");
             }
-            item.sta_DisConnect();
+
+            item.Disconnect();
             _sdks.Remove(item);
 
             return Result.Success();
@@ -82,7 +83,7 @@ namespace DataService.Core.Services
             foreach(var sdk in _sdks)
             {
                 _logger.LogInformation($"Disconnecting Device's IP: {sdk.GetDevice().Ip}");
-                sdk.sta_DisConnect();
+                sdk.Disconnect();
             }
         }
 
@@ -90,8 +91,39 @@ namespace DataService.Core.Services
         {
             foreach (var sdk in _sdks)
             {
-                sdk.sta_ConnectTCP();
+                sdk.ConnectTCP();
             }
+        }
+
+        public Result AddEmployee(Employee emp)
+        {
+            foreach(var sdk in _sdks)
+            {
+                if (sdk.IsConnected)
+                {
+                    var result = sdk.AddEmployee(emp);
+                    if(result.IsSuccess )
+                    {
+                        _logger.LogInformation(result.Message);
+                    }
+                    else
+                    {
+                        _logger.LogError(result.Message);
+                    }
+                }
+            }
+
+            return Result.Success();
+        }
+
+        public Result RemoveEmployee(Employee employy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result UpdateEmployee(Employee employy)
+        {
+            throw new NotImplementedException();
         }
     }
 }

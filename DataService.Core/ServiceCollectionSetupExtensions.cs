@@ -8,6 +8,8 @@ using DataService.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using DataService.Settings;
+using DataWorkerService.Models.Config;
 
 namespace DataService.Core;
 
@@ -23,6 +25,7 @@ public static class ServiceCollectionSetupExtensions
         services.AddTransient<IGenericRepository<Attendance>, GenericRepository<Attendance>>();
         services.AddTransient<IGenericRepository<Device>, GenericRepository<Device>>();
         services.AddTransient<IGenericRepository<Employee>, GenericRepository<Employee>>();
+        services.AddTransient<IGenericRepository<Notification>, GenericRepository<Notification>>();
 
     }
 
@@ -32,8 +35,23 @@ public static class ServiceCollectionSetupExtensions
         services.AddSingleton<IQueueSender, InMemoryQueueSender>();
     }
 
-    public static void AddOtherServices(this IServiceCollection services)
+    public static void AddOtherServices(this IServiceCollection services, IConfiguration configuration)
     {
+        var credential = configuration.GetSection("JSONCredential").Get<JSONCredential>() ?? default!;
+        if (credential == null)
+        {
+            throw new ArgumentNullException(nameof(JSONCredential));
+        }
+
+        var googleAccount = configuration.GetSection("GoogleAccount").Get<GoogleApiAccount>() ?? default!;
+        if (googleAccount == null)
+        {
+            throw new ArgumentNullException(nameof(GoogleApiAccount));
+        }
+
+        services.AddSingleton(credential);
+        services.AddSingleton(googleAccount);
+
         services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
         services.AddSingleton<ISDKService, SDKService>();
     }

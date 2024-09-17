@@ -22,10 +22,13 @@
                 Port
             </th>
             <th>
-                Status
+                Sheet Name
             </th>
             <th>
-                Health Check
+                Document Id
+            </th>
+            <th>
+                Status
             </th>
             <th class="text-center">
                 Action
@@ -47,6 +50,29 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Device.Port)
             </td>
+            <td colspan="2">
+                <table class="table ">
+                    <tbody>
+                        @foreach (var sheet in item.Device.Sheets)
+                        {
+                            <tr>
+                                <td>@sheet.SheetName</td>
+                                <td>@sheet.DocumentId</td>
+                            </tr>
+                        }
+                    </tbody>
+                       
+                </table>
+                
+            </td>
+            @* <td>
+                <div>
+                    @foreach (var sheet in item.Device.Sheets)
+                    {
+                        <h5>@sheet.DocumentId</h5>
+                    }
+                </div>
+            </td> *@
             <td>
                 @if (item.Device.IsConnected)
                 {
@@ -58,16 +84,6 @@
                 }
             </td>
             <td>
-                @if (item.Status)
-                {
-                    <div>Healthy</div>
-                }
-                else
-                {
-                    <div>Unhealthy</div>
-                }
-            </td>
-            <td>
                 <div class="d-flex gap-2 justify-content-center">
                     <a asp-action="Edit" asp-route-id="@item.Device.Id" class="btn btn-primary">Edit</a>
                     <a asp-action="Details" asp-route-id="@item.Device.Id" class="btn btn-primary">Details</a>
@@ -75,8 +91,7 @@
                 </div>
             </td>
             <td>
-                    <a class="btn btn-primary @(item.Device.IsConnected ? "disconnect" : "connect")" device-id="@item.Device.Id">@(item.Device.IsConnected ? "Disconnect" : "Connect")</a>
-                @* <a asp-action="Disconnect" asp-route-id="@item.Device.Id" class="btn btn-primary">Disconnect</a> *@
+                <a class="btn btn-primary @(item.Device.IsConnected ? "disconnect" : "connect")" device-id="@item.Device.Id">@(item.Device.IsConnected ? "Disconnect" : "Connect")</a>
             </td>
         </tr>
 }

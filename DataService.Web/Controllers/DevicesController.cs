@@ -100,10 +100,7 @@ namespace DataService.Web.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var result = await _service.Delete(id);
-            if (result.IsSuccess)
-            {
-                result.Message = Url.Action(nameof(Index), "Devices");
-            }
+            
             return Json(result);
         }
 

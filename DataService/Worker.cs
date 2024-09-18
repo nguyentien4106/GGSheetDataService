@@ -29,7 +29,7 @@ public class Worker : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             var sdks = _sdkService.GetCurrentSDKs();
-            var runningCount = sdks.Where(item => item.GetConnectState());
+            var runningCount = sdks.Where(item => item.IsConnected);
             _logger.LogInformation($"Total {sdks.Count} in system. {runningCount.Count()} running: {string.Join(",", runningCount)}");
             await Task.Delay(TenSeconds, stoppingToken);
         }

@@ -135,6 +135,9 @@ namespace DataService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("Success")
+                        .HasColumnType("boolean");
+
                     b.Property<short>("Type")
                         .HasColumnType("smallint");
 

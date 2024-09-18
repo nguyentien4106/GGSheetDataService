@@ -1,8 +1,11 @@
 ﻿using DataService.Core.Contracts;
 using DataService.Core.Interfaces;
+using DataService.Core.Models.Enum;
+using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;
 using DataWorkerService.Helper;
 using DataWorkerService.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -17,12 +20,15 @@ namespace DataService.Core.Services
         public List<SDKHelper> _sdks = new();
         ILogger<SDKService> _logger;
         IGenericRepository<Device> _repository;
+        IGenericRepository<Notification> _notifications;
         IServiceLocator _locator;
-
+        AppDbContext _context;
         public SDKService(IServiceLocator locator)
         {
             _logger = locator.Get<ILogger<SDKService>>();
             _repository = locator.Get<IGenericRepository<Device>>();
+            _notifications = locator.Get<IGenericRepository<Notification>>();
+            _context = locator.Get<AppDbContext>();
             _locator = locator;
         }
 
@@ -46,21 +52,29 @@ namespace DataService.Core.Services
         {
             var sdk = new SDKHelper(_locator, device);
             _sdks.Add(sdk);
+            _repository.Insert(device);
 
+            _notifications.Insert(new Notification
+            {
+                Action = (short)NotificationAction.ServiceAdded,
+                Message = $"Device ${device.Ip} added successfully!",
+                Type = (short)NotificationType.Device,
+                Success = true
+            });
             if (connect)
             {
                 var result = sdk.ConnectTCP();
                 if (result.IsSuccess)
                 {
-                    _logger.LogInformation("Connect successfully");
+                    _context.Devices.Where(item => item.Ip == device.Ip).ExecuteUpdate(setter => setter.SetProperty(i => i.IsConnected, true));
                     return Result.Success();
                 }
                 else
                 {
-                    _logger.LogInformation("Connect Failed");
                     return Result.Fail(503, "Can not connect");
                 }
             }
+
             return Result.Success();
         }
 
@@ -74,7 +88,20 @@ namespace DataService.Core.Services
 
             item.Disconnect();
             _sdks.Remove(item);
+            foreach (var sheet in device.Sheets)
+            {
+                _context.Sheets.Entry(sheet).State = EntityState.Deleted;
+            }
 
+            _context.Devices.Entry(device).State = EntityState.Deleted;
+            _context.SaveChanges();
+            _notifications.Insert(new Notification
+            {
+                Action = (short)NotificationAction.ServiceRemoved,
+                Message = $"Device {device.Ip} removed successfully!",
+                Type = (short)NotificationType.Device,
+                Success = true
+            });
             return Result.Success();
         }
 

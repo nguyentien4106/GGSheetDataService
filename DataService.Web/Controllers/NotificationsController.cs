@@ -24,11 +24,10 @@ namespace DataService.Web.Controllers
             _repository = repos;
         }
 
-        // GET: api/Notifications
         [HttpGet]
         public async Task<Result> GetNotifications()
         {
-            var data = await _repository.GetAsync();
+            var data = await _repository.GetAsync(orderBy: i => i.OrderByDescending(i => i.CreateAt));
             return new()
             {
                 Data = data,
@@ -36,7 +35,6 @@ namespace DataService.Web.Controllers
             };
         }
 
-        // GET: api/Notifications/5
         [HttpGet("{id}")]
         public async Task<Notification> GetNotification(int id)
         {
@@ -46,8 +44,6 @@ namespace DataService.Web.Controllers
         }
 
 
-        // POST: api/Notifications
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<Result> PostNotification(Notification notification)
         {

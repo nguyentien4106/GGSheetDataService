@@ -5,15 +5,16 @@ $(".connect").click(function () {
     $("#loading").show();
 
     $.post("https://localhost:7058/Devices/Connect/" + id)
-        .then((res) => {
-            show(res)
-      })
-      .catch((e) => {
-        showError(e.message);
-      })
-      .always(() => {
-        $("#loading").hide();
-      });
+        .then(async (res) => {
+            show(res);
+            await new Promise((resolve) => setTimeout(resolve, 5000));
+        })
+        .catch((e) => {
+            showError(e.message);
+        })
+        .always(() => {
+            $("#loading").hide();
+        });
 });
 
 $(".disconnect").click(function () {
@@ -21,33 +22,33 @@ $(".disconnect").click(function () {
     $("#loading").show();
 
     $.post("https://localhost:7058/Devices/Disconnect/" + id)
-      .then((res) => {
-        show(res)
-      })
-      .catch((e) => {
-        showError(e.message);
-      })
-      .always(() => {
-        $("#loading").hide();
-      });
+        .then((res) => {
+            show(res);
+        })
+        .catch((e) => {
+            showError(e.message);
+        })
+        .always(() => {
+            $("#loading").hide();
+        });
 });
 $(".delete").click(function () {
-  const result = confirm("Do you confirm to delete this device");
-  if (result) {
-    const id = $(this).attr("device-id");
-    $("#loading").show();
+    const result = confirm("Do you confirm to delete this device");
+    if (result) {
+        const id = $(this).attr("device-id");
+        $("#loading").show();
 
-    $.post("https://localhost:7058/Devices/Delete/" + id)
-      .then((res) => {
-        console.log(res);
+        $.post("https://localhost:7058/Devices/Delete/" + id)
+            .then((res) => {
+                console.log(res);
 
-        show(res)
-      })
-      .catch((e) => {
-        showError(e.message);
-      })
-      .always(() => {
-        $("#loading").hide();
-      });
-  }
+                show(res);
+            })
+            .catch((e) => {
+                showError(e.message);
+            })
+            .always(() => {
+                $("#loading").hide();
+            });
+    }
 });

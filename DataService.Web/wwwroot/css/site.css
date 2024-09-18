@@ -18,7 +18,9 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    margin: 0;
+    overflow: hidden;
 }
 
 #loading {
@@ -53,4 +55,55 @@ body {
 
 .w-5{
     width: 5%;
+}
+
+.notification-panel {
+    position: absolute;
+    top: 20px;
+    right: -600px; /* Start hidden off-screen */
+    width: 450px;
+    height: 500px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: scroll;
+}
+
+.notification-panel.active {
+    right: 20px; /* Slide in */
+}
+
+.notification {
+    padding: 15px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+}
+
+.notification:last-child {
+    border-bottom: none;
+}
+
+.notification p {
+    margin: 0;
+    flex: 1;
+}
+/*
+.notification__time{
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+}*/
+
+.success-item {
+    background-color: #c4f2ae;
+}
+
+.fail-item {
+    background-color: #e89887;
 }

@@ -1,4 +1,5 @@
 ﻿using DataService.Core.Contracts;
+using DataService.Core.Messaging;
 using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;
 using DataWorkerService.Models;
@@ -87,6 +88,7 @@ namespace DataService.Core.Repositories
             {
                 dbSet.Add(entity);
                 await _context.SaveChangesAsync();
+
                 return Result.Success();
             }
             catch (Exception ex)

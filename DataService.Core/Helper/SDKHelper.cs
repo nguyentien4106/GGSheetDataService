@@ -15,6 +15,7 @@ using BiometricDevices.NET.Abstract;
 using BiometricDevices.NET.Concrete.ZKUFace800;
 using BiometricDevices.NET.Enums;
 using zkemkeeper;
+using DataService.Core.Models.Enum;
 
 namespace DataWorkerService.Helper
 {
@@ -25,6 +26,7 @@ namespace DataWorkerService.Helper
         private readonly JSONCredential _credential;
         private readonly ILogger<SDKHelper> _logger;
         private readonly IGenericRepository<Attendance> _repository;
+        private readonly IGenericRepository<Notification> _notifications;
         private readonly IQueueSender _queueSender;
 
         private readonly Device _device;
@@ -42,6 +44,8 @@ namespace DataWorkerService.Helper
             _logger = locator.Get<ILogger<SDKHelper>>();
             _repository = locator.Get<IGenericRepository<Attendance>>();
             _queueSender = locator.Get<IQueueSender>();
+            _notifications = locator.Get<IGenericRepository<Notification>>();
+
             _device = device ?? throw new ArgumentNullException(nameof(device));
         }
 
@@ -64,8 +68,6 @@ namespace DataWorkerService.Helper
 
         public Device GetDevice() => _device;
 
-        public bool GetConnectState() => _isConnected;
-
         public void SetConnectState(bool state)
         {
             _isConnected = state;
@@ -78,12 +80,6 @@ namespace DataWorkerService.Helper
         {
             iMachineNumber = Number;
         }
-
-        //public void TestRealTimeEvent()
-        //{
-        //    var random = new Random();
-        //    axCZKEM1_OnAttTransactionEx("-1", random.Next(0, 1), random.Next(0, 5), random.Next(0, 14), 2024, 12, 12, 12, 12, 12, 0);
-        //}
 
         public Result ConnectTCP()
         {
@@ -109,11 +105,24 @@ namespace DataWorkerService.Helper
                 SetConnectState(true);
                 _logger.LogInformation($"Connected to {_device.Ip}");
                 RegisterRealTimeEvents();
+                _notifications.Insert(new Notification {
+                    Action = (short)NotificationAction.ServiceAdded,
+                    Message = $"Device {DeviceIP}: Connected successfully!",
+                    Type = (short)NotificationType.Device,
+                    Success = true
+                });
                 return Result.Success();
             }
             int errorCode = 1;
             _zkem.GetLastError(ref errorCode);
             _logger.LogError($"Connection failed with error code {errorCode}");
+            _notifications.Insert(new Notification
+            {
+                Action = (short)NotificationAction.ServiceAdded,
+                Message = $"Device {DeviceIP}: Connected failed!",
+                Type = (short)NotificationType.Device,
+                Success = false
+            });
             return Result.Fail(errorCode, "Connection failed");
         }
 
@@ -124,11 +133,26 @@ namespace DataWorkerService.Helper
                 _logger.LogInformation($"Disconnecting {_device.Ip}");
                 _zkem.Disconnect();
                 SetConnectState(false);
+                _notifications.Insert(new Notification
+                {
+                    Action = (short)NotificationAction.ServiceAdded,
+                    Message = $"Device {DeviceIP}: Disconnected sucessfully",
+                    Type = (short)NotificationType.Device,
+                    Success = true
+                });
             }
             else
             {
+                _notifications.Insert(new Notification
+                {
+                    Action = (short)NotificationAction.ServiceAdded,
+                    Message = $"Device {DeviceIP}: Cann't Disconnect due to unconnected.",
+                    Type = (short)NotificationType.Device,
+                    Success = false
+                });
                 _logger.LogWarning("Device already disconnected");
             }
+            
         }
 
         public Result RegisterRealTimeEvents()
@@ -262,7 +286,7 @@ namespace DataWorkerService.Helper
         {
             if (!_isConnected)
             {
-                _logger.LogError($"Device {DeviceIP} was not connected");
+                _logger.LogError($"Device {DeviceIP}: Device was not connected then can not insert employee.");
                 return Result.Fail(500);
             }
 
@@ -312,10 +336,24 @@ namespace DataWorkerService.Helper
             _zkem.SetStrCardNumber(employee.CardNumber);//Before you using function SetUserInfo,set the card number to make sure you can upload it to the device
             if (_zkem.SSR_SetUserInfo(iMachineNumber, employee.Pin.Trim(), employee.Name.Trim(), employee.Password.Trim(), employee.Privilege, true))//upload the user's information(card number included)
             {
+                _notifications.Insert(new Notification
+                {
+                    Action = (short)NotificationAction.ServiceAdded,
+                    Message = $"Device {DeviceIP}: Employee added successfully!",
+                    Type = (short)NotificationType.Employee,
+                    Success = true
+                });
                 _logger.LogInformation("Set user information successfully");
             }
             else
             {
+                _notifications.Insert(new Notification
+                {
+                    Action = (short)NotificationAction.ServiceAdded,
+                    Message = $"Device {DeviceIP}: Employee added failed!",
+                    Type = (short)NotificationType.Employee,
+                    Success = false
+                });
                 _zkem.GetLastError(ref idwErrorCode);
                 _logger.LogError("*Operation failed,ErrorCode=" + idwErrorCode.ToString());
                 return Result.Fail(idwErrorCode, "*Operation failed,ErrorCode=" + idwErrorCode.ToString());

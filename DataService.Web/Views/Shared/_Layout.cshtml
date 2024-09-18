@@ -37,8 +37,24 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Others" asp-action="Index">Other Management</a>
                         </li>
-                        <li class="" style="margin-left:auto;">
-                            <i class="bi bi-bell h3 pointer" id="notification"></i>
+                        <li class="ml-4" style="margin-left:auto;">
+                            <div style="position: relative;">
+                                <i class="bi bi-bell h3 pointer" id="notification">
+                                </i>
+
+                                <div class="notification-panel" id="notificationPanel">
+                                    @* <div class="notification">
+                                        <p>You have a new message!</p>
+                                    </div>
+                                    <div class="notification">
+                                        <p>Your order has been shipped!</p>
+                                    </div>
+                                    <div class="notification">
+                                        <p>Don't miss our special offer!</p>
+                                    </div> *@
+                                </div>
+                            </div>
+                            
                         </li>
                     </ul>
                 </div>

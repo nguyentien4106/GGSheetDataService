@@ -21,6 +21,7 @@ namespace DataService.Core.Messaging
         IServiceLocator _locator;
         IGenericRepository<Device> _deviceRepository;
         AppDbContext _context;
+
         public RabbitMQConsumer(IServiceLocator locator)
         {
             _locator = locator;
@@ -220,19 +221,11 @@ namespace DataService.Core.Messaging
         private void HandleDeleteDevice(Device device)
         {
             _sdkService.Remove(device);
-            foreach (var sheet in device.Sheets)
-            {
-                _context.Sheets.Entry(sheet).State = EntityState.Deleted;
-            }
-            
-            _context.Devices.Entry(device).State = EntityState.Deleted;
-            _context.SaveChanges();
         }
 
         private void HandleAddNewDevice(Device device)
         {
             _sdkService.Add(device);
-            _deviceRepository.Insert(device);
         }
 
     }

@@ -6,41 +6,46 @@
 }
 
 <div class="d-flex justify-content-between">
-    <h3 class="">Add New Employee</h3>
+    <h3 class="">Add new Employee</h3>
     <div class="">
         <a asp-action="Index" class="btn btn-primary">Back to List</a>
     </div>
 </div>
 <hr />
-<form class="row g-3 employee-validation" novalidate id="employee-validation" asp-action="Create" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <div class="col-md-4">
-        <label for="ip" class="form-label" asp-for="Pin">Employee Code</label>
-        <input type="text" class="form-control" id="ip" value="" required asp-for="Pin">
-    </div>
-    <div class="col-md-4">
-        <label for="port" class="form-label" asp-for="Name">Employee's Name</label>
-        <input type="text" class="form-control" value="" required asp-for="Name">
-    </div>
-    <div class="col-md-4">
-        <label for="commKey" class="form-label" asp-for="Password">Employee Password</label>
-        <input type="text" class="form-control" required asp-for="Password">
-    </div>
-    <div class="col-md-4">
-        <label for="commKey" class="form-label" asp-for="Privilege">Employee Privilege</label>
-        <select asp-for="Privilege" asp-items="@(privileges)" class="form-control custom-select">
-        </select>
-    </div>
-    <div class="col-md-4">
-        <label for="commKey" class="form-label" asp-for="CardNumber">Employee Card Number</label>
-        <input type="text" class="form-control" required asp-for="CardNumber">
-    </div>
-    
-    <div class="col-12">
-        <button class="btn btn-primary" type="submit" id="add-employee">Add Employee</button>
-    </div>
-</form>
+@* <div class="row"> *@
+        <form asp-action="Create" class="row g-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col-md-4">
+                <label asp-for="Pin" class="control-label"></label>
+                <input asp-for="Pin" class="form-control" />
+                <span asp-validation-for="Pin" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Privilege" class="control-label"></label>
+                @* <input asp-for="Privilege" class="form-control" /> *@
+                <select asp-for="Privilege" asp-items="@(privileges)" class="form-control"></select>
+                <span asp-validation-for="Privilege" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="CardNumber" class="control-label"></label>
+                <input asp-for="CardNumber" class="form-control" />
+                <span asp-validation-for="CardNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+@* </div> *@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

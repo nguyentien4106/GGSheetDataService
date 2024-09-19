@@ -22,6 +22,9 @@
                 Port
             </th>
             <th>
+                Employee Count
+            </th>
+            <th>
                 Sheet Name
             </th>
             <th>
@@ -49,6 +52,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Device.Port)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Device.Employees.Count)
             </td>
             <td colspan="2">
                 <table class="table ">

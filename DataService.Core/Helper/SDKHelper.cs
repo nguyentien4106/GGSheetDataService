@@ -30,8 +30,8 @@ namespace DataWorkerService.Helper
         private readonly IQueueSender _queueSender;
 
         private readonly Device _device;
-        private readonly List<Employee> _employees = new();
         private readonly List<SheetAppender> _appenders = new();
+        private List<Employee> _employees = new();
 
         private bool _isConnected;
         private bool _disposed;
@@ -52,6 +52,8 @@ namespace DataWorkerService.Helper
         public string DeviceIP => _device.Ip;
 
         public bool IsConnected => _device.IsConnected;
+
+        public List<Employee> Employees => _employees;
 
         public static Result Ping(Device device)
         {
@@ -157,7 +159,6 @@ namespace DataWorkerService.Helper
 
         public Result RegisterRealTimeEvents()
         {
-
             if (!_isConnected)
             {
                 _logger.LogError("Failed to register real-time events. Device is not connected.");
@@ -167,10 +168,9 @@ namespace DataWorkerService.Helper
 
             if (_zkem.RegEvent(GetMachineNumber(), 65535))//Here you can register the realtime events that you want to be triggered(the parameters 65535 means registering all)
             {
-                _employees.AddRange(GetEmployees());
+                _employees = GetEmployees();
                 InitializeSheetsHelper();
                 _zkem.OnAttTransactionEx += HandleAttendanceTransaction;
-
                 _zkem.OnDisConnected += () => _logger.LogInformation("Device disconnected");
                 _zkem.OnConnected += () => _logger.LogInformation("Device connected");
 
@@ -192,50 +192,26 @@ namespace DataWorkerService.Helper
                     sheetHelper.Init(_credential.ToString());
                     _appenders.Add(new SheetAppender(sheetHelper));
                     _logger.LogInformation($"Initialized sheet {sheet.SheetName} (ID: {sheet.DocumentId})");
+                    _notifications.Insert(new Notification
+                    {
+                        Action = (short)NotificationAction.ServiceAdded,
+                        Message = $"Device {DeviceIP}: Initialized sheet {sheet.SheetName} (ID: {sheet.DocumentId}) successfully.",
+                        Success = true,
+                        Type = (short)NotificationType.Device
+                    });
                 }
                 catch (Exception ex)
                 {
+                    _notifications.Insert(new Notification
+                    {
+                        Action = (short)NotificationAction.ServiceAdded,
+                        Message = $"Device {DeviceIP}: Initialized sheet {sheet.SheetName} (ID: {sheet.DocumentId}) failed.",
+                        Success = true,
+                        Type = (short)NotificationType.Device
+                    });
                     _logger.LogError($"Error initializing sheet: {ex.Message}");
                 }
             }
-        }
-
-        public List<Employee> GetEmployees()
-        {
-            var employees = new List<Employee>();
-
-            if (!_isConnected)
-            {
-                return employees;
-            }
-
-            _zkem.EnableDevice(1, false);
-            try
-            {
-                _zkem.ReadAllUserID(1);
-                while (_zkem.SSR_GetAllUserInfo(1, out var empNo, out var name, out var pwd, out var pri, out var enable))
-                {
-                    var cardNum = _zkem.GetStrCardNumber(out var cn) ? cn : string.Empty;
-                    employees.Add(new Employee
-                    {
-                        Pin = empNo,
-                        Name = name.TrimEnd('\0'),
-                        Privilege = pri,
-                        Password = pwd,
-                        CardNumber = cardNum
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error retrieving employees: {ex.Message}");
-            }
-            finally
-            {
-                _zkem.EnableDevice(1, true);
-            }
-
-            return employees;
         }
 
         private void HandleAttendanceTransaction(string EnrollNumber, int IsInValid, int attState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
@@ -290,10 +266,6 @@ namespace DataWorkerService.Helper
                 return Result.Fail(500);
             }
 
-            //int iPrivilege = cbPrivilege.SelectedIndex;
-
-            bool bFlag = false;
-        
             int iPIN2Width = 0;
             int iIsABCPinEnable = 0;
             int iT9FunOn = 0;
@@ -365,6 +337,45 @@ namespace DataWorkerService.Helper
             return Result.Success();
 
         }
+
+        private List<Employee> GetEmployees()
+        {
+            var employees = new List<Employee>();
+
+            if (!_isConnected)
+            {
+                return employees;
+            }
+
+            _zkem.EnableDevice(iMachineNumber, false);
+            try
+            {
+                _zkem.ReadAllUserID(iMachineNumber);
+                while (_zkem.SSR_GetAllUserInfo(iMachineNumber, out var empNo, out var name, out var pwd, out var pri, out var enable))
+                {
+                    var cardNum = _zkem.GetStrCardNumber(out var cn) ? cn : string.Empty;
+                    employees.Add(new Employee
+                    {
+                        Pin = empNo,
+                        Name = name.TrimEnd('\0'),
+                        Privilege = pri,
+                        Password = pwd,
+                        CardNumber = cardNum
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error retrieving employees: {ex.Message}");
+            }
+            finally
+            {
+                _zkem.EnableDevice(iMachineNumber, true);
+            }
+
+            return employees;
+        }
+
     }
 
 }

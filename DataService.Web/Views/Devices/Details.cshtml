@@ -57,7 +57,38 @@
                     }
                 </tbody>
             </table>
-            
+
+        }
+    </dl>
+    <dl class="row">
+        @{
+            var idx = 1;
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">PIN</th>
+                        <th scope="col">Employee's Name</th>
+                        <th scope="col">Password</th>
+                        <th scope="col">CardName</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var employee in Model.Employees)
+                        {
+                            <tr>
+                                <th scope="row">@(idx++)</th>
+                                <td>@employee.Pin</td>
+                                <td>@employee.Name</td>
+                                <td>@employee.Password</td>
+                                <td>@employee.CardNumber</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
         }
     </dl>
 </div>

@@ -18,16 +18,12 @@ namespace DataService.Core.Messaging
     {
         ILogger<RabbitMQConsumer> _logger;
         ISDKService _sdkService;
-        IServiceLocator _locator;
-        IGenericRepository<Device> _deviceRepository;
         AppDbContext _context;
 
         public RabbitMQConsumer(IServiceLocator locator)
         {
-            _locator = locator;
             _logger = locator.Get<ILogger<RabbitMQConsumer>>();
             _sdkService = locator.Get<ISDKService>();
-            _deviceRepository = locator.Get<IGenericRepository<Device>>();
             _context = locator.Get<AppDbContext>();
         }
 
@@ -104,6 +100,7 @@ namespace DataService.Core.Messaging
             switch (eventObj.ActionType)
             {
                 case ActionType.Added:
+                    HandleAddNewEmployee(eventObj.Data);
                     break;
                 case ActionType.Deleted:
                     break;
@@ -116,6 +113,16 @@ namespace DataService.Core.Messaging
                 default:
                     break;
             }
+        }
+
+        private void HandleAddNewEmployee(Employee data)
+        {
+            foreach(var sdk in _sdkService.GetCurrentSDKs())
+            {
+                sdk.AddEmployee(data);
+            }
+            _context.Employees.Add(data);
+            _context.SaveChanges();
         }
 
         private void HandleDeviceEventQueue(object? sender, BasicDeliverEventArgs args)

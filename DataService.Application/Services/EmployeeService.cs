@@ -10,19 +10,8 @@ using System.Linq.Expressions;
 
 namespace DataService.Application.Services
 {
-    public class EmployeeService : GenericRepository<Employee>, IEmployeeService
+    public class EmployeeService(AppDbContext context, ILogger<GenericRepository<Employee>> logger) : GenericRepository<Employee>(context, logger), IEmployeeService
     {
-        public EmployeeService(AppDbContext context, ILogger<GenericRepository<Employee>> logger) : base(context, logger)
-        {
-        }
-
-
-        public override Task<IEnumerable<Employee>> GetAsync(Expression<Func<Employee, bool>> filter = null, Func<IQueryable<Employee>, IOrderedQueryable<Employee>> orderBy = null, string includeProperties = "")
-        {
-            
-            return base.GetAsync(filter, orderBy, includeProperties);
-        }
-
         public override async Task<Result> Insert(Employee employee)
         {
             if (employee.Pin.StartsWith("0"))
@@ -47,6 +36,7 @@ namespace DataService.Application.Services
                 Data = employee,
                 ActionType = ActionType.Added
             }.ToString());
+            _logger.LogInformation("Requested to Add Employee successfully! Please wait...");
 
             return Result.Success("Requested to Add Employee successfully! Please wait...");
         }

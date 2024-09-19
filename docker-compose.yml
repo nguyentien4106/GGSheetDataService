@@ -1,7 +1,8 @@
 version: '3.8'
 
 services:
-  db:
+  # PostgreSQL Service
+  postgres:
     image: postgres
     environment:
       POSTGRES_USER: postgres
@@ -9,40 +10,57 @@ services:
       POSTGRES_DB: attdb
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - container_network
-  messagequeue:
-    image: rabbitmq
+      - mynetwork
+
+  # RabbitMQ Service
+  rabbitmq:
+    image: rabbitmq:3-management
     ports:
       - "5672:5672"
+      - "15672:15672"
     networks:
-      - container_network
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    image: nguyentien0620/dataservice.web-arm:latest
+      - mynetwork
+
+  # .NET Web App Service
+  webapp:
+    # image: your-webapp-image  # Replace with your web app Docker image
+    build: 
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+      - rabbitmq
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db;Database=attdb;Username=postgres;Password=Ti100600@
-    depends_on:
-      - db
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=attdb;Username=postgres;Password=Ti100600@
+      - RabbitMQ__HostName=localhost
+    ports:
+      - "8080:8080"  # Adjust based on your app's port configuration
     networks:
-      - container_network
-    # platform: linux/arm64/v8
-  service:
+      - mynetwork
+
+  # .NET Worker Service
+  worker:
+    # image: your-worker-image  # Replace with your worker service Docker image
     build: 
       dockerfile: Dockerfile.service
-    image: nguyentien0620/dataservice-arm:latest
-
-    environment:
-      - ConnectionStrings__DefaultConnection=Host=db;Database=attdb;Username=postgres;Password=Ti100600@
     depends_on:
-      - db
+      - postgres
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=attdb;Username=postgres;Password=Ti100600@
+      - RabbitMQ__HostName=localhost
     networks:
-      - container_network
-    # platform: linux/arm64/v8
+      - mynetwork
 
+# Define a Docker network
 networks:
-  container_network:
+  mynetwork:
     driver: bridge
+
+# Define named volumes for PostgreSQL data persistence
+volumes:
+  postgres_data:

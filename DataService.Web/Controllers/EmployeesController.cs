@@ -7,15 +7,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DataService.Infrastructure.Data;
 using DataService.Infrastructure.Entities;
-using DataService.Models.AttMachine;
-using DataService.Core.Contracts;
 using DataService.Application.Services;
+using DataService.Models.AttMachine;
+using DataService.Web.Models.Employee;
 
 namespace DataService.Web.Controllers
 {
     public class EmployeesController : Controller
     {
         private readonly IEmployeeService _service;
+
         public EmployeesController(IEmployeeService service)
         {
             _service = service;
@@ -24,7 +25,9 @@ namespace DataService.Web.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            return View(await _service.GetAsync());
+            var employees = await _service.GetAsync();
+            var model = employees.Select(item => new EmployeeViewModel(item));
+            return View(model);
         }
 
         // GET: Employees/Details/5
@@ -51,7 +54,7 @@ namespace DataService.Web.Controllers
             {
                 Value = item.Key.ToString(),
                 Text = item.Value
-            });
+            }); 
             return View();
         }
 
@@ -62,8 +65,20 @@ namespace DataService.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Pin,Name,Password,Privilege,CardNumber,Id")] Employee employee)
         {
-            var result = await _service.Insert(employee);
-            ModelState.AddModelError("add", result.Message);
+            if (ModelState.IsValid)
+            {
+                var result = await _service.Insert(employee);
+                if (result.IsSuccess)
+                {
+                    Thread.Sleep(3000);
+                    return RedirectToAction(nameof(Index));
+
+                }
+                else
+                {
+                    ModelState.AddModelError("", result.Message);
+                }
+            }
             return View(employee);
         }
 
@@ -94,7 +109,19 @@ namespace DataService.Web.Controllers
             {
                 return NotFound();
             }
-            await _service.Update(employee);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _service.Update(employee);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return RedirectToAction(nameof(Index));
+            }
             return View(employee);
         }
 
@@ -106,7 +133,7 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var employee = await _service.GetById(id.Value);
+            var employee = await _service.GetById(id.Value) ;
             if (employee == null)
             {
                 return NotFound();
@@ -126,9 +153,9 @@ namespace DataService.Web.Controllers
                 await _service.Delete(employee);
             }
 
-            
             return RedirectToAction(nameof(Index));
         }
 
+       
     }
 }

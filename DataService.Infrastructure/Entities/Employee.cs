@@ -9,7 +9,8 @@ namespace DataService.Infrastructure.Entities
 {
     public class Employee : BaseEntity
     {
-        [MaxLength(8)]
+        [MaxLength(9)]
+        [Display(Name = "PIN")]
         [Required]
         public string Pin { get; set; } = string.Empty;
         
@@ -23,6 +24,9 @@ namespace DataService.Infrastructure.Entities
         public int Privilege { get; set; }
         
         [Required]
+        [Display(Name = "Card Number")]
         public string CardNumber { get; set; } = string.Empty;
+
+        public List<Device> Devices { get; set; } = [];
     }
 }

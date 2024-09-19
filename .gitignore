@@ -35,4 +35,3 @@ msbuild.wrn
 logs/
 DataService/.vs/DataService.generated/
 
-DataService.Infrastructure/Migrations/*

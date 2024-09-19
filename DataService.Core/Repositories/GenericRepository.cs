@@ -88,7 +88,6 @@ namespace DataService.Core.Repositories
             {
                 dbSet.Add(entity);
                 await _context.SaveChangesAsync();
-
                 return Result.Success();
             }
             catch (Exception ex)

@@ -16,7 +16,7 @@ namespace DataService.Web.Controllers
         // GET: Devices
         public async Task<IActionResult> Index()
         {
-            var devices = await _service.GetAsync(includeProperties: "Sheets");
+            var devices = await _service.GetAsync(includeProperties: "Sheets,Employees");
             var model = devices.Select(item => new DeviceViewModel(item, SDKHelper.Ping(item).IsSuccess));
 
             return View(model);
@@ -30,7 +30,7 @@ namespace DataService.Web.Controllers
                 return NotFound();
             }
 
-            var device = await _service.GetById(id.Value, "Sheets");
+            var device = await _service.GetById(id.Value, "Sheets,Employees");
             
             if (device == null)
             {

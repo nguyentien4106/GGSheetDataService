@@ -1,15 +1,14 @@
-﻿@model IEnumerable<DataService.Infrastructure.Entities.Employee>
+﻿@model IEnumerable<DataService.Web.Models.Employee.EmployeeViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Employees</h1>
-
 <div class="d-flex justify-content-end">
-    <a class="btn btn-primary" asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </div>
-<table class="table table-hover">
+<table class="table">
     <thead>
         <tr>
             <th>
@@ -49,10 +48,9 @@
                 @Html.DisplayFor(modelItem => item.CardNumber)
             </td>
             <td>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 justify-content-center">
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" device-id="@item.Id">Delete</a>
                 </div>
             </td>
         </tr>

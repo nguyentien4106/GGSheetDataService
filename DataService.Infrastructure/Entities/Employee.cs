@@ -28,5 +28,6 @@ namespace DataService.Infrastructure.Entities
         public string CardNumber { get; set; } = string.Empty;
 
         public List<Device> Devices { get; set; } = [];
+
     }
 }

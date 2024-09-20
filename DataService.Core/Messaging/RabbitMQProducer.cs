@@ -1,4 +1,4 @@
-﻿using Confluent.Kafka;
+﻿
 using DataService.Core.Settings;
 using RabbitMQ.Client;
 using System;

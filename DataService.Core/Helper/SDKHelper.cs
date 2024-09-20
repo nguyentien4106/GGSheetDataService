@@ -4,17 +4,12 @@ using DataService.Core.Contracts;
 using DataService.Core.Helper;
 using DataService.Core.Models.AttMachine;
 using DataService.Infrastructure.Entities;
-using DataService.Models.AttMachine;
 using DataService.Settings;
 using DataWorkerService.Models;
 using DataWorkerService.Models.Config;
 using DataWorkerService.Models.Sheet;
 using GoogleSheetsWrapper;
 using Microsoft.Extensions.Logging;
-using BiometricDevices.NET.Abstract;
-using BiometricDevices.NET.Concrete.ZKUFace800;
-using BiometricDevices.NET.Enums;
-using DataService.Core.Models.Enum;
 using DataService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

@@ -81,11 +81,13 @@ namespace DataService.Core.Services
             var item = _sdks.FirstOrDefault(item => item.DeviceIP == device.Ip);
             if (item == null)
             {
+                _context.Devices.Where(item => item.Ip == device.Ip).ExecuteDelete();
                 return Result.Fail(404, "Device not found");
             }
 
             item.Disconnect(true);
             var result = _sdks.Remove(item);
+            _context.Devices.Where(item => item.Ip == device.Ip).ExecuteDelete();
 
             return Result.Success();
         }

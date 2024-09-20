@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /src
 
-COPY ["./DataService.csproj", "DataService/"]
+COPY ["DataService.csproj", "DataService/"]
 COPY ["../DataService.Core/DataService.Core.csproj", "DataService/"]
 COPY ["../DataService.Infrastructure/DataService.Infrastructure.csproj", "DataService/"]
 

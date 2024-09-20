@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using DataService.Settings;
 using DataWorkerService.Models.Config;
+using DataService.Core.Settings;
 
 namespace DataService.Core;
 
@@ -49,8 +50,15 @@ public static class ServiceCollectionSetupExtensions
             throw new ArgumentNullException(nameof(GoogleApiAccount));
         }
 
+        var rabbitmq = configuration.GetSection("RabbitMQ").Get<RabbitMQParams>() ?? default!;
+        if (rabbitmq == null)
+        {
+            throw new ArgumentNullException(nameof(RabbitMQParams));
+        }
+
         services.AddSingleton(credential);
         services.AddSingleton(googleAccount);
+        services.AddSingleton(rabbitmq);
 
         services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
         services.AddSingleton<ISDKService, SDKService>();

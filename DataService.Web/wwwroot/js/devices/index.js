@@ -4,7 +4,7 @@ $(".connect").click(function () {
     const id = $(this).attr("device-id");
     $("#loading").show();
 
-    $.post("https://localhost:7058/Devices/Connect/" + id)
+    $.post("/Devices/Connect/" + id)
         .then(async (res) => {
             show(res);
             await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -21,7 +21,7 @@ $(".disconnect").click(function () {
     const id = $(this).attr("device-id");
     $("#loading").show();
 
-    $.post("https://localhost:7058/Devices/Disconnect/" + id)
+    $.post("/Devices/Disconnect/" + id)
         .then((res) => {
             show(res);
         })
@@ -38,7 +38,7 @@ $(".delete").click(function () {
         const id = $(this).attr("device-id");
         $("#loading").show();
 
-        $.post("https://localhost:7058/Devices/Delete/" + id)
+        $.post("/Devices/Delete/" + id)
             .then((res) => {
                 console.log(res);
 

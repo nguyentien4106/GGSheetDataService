@@ -35,7 +35,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=postgres;Database=attdb;Username=postgres;Password=Ti100600@
-      - RabbitMQ__HostName=localhost
+      - RabbitMQ__HostName=rabbitmq
+
     ports:
       - "8080:8080"  # Adjust based on your app's port configuration
     networks:
@@ -52,9 +53,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=postgres;Database=attdb;Username=postgres;Password=Ti100600@
-      - RabbitMQ__HostName=localhost
+      - RabbitMQ__HostName=rabbitmq
+
     networks:
       - mynetwork
+      
+    isolation: process
+
+    
 
 # Define a Docker network
 networks:

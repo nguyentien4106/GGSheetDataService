@@ -11,6 +11,7 @@ using DataService.Core.Services;
 using DataService.Core.Contracts;
 using DataService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using DataService.Core.Settings;
 
 namespace DataService.Core.Messaging
 {
@@ -19,20 +20,21 @@ namespace DataService.Core.Messaging
         ILogger<RabbitMQConsumer> _logger;
         ISDKService _sdkService;
         AppDbContext _context;
-
-        public RabbitMQConsumer(IServiceLocator locator)
+        RabbitMQParams _rabbit;
+        public RabbitMQConsumer(IServiceLocator locator, RabbitMQParams rabbit)
         {
             _logger = locator.Get<ILogger<RabbitMQConsumer>>();
             _sdkService = locator.Get<ISDKService>();
             _context = locator.Get<AppDbContext>();
+            _rabbit = rabbit;
         }
 
         public IModel StartListening()
         {
-            var factory = new ConnectionFactory() { HostName = RabbitMQConstants.HostName, Port = RabbitMQConstants.Port };
+            var factory = new ConnectionFactory() { HostName = _rabbit.HostName };
             var connection = factory.CreateConnection();
             var channel = connection.CreateModel();
-            channel.QueueDeclare(queue: RabbitMQConstants.DeviceEventQueue,
+            channel.QueueDeclare(queue: _rabbit.DeviceQueue,
                                 durable: true,
                                 exclusive: false,
                                 autoDelete: false,
@@ -42,9 +44,9 @@ namespace DataService.Core.Messaging
 
             consumer.Received += HandleDeviceEventQueue;
 
-            channel.BasicConsume(queue: RabbitMQConstants.DeviceEventQueue, autoAck: true, consumer: consumer);
+            channel.BasicConsume(queue: _rabbit.DeviceQueue, autoAck: true, consumer: consumer);
 
-            channel.QueueDeclare(queue: RabbitMQConstants.EmployeeEventQueue,
+            channel.QueueDeclare(queue: _rabbit.EmployeeQueue,
                                 durable: true,
                                 exclusive: false,
                                 autoDelete: false,
@@ -54,50 +56,50 @@ namespace DataService.Core.Messaging
 
             consumer.Received += HandleEmployeeEventQueue;
 
-            channel.BasicConsume(queue: RabbitMQConstants.EmployeeEventQueue, autoAck: true, consumer: consumer1);
+            channel.BasicConsume(queue: _rabbit.EmployeeQueue, autoAck: true, consumer: consumer1);
 
             return channel;
         }
 
-        public IModel StartListeningOnDeviceQueue()
-        {
-            var factory = new ConnectionFactory() { HostName = RabbitMQConstants.HostName, Port = RabbitMQConstants.Port };
-            var connection = factory.CreateConnection();
-            var channel = connection.CreateModel();
-            channel.QueueDeclare(queue: RabbitMQConstants.DeviceEventQueue,
-                                durable: true,
-                                exclusive: false,
-                                autoDelete: false,
-                                arguments: null);
+        //public IModel StartListeningOnDeviceQueue()
+        //{
+        //    var factory = new ConnectionFactory() { HostName = RabbitMQConstants.HostName, Port = RabbitMQConstants.Port };
+        //    var connection = factory.CreateConnection();
+        //    var channel = connection.CreateModel();
+        //    channel.QueueDeclare(queue: RabbitMQConstants.DeviceEventQueue,
+        //                        durable: true,
+        //                        exclusive: false,
+        //                        autoDelete: false,
+        //                        arguments: null);
 
-            var consumer = new EventingBasicConsumer(channel);
+        //    var consumer = new EventingBasicConsumer(channel);
 
-            consumer.Received += HandleDeviceEventQueue;
+        //    consumer.Received += HandleDeviceEventQueue;
 
-            channel.BasicConsume(queue: RabbitMQConstants.DeviceEventQueue, autoAck: true, consumer: consumer);
+        //    channel.BasicConsume(queue: RabbitMQConstants.DeviceEventQueue, autoAck: true, consumer: consumer);
 
-            return channel;
-        }
+        //    return channel;
+        //}
 
-        public IModel StartListeningOnEmployeesQueue()
-        {
-            var factory = new ConnectionFactory() { HostName = RabbitMQConstants.HostName, Port = RabbitMQConstants.Port };
-            var connection = factory.CreateConnection();
-            var channel = connection.CreateModel();
-            channel.QueueDeclare(queue: RabbitMQConstants.EmployeeEventQueue,
-                                durable: true,
-                                exclusive: false,
-                                autoDelete: false,
-                                arguments: null);
+        //public IModel StartListeningOnEmployeesQueue()
+        //{
+        //    var factory = new ConnectionFactory() { HostName = RabbitMQConstants.HostName, Port = RabbitMQConstants.Port };
+        //    var connection = factory.CreateConnection();
+        //    var channel = connection.CreateModel();
+        //    channel.QueueDeclare(queue: RabbitMQConstants.EmployeeEventQueue,
+        //                        durable: true,
+        //                        exclusive: false,
+        //                        autoDelete: false,
+        //                        arguments: null);
 
-            var consumer = new EventingBasicConsumer(channel);
+        //    var consumer = new EventingBasicConsumer(channel);
 
-            consumer.Received += HandleEmployeeEventQueue;
+        //    consumer.Received += HandleEmployeeEventQueue;
 
-            channel.BasicConsume(queue: RabbitMQConstants.EmployeeEventQueue, autoAck: true, consumer: consumer);
+        //    channel.BasicConsume(queue: RabbitMQConstants.EmployeeEventQueue, autoAck: true, consumer: consumer);
 
-            return channel;
-        }
+        //    return channel;
+        //}
 
         private void HandleEmployeeEventQueue(object? sender, BasicDeliverEventArgs args)
         {

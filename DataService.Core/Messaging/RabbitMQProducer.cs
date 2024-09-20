@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using DataService.Core.Settings;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,18 @@ using System.Threading.Tasks;
 
 namespace DataService.Core.Messaging
 {
-    public static class RabbitMQProducer
+    public class RabbitMQProducer
     {
-        public static void SendMessage(string queue, string message)
+        RabbitMQParams _rabbit;
+
+        public RabbitMQProducer(RabbitMQParams rabbit)
         {
-            var factory = new ConnectionFactory() { HostName = RabbitMQConstants.HostName, Port = RabbitMQConstants.Port };
+            _rabbit = rabbit;
+        }
+
+        public void SendMessage(string queue, string message)
+        {
+            var factory = new ConnectionFactory() { HostName = _rabbit.HostName };
             using var connection = factory.CreateConnection();
 
             using var channel = connection.CreateModel();

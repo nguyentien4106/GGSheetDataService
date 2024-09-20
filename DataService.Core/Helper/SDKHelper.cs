@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 using BiometricDevices.NET.Abstract;
 using BiometricDevices.NET.Concrete.ZKUFace800;
 using BiometricDevices.NET.Enums;
-using zkemkeeper;
 using DataService.Core.Models.Enum;
 using DataService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +22,7 @@ namespace DataWorkerService.Helper
 {
     public class SDKHelper : IDisposable
     {
-        private readonly CZKEMClass _zkem = new();
+        private readonly zkemkeeper.CZKEMClass _zkem = new();
         private readonly GoogleApiAccount _account;
         private readonly JSONCredential _credential;
         private readonly ILogger<SDKHelper> _logger;

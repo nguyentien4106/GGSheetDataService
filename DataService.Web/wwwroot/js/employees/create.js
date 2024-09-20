@@ -49,7 +49,7 @@ $("#add-employee").click(function (event) {
         event.preventDefault();
         $( "#loading" ).show();
 
-        $.post("https://localhost:7058/Employees/Create", data)
+        $.post("/Employees/Create", data)
             .then((res) => {
                 if (res.isSuccess) {
                     showSuccess();

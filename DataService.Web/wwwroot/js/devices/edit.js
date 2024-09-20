@@ -66,7 +66,7 @@ $("#update-device").click(function (event) {
             Sheets: sheets
         }
         console.log(data)
-        $.post("https://localhost:7058/Devices/Edit", data)
+        $.post("/Devices/Edit", data)
         .then(res => {
             if (res.isSuccess) {
                 showSuccess()

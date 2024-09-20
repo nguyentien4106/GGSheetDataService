@@ -22,7 +22,7 @@ function createNotification(item) {
 
 notification.click(function () {
     const panel = $('#notificationPanel');
-    $.get("https://localhost:7058/api/notifications").then(res => {
+    $.get("/api/notifications").then(res => {
         console.log(res.data)
         const notifications = res.data.map(createNotification).join("")
         panel.html(notifications)

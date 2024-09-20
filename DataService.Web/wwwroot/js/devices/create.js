@@ -61,7 +61,7 @@ $("#add-device").click(function (event) {
         event.preventDefault();
         $( "#loading" ).show();
 
-        $.post("https://localhost:7058/Devices/Create", data)
+        $.post("/Devices/Create", data)
             .then((res) => {
                 if (res.isSuccess) {
                     showSuccess();

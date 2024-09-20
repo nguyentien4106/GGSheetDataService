@@ -4,6 +4,7 @@ using DataService.Core.Messaging;
 using DataService.Infrastructure.Entities;
 using DataService.Core.Services;
 using RabbitMQ.Client;
+using DataService.Core.Settings;
 
 namespace DataService;
 
@@ -15,11 +16,11 @@ public class Worker : BackgroundService
     IModel _model;
     ISDKService _sdkService;
 
-    public Worker(ILogger<Worker> logger, IServiceLocator locator)
+    public Worker(ILogger<Worker> logger, IServiceLocator locator, RabbitMQParams rabbit)
     {
         _locator = locator;
         _logger = logger;
-        _consumer = new RabbitMQConsumer(locator);
+        _consumer = new RabbitMQConsumer(locator, rabbit);
         _sdkService = locator.Get<ISDKService>();
     }
 
@@ -38,7 +39,7 @@ public class Worker : BackgroundService
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _sdkService.Init();
-        _model = _consumer.StartListening();
+        //_model = _consumer.StartListening();
         return base.StartAsync(cancellationToken);
     }
 

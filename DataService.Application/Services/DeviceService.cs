@@ -8,14 +8,18 @@ using DataWorkerService.Helper;
 using DataWorkerService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using DataService.Core.Settings;
 
 
 namespace DataService.Application.Services
 {
     public class DeviceService : GenericRepository<DeviceEntity>, IDeviceService
     {
-        public DeviceService(AppDbContext context, ILogger<GenericRepository<DeviceEntity>> logger) : base(context, logger)
+        RabbitMQProducer _producer;
+
+        public DeviceService(AppDbContext context, ILogger<GenericRepository<DeviceEntity>> logger, RabbitMQParams rabbit) : base(context, logger)
         {
+            _producer = new(rabbit);
         }
 
         public override async Task<Result> Insert(DeviceEntity device)
@@ -32,7 +36,7 @@ namespace DataService.Application.Services
 
             if (result.IsSuccess)
             {
-                RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
+                _producer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
                 {
                     ActionType = ActionType.Added,
                     Data = device
@@ -44,7 +48,7 @@ namespace DataService.Application.Services
 
         public override async Task<Result> Update(Device entityToUpdate)
         {
-            RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
+            _producer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
             {
                 ActionType = ActionType.Modified,
                 Data = entityToUpdate
@@ -57,7 +61,7 @@ namespace DataService.Application.Services
         {
             var device = await GetById(id, "Sheets");
 
-            RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
+            _producer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
             {
                 ActionType = ActionType.Deleted,
                 Data = device
@@ -70,7 +74,7 @@ namespace DataService.Application.Services
         {
             var device = await GetById(deviceid);
 
-            RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
+            _producer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
             {
                 ActionType = ActionType.Connect,
                 Data = device
@@ -81,7 +85,7 @@ namespace DataService.Application.Services
         public async Task<Result> Disconnect(int deviceid)
         {
             var device = await GetById(deviceid);
-            RabbitMQProducer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
+            _producer.SendMessage(RabbitMQConstants.DeviceEventQueue, new RabbitMQEvent<DeviceEntity>
             {
                 ActionType = ActionType.Disconnect,
                 Data = device

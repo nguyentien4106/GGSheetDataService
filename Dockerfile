@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-preview-windowsservercore-ltsc2022 AS base
 WORKDIR /app
 
 EXPOSE 8080
@@ -21,7 +21,7 @@ WORKDIR "/src/DataService.Web"
 RUN dotnet build "DataService.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "DataService.Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "DataService.Web.csproj" -c Release -o /app/publish -r linux-x64 /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

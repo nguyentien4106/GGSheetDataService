@@ -33,7 +33,6 @@ namespace DataService.Core.Helper
         private readonly List<SheetAppender> _appenders = new();
         private List<ZKUFace800BiometricUser> _employees = new();
 
-        private bool _isConnected;
         private bool _disposed;
         private int iMachineNumber = 1;
 
@@ -52,7 +51,11 @@ namespace DataService.Core.Helper
 
         public string DeviceIP => _device.Ip;
 
-        public bool IsConnected => _device.IsConnected;
+        public bool IsConnected => _sdk.State.HasFlag(DeviceState.Connected);
+
+        public DeviceState DeviceState => _sdk.State;
+
+        public Device GetDevice() => _device;
 
         public List<ZKUFace800BiometricUser> Employees => _employees;
 
@@ -61,13 +64,6 @@ namespace DataService.Core.Helper
             return Result.Success();
         }
 
-        public Device GetDevice() => _device;
-
-        public void SetConnectState(bool state)
-        {
-            _isConnected = state;
-            _logger.LogInformation($"Connected state turn into {state}");
-        }
 
         public int GetMachineNumber() => iMachineNumber;
 
@@ -87,14 +83,12 @@ namespace DataService.Core.Helper
             };
         }
 
-        public DeviceState DeviceState => _sdk.State;
 
         public async Task<Result> ConnectTCP()
         {
             if (_device == null)
             {
                 _logger.LogError("Device is null");
-                SetConnectState(false);
                 return Result.Fail(-1, "Invalid device settings");
             }
 

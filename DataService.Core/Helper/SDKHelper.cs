@@ -16,6 +16,8 @@ using BiometricDevices.NET.Concrete.ZKUFace800;
 using BiometricDevices.NET.Enums;
 using zkemkeeper;
 using DataService.Core.Models.Enum;
+using DataService.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataWorkerService.Helper
 {
@@ -28,6 +30,7 @@ namespace DataWorkerService.Helper
         private readonly IGenericRepository<Attendance> _repository;
         private readonly IGenericRepository<Notification> _notifications;
         private readonly IQueueSender _queueSender;
+        private readonly AppDbContext _context;
 
         private readonly Device _device;
         private readonly List<SheetAppender> _appenders = new();
@@ -45,6 +48,7 @@ namespace DataWorkerService.Helper
             _repository = locator.Get<IGenericRepository<Attendance>>();
             _queueSender = locator.Get<IQueueSender>();
             _notifications = locator.Get<IGenericRepository<Notification>>();
+            _context = locator.Get<AppDbContext>();
 
             _device = device ?? throw new ArgumentNullException(nameof(device));
         }
@@ -95,66 +99,80 @@ namespace DataWorkerService.Helper
             if (_isConnected)
             {
                 _logger.LogWarning("Device already connected");
-                //Disconnect();
                 return Result.Success("Already connected");
             }
 
-            _logger.LogInformation($"Connecting to {_device.Ip}");
+            _logger.LogInformation($"Device {DeviceIP}: Connecting...");
             _zkem.SetCommPassword(int.Parse(_device.CommKey));
 
             if (_zkem.Connect_Net(_device.Ip, int.Parse(_device.Port)))
             {
+                _logger.LogInformation($"Device {DeviceIP}: Connected successfully!");
                 SetConnectState(true);
-                _logger.LogInformation($"Connected to {_device.Ip}");
                 RegisterRealTimeEvents();
+
                 _notifications.Insert(new Notification {
-                    Action = (short)NotificationAction.ServiceAdded,
                     Message = $"Device {DeviceIP}: Connected successfully!",
-                    Type = (short)NotificationType.Device,
                     Success = true
                 });
+
+                _context.Devices.Where(item => item.Ip == DeviceIP).ExecuteUpdate(setter => setter.SetProperty(i => i.IsConnected, true));
+
                 return Result.Success();
             }
+
             int errorCode = 1;
             _zkem.GetLastError(ref errorCode);
-            _logger.LogError($"Connection failed with error code {errorCode}");
+            _logger.LogError($"Device {DeviceIP}: Connected failed with error code {errorCode}");
+           
             _notifications.Insert(new Notification
             {
-                Action = (short)NotificationAction.ServiceAdded,
                 Message = $"Device {DeviceIP}: Connected failed!",
-                Type = (short)NotificationType.Device,
                 Success = false
             });
             return Result.Fail(errorCode, "Connection failed");
         }
 
-        public void Disconnect()
+        public void Disconnect(bool isRemove = false)
         {
             if (_isConnected)
             {
-                _logger.LogInformation($"Disconnecting {_device.Ip}");
                 _zkem.Disconnect();
                 SetConnectState(false);
-                _notifications.Insert(new Notification
+                _logger.LogInformation($"Device {DeviceIP}: Disconnected sucessfully");
+
+                if (isRemove)
                 {
-                    Action = (short)NotificationAction.ServiceAdded,
-                    Message = $"Device {DeviceIP}: Disconnected sucessfully",
-                    Type = (short)NotificationType.Device,
-                    Success = true
-                });
+                    _context.Devices.Where(item => item.Ip == DeviceIP).ExecuteDelete();
+                    _notifications.Insert(new Notification
+                    {
+                        Message = $"Device {DeviceIP}: Disconnected then Removed successfully",
+                        Success = true
+                    });
+                }
+                else
+                {
+                    _context.Devices.Where(item => item.Ip == DeviceIP).ExecuteUpdate(setter => setter.SetProperty(i => i.IsConnected, false));
+                    _notifications.Insert(new Notification
+                    {
+                        Message = $"Device {DeviceIP}: Disconnected sucessfully",
+                        Success = true
+                    });
+                }
+                
+
             }
             else
             {
                 _notifications.Insert(new Notification
                 {
-                    Action = (short)NotificationAction.ServiceAdded,
                     Message = $"Device {DeviceIP}: Cann't Disconnect due to unconnected.",
-                    Type = (short)NotificationType.Device,
                     Success = false
                 });
-                _logger.LogWarning("Device already disconnected");
+                _logger.LogWarning($"Device {DeviceIP}: Cann't Disconnect due to unconnected.");
+                _context.Devices.Where(item => item.Ip == DeviceIP).ExecuteUpdate(setter => setter.SetProperty(i => i.IsConnected, false));
             }
-            
+
         }
 
         public Result RegisterRealTimeEvents()
@@ -191,25 +209,21 @@ namespace DataWorkerService.Helper
                     var sheetHelper = new SheetHelper<Record>(sheet.DocumentId, _account.ServiceAccountId, sheet.SheetName);
                     sheetHelper.Init(_credential.ToString());
                     _appenders.Add(new SheetAppender(sheetHelper));
-                    _logger.LogInformation($"Initialized sheet {sheet.SheetName} (ID: {sheet.DocumentId})");
+                    _logger.LogInformation($"Device {DeviceIP}: Initialized sheet {sheet.SheetName} (ID: {sheet.DocumentId}) successfully.");
                     _notifications.Insert(new Notification
                     {
-                        Action = (short)NotificationAction.ServiceAdded,
                         Message = $"Device {DeviceIP}: Initialized sheet {sheet.SheetName} (ID: {sheet.DocumentId}) successfully.",
                         Success = true,
-                        Type = (short)NotificationType.Device
                     });
                 }
                 catch (Exception ex)
                 {
                     _notifications.Insert(new Notification
                     {
-                        Action = (short)NotificationAction.ServiceAdded,
-                        Message = $"Device {DeviceIP}: Initialized sheet {sheet.SheetName} (ID: {sheet.DocumentId}) failed.",
+                        Message = $"Device {DeviceIP}: Initialized sheet {sheet.SheetName} (ID: {sheet.DocumentId}) failed because ${ex.Message}",
                         Success = true,
-                        Type = (short)NotificationType.Device
                     });
-                    _logger.LogError($"Error initializing sheet: {ex.Message}");
+                    _logger.LogError($"Device {DeviceIP}: Initialized sheet {sheet.SheetName} (ID: {sheet.DocumentId}) failed.");
                 }
             }
         }
@@ -266,69 +280,36 @@ namespace DataWorkerService.Helper
                 return Result.Fail(500);
             }
 
-            int iPIN2Width = 0;
-            int iIsABCPinEnable = 0;
-            int iT9FunOn = 0;
-            string strTemp = "";
-            _zkem.GetSysOption(GetMachineNumber(), "~PIN2Width", out strTemp);
-            iPIN2Width = Convert.ToInt32(strTemp);
-            _zkem.GetSysOption(GetMachineNumber(), "~IsABCPinEnable", out strTemp);
-            iIsABCPinEnable = Convert.ToInt32(strTemp);
-            _zkem.GetSysOption(GetMachineNumber(), "~T9FunOn", out strTemp);
-            iT9FunOn = Convert.ToInt32(strTemp);
-
-
-            if (employee.Pin.Length > iPIN2Width)
-            {
-                _logger.LogError("*User ID error! The max length is " + iPIN2Width.ToString());
-                return Result.Fail(501, "*User ID error! The max length is " + iPIN2Width.ToString());
-            }
-
-            if (iIsABCPinEnable == 0 || iT9FunOn == 0)
-            {
-                if (employee.Pin.StartsWith("0"))
-                {
-                    _logger.LogError("PIN can not start with 0");
-
-                    return Result.Fail(501, "PIN can not start with 0");
-                }
-
-                if (!employee.Pin.All(char.IsDigit))
-                {
-                    _logger.LogError("*User ID error! User ID only support digital");
-                    return Result.Fail(501, "*User ID error! User ID only support digital");
-
-                }
-               
-            }
-
             int idwErrorCode = 0;
 
             _zkem.EnableDevice(iMachineNumber, false);
             _zkem.SetStrCardNumber(employee.CardNumber);//Before you using function SetUserInfo,set the card number to make sure you can upload it to the device
             if (_zkem.SSR_SetUserInfo(iMachineNumber, employee.Pin.Trim(), employee.Name.Trim(), employee.Password.Trim(), employee.Privilege, true))//upload the user's information(card number included)
             {
+                _context.Employees.Add(employee);
+                _context.DeviceEmployees.Add(new DeviceEmployee
+                {
+                    DeviceId = _device.Id,
+                    EmployeeId = employee.Id,
+                });
                 _notifications.Insert(new Notification
                 {
-                    Action = (short)NotificationAction.ServiceAdded,
                     Message = $"Device {DeviceIP}: Employee added successfully!",
-                    Type = (short)NotificationType.Employee,
                     Success = true
                 });
-                _logger.LogInformation("Set user information successfully");
+                _logger.LogInformation($"Device {DeviceIP}: Employee added successfully!");
             }
             else
             {
+                _zkem.GetLastError(ref idwErrorCode);
+
                 _notifications.Insert(new Notification
                 {
-                    Action = (short)NotificationAction.ServiceAdded,
-                    Message = $"Device {DeviceIP}: Employee added failed!",
-                    Type = (short)NotificationType.Employee,
+                    Message = $"Device {DeviceIP}: Employee added failed! ErrorCode = {idwErrorCode}",
                     Success = false
                 });
-                _zkem.GetLastError(ref idwErrorCode);
-                _logger.LogError("*Operation failed,ErrorCode=" + idwErrorCode.ToString());
-                return Result.Fail(idwErrorCode, "*Operation failed,ErrorCode=" + idwErrorCode.ToString());
+                _logger.LogError($"Device {DeviceIP}: Employee added failed!");
+                return Result.Fail(idwErrorCode, $"Device {DeviceIP}: Employee added failed!");
 
             }
             _zkem.RefreshData(iMachineNumber);//the data in the device should be refreshed

@@ -38,14 +38,15 @@ public class Worker : BackgroundService
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _sdkService.Init();
-        _consumer.StartListeningOnDeviceQueue();
+        _model = _consumer.StartListening();
         return base.StartAsync(cancellationToken);
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Turning off.");
+        _sdkService.DisconnectAll();
         _model.Dispose();
+        _logger.LogInformation("Turning off system.");
         return base.StopAsync(cancellationToken);
     }
 }

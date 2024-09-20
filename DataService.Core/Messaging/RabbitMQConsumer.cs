@@ -27,12 +27,12 @@ namespace DataService.Core.Messaging
             _context = locator.Get<AppDbContext>();
         }
 
-        public IModel StartListening(string queue)
+        public IModel StartListening()
         {
             var factory = new ConnectionFactory() { HostName = RabbitMQConstants.HostName, Port = RabbitMQConstants.Port };
             var connection = factory.CreateConnection();
             var channel = connection.CreateModel();
-            channel.QueueDeclare(queue: queue,
+            channel.QueueDeclare(queue: RabbitMQConstants.DeviceEventQueue,
                                 durable: true,
                                 exclusive: false,
                                 autoDelete: false,
@@ -40,11 +40,21 @@ namespace DataService.Core.Messaging
 
             var consumer = new EventingBasicConsumer(channel);
 
-            consumer.Received += RabbitMQHandler.GetHandler(queue);
+            consumer.Received += HandleDeviceEventQueue;
 
-            channel.BasicConsume(queue: queue, autoAck: true, consumer: consumer);
+            channel.BasicConsume(queue: RabbitMQConstants.DeviceEventQueue, autoAck: true, consumer: consumer);
 
-            _logger.LogInformation("Worker service is listening for messages...");
+            channel.QueueDeclare(queue: RabbitMQConstants.EmployeeEventQueue,
+                                durable: true,
+                                exclusive: false,
+                                autoDelete: false,
+                                arguments: null);
+
+            var consumer1 = new EventingBasicConsumer(channel);
+
+            consumer.Received += HandleEmployeeEventQueue;
+
+            channel.BasicConsume(queue: RabbitMQConstants.EmployeeEventQueue, autoAck: true, consumer: consumer1);
 
             return channel;
         }
@@ -213,16 +223,7 @@ namespace DataService.Core.Messaging
                 return;
             }
 
-            var result = sdk.ConnectTCP();
-            if (result.IsSuccess)
-            {
-                _context.Devices.Where(item => item.Ip == device.Ip).ExecuteUpdate(setter => setter.SetProperty(i => i.IsConnected, true));
-                _logger.LogInformation($"Connected Successfully! Device's IP = {device.Ip}");
-            }
-            else
-            {
-                _logger.LogError($"Can not connect to device because of {result.Message}");
-            }
+            sdk.ConnectTCP();
         }
 
         private void HandleDeleteDevice(Device device)

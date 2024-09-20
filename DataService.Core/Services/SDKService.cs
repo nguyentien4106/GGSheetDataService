@@ -19,22 +19,23 @@ namespace DataService.Core.Services
     {
         public List<SDKHelper> _sdks = new();
         ILogger<SDKService> _logger;
-        IGenericRepository<Device> _repository;
-        IGenericRepository<Notification> _notifications;
+        IGenericRepository<Device> _deviceRepository;
+        IGenericRepository<Notification> _notificationsRepository;
         IServiceLocator _locator;
         AppDbContext _context;
+
         public SDKService(IServiceLocator locator)
         {
             _logger = locator.Get<ILogger<SDKService>>();
-            _repository = locator.Get<IGenericRepository<Device>>();
-            _notifications = locator.Get<IGenericRepository<Notification>>();
+            _deviceRepository = locator.Get<IGenericRepository<Device>>();
+            _notificationsRepository = locator.Get<IGenericRepository<Notification>>();
             _context = locator.Get<AppDbContext>();
             _locator = locator;
         }
 
         public void Init(bool connect = false)
         {
-            var devices = _repository.Get(includeProperties: "Sheets");
+            var devices = _deviceRepository.Get(includeProperties: "Sheets");
             foreach (var device in devices)
             {
                 _sdks.Add(new SDKHelper(_locator, device));
@@ -52,15 +53,14 @@ namespace DataService.Core.Services
         {
             var sdk = new SDKHelper(_locator, device);
             _sdks.Add(sdk);
-            _repository.Insert(device);
+            _deviceRepository.Insert(device);
 
-            _notifications.Insert(new Notification
+            _notificationsRepository.Insert(new Notification
             {
-                Action = (short)NotificationAction.ServiceAdded,
-                Message = $"Device ${device.Ip} added successfully!",
-                Type = (short)NotificationType.Device,
+                Message = $"Device ${device.Ip}: Added successfully!",
                 Success = true
             });
+
             if (connect)
             {
                 var result = sdk.ConnectTCP();
@@ -86,22 +86,9 @@ namespace DataService.Core.Services
                 return Result.Fail(404, "Device not found");
             }
 
-            item.Disconnect();
-            _sdks.Remove(item);
-            foreach (var sheet in device.Sheets)
-            {
-                _context.Sheets.Entry(sheet).State = EntityState.Deleted;
-            }
+            item.Disconnect(true);
+            var result = _sdks.Remove(item);
 
-            _context.Devices.Entry(device).State = EntityState.Deleted;
-            _context.SaveChanges();
-            _notifications.Insert(new Notification
-            {
-                Action = (short)NotificationAction.ServiceRemoved,
-                Message = $"Device {device.Ip} removed successfully!",
-                Type = (short)NotificationType.Device,
-                Success = true
-            });
             return Result.Success();
         }
 
@@ -109,7 +96,6 @@ namespace DataService.Core.Services
         {
             foreach(var sdk in _sdks)
             {
-                _logger.LogInformation($"Disconnecting Device's IP: {sdk.GetDevice().Ip}");
                 sdk.Disconnect();
             }
         }
@@ -120,24 +106,14 @@ namespace DataService.Core.Services
             {
                 sdk.ConnectTCP();
             }
+
         }
 
         public Result AddEmployee(Employee emp)
         {
             foreach(var sdk in _sdks)
             {
-                if (sdk.IsConnected)
-                {
-                    var result = sdk.AddEmployee(emp);
-                    if(result.IsSuccess )
-                    {
-                        _logger.LogInformation(result.Message);
-                    }
-                    else
-                    {
-                        _logger.LogError(result.Message);
-                    }
-                }
+                sdk.AddEmployee(emp);
             }
 
             return Result.Success();

@@ -28,22 +28,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-
-//    var context = services.GetRequiredService<AppDbContext>();
-//    var logger = services.GetRequiredService<ILogger<Program>>();
-//    logger.LogInformation("Logger");
-//    if (context.Database.GetPendingMigrations().Any())
-//    {
-//        logger.LogInformation("context.Database.GetPendingMigrations().Any()");
-//        context.Database.Migrate();
-//        logger.LogInformation("context.Database.GetPendingMigrations().Any() Migrate() ");
-
-//    }
-//}
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

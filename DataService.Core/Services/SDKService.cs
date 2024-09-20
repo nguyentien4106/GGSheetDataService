@@ -18,7 +18,6 @@ namespace DataService.Core.Services
     public class SDKService : ISDKService
     {
         public List<SDKHelper> _sdks = new();
-        ILogger<SDKService> _logger;
         IGenericRepository<Device> _deviceRepository;
         IGenericRepository<Notification> _notificationsRepository;
         IServiceLocator _locator;
@@ -26,7 +25,6 @@ namespace DataService.Core.Services
 
         public SDKService(IServiceLocator locator)
         {
-            _logger = locator.Get<ILogger<SDKService>>();
             _deviceRepository = locator.Get<IGenericRepository<Device>>();
             _notificationsRepository = locator.Get<IGenericRepository<Notification>>();
             _context = locator.Get<AppDbContext>();

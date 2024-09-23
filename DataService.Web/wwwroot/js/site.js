@@ -1,4 +1,5 @@
-﻿$('#loading').hide() 
+﻿
+$('#loading').hide() 
 
 const notification = $("#notification")
 const options24Hour = {

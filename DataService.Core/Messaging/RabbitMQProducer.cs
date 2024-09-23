@@ -25,10 +25,7 @@ namespace DataService.Core.Messaging
 
             using var channel = connection.CreateModel();
             channel.QueueDeclare(queue: queue,
-                                 durable: true,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
+                                 durable: true);
 
             var body = Encoding.UTF8.GetBytes(message);
             var properties = channel.CreateBasicProperties();

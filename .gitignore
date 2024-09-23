@@ -35,3 +35,4 @@ msbuild.wrn
 logs/
 DataService/.vs/DataService.generated/
 
+node_modules

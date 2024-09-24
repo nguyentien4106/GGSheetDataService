@@ -46,22 +46,22 @@ services:
   worker:
     # image: your-worker-image  # Replace with your worker service Docker image
     build: 
-      dockerfile: Dockerfile.service
+      context: ./NodeService
     depends_on:
       - postgres
       - rabbitmq
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=attdb;Username=postgres;Password=Ti100600@
-      - RabbitMQ__HostName=rabbitmq
-
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Ti100600@
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DATABASE: attdb
+      RABBITMQ_HOST: rabbitmq
     networks:
       - mynetwork
+    command: ["node", "index.js"]
+
       
-    isolation: process
-
-    
-
 # Define a Docker network
 networks:
   mynetwork:

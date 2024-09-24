@@ -1,8 +1,11 @@
 // consumer.js
+require('dotenv').config(); // Load environment variables from .env file
 const amqp = require("amqplib/callback_api");
+const { ActionTypes } = require("../constants");
+// const ActionType = require
 
 async function startConsumer() {
-    amqp.connect("amqp://localhost", (err, connection) => {
+    amqp.connect(`amqp://${process.env.RABBITMQ_HOST}`, (err, connection) => {
         if (err) {
             console.log(err);
             throw err;
@@ -28,9 +31,17 @@ async function startConsumer() {
             // Consume messages from the queue
             channel.consume(queue, (msg) => {
                 if (msg !== null) {
-                    const json = JSON.parse(msg.content)
+                    const message = JSON.parse(msg.content)
+                    switch(message.ActionType){
+                        case ActionTypes.Added:
+                            console.log('add')
+                            break;
+                        default:
+                            console.log('default')
+                            break;
+                    }
                     console.log(
-                        `[Consumer] Received: `, json
+                        `[Consumer] Received: `, message
                     );
                     channel.ack(msg); // Acknowledge that the message has been processed
                 }
